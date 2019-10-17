@@ -1,0 +1,7 @@
+"AddonInfo"
+{
+	"name"			"Lumiens MapVote"
+	"version"		"1.0"
+	"up_date"		""
+	"author_name"	"Lumien (Modified from Tyrantelf (Origional: Willox & Dizla))"
+}
