@@ -1,11 +1,14 @@
 {
 	"title"		:	"Lumiens MapVote",
 	"type"		:	"ServerContent",
-	"tags"		:	[ "misc","admin" ],
+	"tags"		:	[ ],
 	"ignore"	:
 	[
 		"*.psd",
 		"*.vcproj",
-		"*.svn*"
+		"*.svn*",
+		".git/*",
+		"LICENSE",
+		"README.md"
 	]
 }
