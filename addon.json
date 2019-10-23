@@ -1,0 +1,11 @@
+{
+	"title"		:	"Lumiens MapVote",
+	"type"		:	"ServerContent",
+	"tags"		:	[ "misc","admin" ],
+	"ignore"	:
+	[
+		"*.psd",
+		"*.vcproj",
+		"*.svn*"
+	]
+}

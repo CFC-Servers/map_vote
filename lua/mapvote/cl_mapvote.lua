@@ -184,19 +184,12 @@ function PANEL:AddVoter(voter)
     local icon = vgui.Create("AvatarImage", icon_container)
     icon:SetSize(32, 32)
     icon:SetZPos(1000)
-    icon:SetTooltip(voter:Name())
+
     icon_container.Player = voter
-    icon_container:SetTooltip(voter:Name())
     icon:SetPlayer(voter, 32)
 
-    if MapVote.HasExtraVotePower(voter) then
-        icon_container:SetSize(60, 40)
-        icon:SetPos(21, 4)
-        icon_container.img = star_mat
-    else
-        icon_container:SetSize(40, 40)
-        icon:SetPos(4, 4)
-    end
+    icon_container:SetSize(36, 36)
+    icon:SetPos(4, 4)
 
     icon_container.Paint = function(s, w, h)
         -- draw.RoundedBox(4, 0, 0, w, h, Color(255, 0, 0, 80))
@@ -207,6 +200,9 @@ function PANEL:AddVoter(voter)
             surface.DrawTexturedRect(2, 2, 16, 16)
         end
     end
+
+    icon_container:SetMouseInputEnabled( false )
+    icon_container:SetAlpha(200)
 
     table.insert(self.Voters, icon_container)
 end
@@ -225,19 +221,18 @@ function PANEL:Think()
 
                 local row = math.floor(bar.NumVotes / 5)
                 local column = bar.NumVotes % 5
+                local layer = math.floor(row / 4)
 
-                if (MapVote.HasExtraVotePower(v.Player)) then
-                    bar.NumVotes = bar.NumVotes + 2
-                else
-                    bar.NumVotes = bar.NumVotes + 1
-                end
+                row = row - (layer) * 4;
+
+                bar.NumVotes = bar.NumVotes + 1
 
                 if (IsValid(bar)) then
                     local CurrentPos = Vector(v.x, v.y, 0)
 
                     local NewPos = Vector(
                                        (bar.x + column * 40),
-                                       bar.y + row * 40, 0)
+                                       bar.y + row * 36 + 25, 0)
 
                     if (not v.CurPos or v.CurPos ~= NewPos) then
                         v:MoveTo(NewPos.x, NewPos.y, 0.3)
@@ -307,7 +302,11 @@ function PANEL:SetMaps(maps)
         playCountLabel:SetText(playCount .. "")
         playCountLabel:SetContentAlignment( 5 )
         playCountLabel:SetFont("RAM_VoteFont")
-        playCountLabel:SetPaintBackgroundEnabled( false )
+        playCountLabel:SetPaintBackgroundEnabled( true )
+
+        function playCountLabel:PerformLayout()
+            self:SetBGColor(0,0,0,220)
+        end
 
         local text = vgui.Create( "DLabel", button )
         text:SetPos( 0, 173 )
@@ -317,12 +316,8 @@ function PANEL:SetMaps(maps)
         text:SetFont("RAM_VoteFont")
         text:SetPaintBackgroundEnabled( true )
 
-        if (playCount==0) then 
-            text:SetTextColor(Color(0,255,0,255))
-        end
-
         function text:PerformLayout()
-            self:SetBGColor(0,0,0,150)
+            self:SetBGColor(0,0,0,220)
         end
 
         self.mapList:AddItem(panel)
