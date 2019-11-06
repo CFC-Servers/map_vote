@@ -41,6 +41,10 @@ Adding more Map prefixes
 {"RTVPlayerCount":3,"MapLimit":24,"TimeLimit":28,"AllowCurrentMap":false,"MapPrefixes":{"1":"ttt_","2":"zm_","3":"de_"},"MapsBeforeRevote":3,"EnableCooldown":true}
 ```
 
+Screenshot
+=======================
+![Screenshot](https://i.imgur.com/LpJOR9x.png)
+
 Modifications
 =======================
 * Replaced Text List with image grid
