@@ -79,7 +79,7 @@ end)
 local PANEL = {}
 
 function PANEL:Init()
-    self:ParentToHUD()
+   -- self:ParentToHUD()
 
     self.startTime = SysTime()
 
@@ -116,24 +116,7 @@ function PANEL:Init()
     end
 
     self.closeButton.DoClick = function()
-        print("HI")
         self:SetVisible(false)
-    end
-
-    self.maximButton = vgui.Create("DButton", self.Canvas)
-    self.maximButton:SetText("")
-    self.maximButton:SetDisabled(true)
-
-    self.maximButton.Paint = function(panel, w, h)
-        derma.SkinHook("Paint", "WindowMaximizeButton", panel, w, h)
-    end
-
-    self.minimButton = vgui.Create("DButton", self.Canvas)
-    self.minimButton:SetText("")
-    self.minimButton:SetDisabled(true)
-
-    self.minimButton.Paint = function(panel, w, h)
-        derma.SkinHook("Paint", "WindowMinimizeButton", panel, w, h)
     end
 
     self.Voters = {}
@@ -160,15 +143,6 @@ function PANEL:PerformLayout()
     self.closeButton:SetPos(buttonPos - 31 * 0, 4)
     self.closeButton:SetSize(31, 31)
     self.closeButton:SetVisible(true)
-
-    self.maximButton:SetPos(buttonPos - 31 * 1, 4)
-    self.maximButton:SetSize(31, 31)
-    self.maximButton:SetVisible(true)
-
-    self.minimButton:SetPos(buttonPos - 31 * 2, 4)
-    self.minimButton:SetSize(31, 31)
-    self.minimButton:SetVisible(true)
-
 end
 
 local heart_mat = Material("icon16/heart.png")
