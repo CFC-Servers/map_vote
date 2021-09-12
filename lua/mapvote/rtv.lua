@@ -23,8 +23,11 @@ function RTV.Start()
         net.Start("RTV_Delay")
         net.Broadcast()
 
-        hook.Add("TTTEndRound", "MapvoteDelayed",
-                 function() MapVote.Start(nil, nil, nil, nil) end)
+        hook.Add("TTTEndRound", "MapvoteDelayed", function() 
+            timer.Simple(15, function()
+                MapVote.Start(nil, nil, nil, nil) 
+            end)
+        end)
     elseif GAMEMODE_NAME == "deathrun" then
         net.Start("RTV_Delay")
         net.Broadcast()
