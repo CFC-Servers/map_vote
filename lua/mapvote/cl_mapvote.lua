@@ -87,9 +87,9 @@ function PANEL:Init()
     self.Canvas:MakePopup()
     self.Canvas:SetKeyboardInputEnabled(false)
 
-    self.countDown = vgui.Create("DLabel", self.Canvas)
-    self.countDown:SetTextColor(color_white)
-    self.countDown:SetFont("RAM_VoteFontCountdown")
+    self.countDown = vgui.Create( "DLabel", self.Canvas )
+    self.countDown:SetTextColor( color_white )
+    self.countDown:SetFont( "RAM_VoteFontCountdown" )
     self.countDown:SetText("")
     self.countDown:SetPos(0, 14)
     self.countDown:SetAlpha(0)
@@ -247,14 +247,14 @@ function PANEL:SetMaps(maps)
         panel:SetSize( 200, 200 )
         panel:SetText("")
         panel:SetAlpha(0)
-        panel:SetPaintBackgroundEnabled( false )
+        panel:SetPaintBackgroundEnabled( true )
 
 
         panel:AlphaTo(255, 0.8, transCounter/40)
         transCounter = transCounter + 1
 
         function panel:PerformLayout()
-            self:SetBGColor(0,150,0,255)
+            self:SetBGColor( 40, 40, 40, 255 )
         end
 
         local button = vgui.Create("DImageButton", panel)
