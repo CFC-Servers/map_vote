@@ -111,8 +111,11 @@ function MapVote.Start(length, current, limit, prefix, callback)
 
         if (not ((not current and game.GetMap():lower() .. ".bsp" == map) or
             (cooldown and table.HasValue(recentmaps, map)))) then
-
-            if is_expression then
+            if MapVote.Config.IncludedMaps[map] then
+		vote_maps[#vote_maps +1] = map:sub(1, -5)
+		play_counts[#play_counts + 1] = plays
+		amt = amt + 1
+	    elseif is_expression then
                 if (string.find(map, prefix)) then -- This might work (from gamemode.txt)
                     vote_maps[#vote_maps + 1] = map:sub(1, -5)
                     play_counts[#play_counts + 1] = plays

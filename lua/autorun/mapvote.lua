@@ -10,7 +10,8 @@ MapVoteConfigDefault = {
     MapsBeforeRevote = 3,
     RTVPlayerCount = 3,
     MapPrefixes = {"ttt_"},
-    AutoGamemode = false
+    AutoGamemode = false,
+    IncludedMaps = {}
 }
 -- Default Config
 
