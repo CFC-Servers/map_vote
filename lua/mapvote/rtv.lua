@@ -24,7 +24,7 @@ function RTV.Start()
         net.Broadcast()
 
         hook.Add("TTTEndRound", "MapvoteDelayed", function() 
-            timer.Simple(15, function()
+            timer.Simple(20, function()
                 MapVote.Start(nil, nil, nil, nil) 
             end)
         end)

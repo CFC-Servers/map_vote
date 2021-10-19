@@ -21,7 +21,10 @@ hook.Add("Initialize", "AutoTTTMapVote", function()
             end
             if switchmap then
                 timer.Stop("end2prep")
-                MapVote.Start(nil, nil, nil, nil)
+                
+                timer.Simple(20, function()
+                    MapVote.Start(nil, nil, nil, nil)
+                end)
             end
         end
     end
