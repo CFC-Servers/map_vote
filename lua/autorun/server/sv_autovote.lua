@@ -20,9 +20,12 @@ hook.Add("Initialize", "AutoTTTMapVote", function()
                 switchmap = true
             end
             if switchmap then
-                timer.Stop("end2prep")
-                
+                hook.Add("TTTDelayRoundStartForVote", "MapVote_DelayRoundStart", function()
+                    MuteForRestart(false)
+                    return true
+                end)
                 timer.Simple(20, function()
+                    MuteForRestart(false)
                     MapVote.Start(nil, nil, nil, nil)
                 end)
             end
