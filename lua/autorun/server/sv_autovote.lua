@@ -24,8 +24,10 @@ hook.Add("Initialize", "AutoTTTMapVote", function()
                     MuteForRestart(false)
                     return true
                 end)
+                hook.Add("CFC_DisconnectInterface_ShouldShowInterface", "MapVote_DisableDisconnectInterface", function()
+                    return false
+                end)
                 timer.Simple(20, function()
-                    MuteForRestart(false)
                     MapVote.Start(nil, nil, nil, nil)
                 end)
             end
