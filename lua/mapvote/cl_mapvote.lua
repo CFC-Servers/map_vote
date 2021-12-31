@@ -44,6 +44,10 @@ net.Receive("RAM_MapVoteStart", function()
 
     MapVote.Panel = vgui.Create("RAM_VoteScreen")
     MapVote.Panel:SetMaps(MapVote.CurrentMaps)
+
+    hook.Add("CFC_DisconnectInterface_ShouldShowInterface", "MapVote_DisableDisconnectInterface", function()
+        return false
+    end)
 end)
 
 net.Receive("RAM_MapVoteUpdate", function()
@@ -69,6 +73,8 @@ end)
 
 net.Receive("RAM_MapVoteCancel", function()
     if IsValid(MapVote.Panel) then MapVote.Panel:Remove() end
+
+    hook.Remove("CFC_DisconnectInterface_ShouldShowInterface", "MapVote_DisableDisconnectInterface")
 end)
 
 net.Receive("RTV_Delay", function()
