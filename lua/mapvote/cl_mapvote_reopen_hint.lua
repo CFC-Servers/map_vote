@@ -23,8 +23,10 @@ hook.Add("PlayerButtonDown", "MapVote_ReopenMapvote", function(ply, button)
 	MapVote.Panel:SetVisible(true)
 end)
 
-local text = "Press F3 to open the mapvote menu"
 hook.Add( "HUDPaint", "MapVote_DrawOpenNotification", function()
+	local timeLeft = math.Round(math.Clamp(MapVote.EndTime - CurTime(), 0, math.huge))
+	local text = "Press F3 to open the mapvote menu. Changing in " .. timeLeft .. " seconds."
+
 	if not IsValid(MapVote.Panel) then return end
 	
 	local x = ScrW() * 0.5

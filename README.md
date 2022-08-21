@@ -34,7 +34,7 @@ If it doesn't exist yet you can just create it.
 * "MapsBeforeRevote" is the number of maps that must be played before a map is in the vote menu again (if EnableCooldown is true)
 * "EnableCooldown" is a true/false variable on whether to remove a map from voting for a while after it's played.
 * "MapsBeforeRevote" is how many maps before the map is taken off the cooldown list after it's played.
-
+* "RTVPercentPlayersRequired" percent of players 0 - 1 required to trigger an rtv
 Adding more Map prefixes
 
 ```JSON
