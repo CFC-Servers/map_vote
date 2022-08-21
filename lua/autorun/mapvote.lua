@@ -34,6 +34,8 @@ if SERVER then
     AddCSLuaFile()
     AddCSLuaFile("mapvote/cl_mapvote.lua")
     AddCSLuaFile("mapvote/cl_mapvote_reopen_hint.lua")
+
+    include("mapvote/config.lua")
     include("mapvote/sv_mapvote.lua")
     include("mapvote/rtv.lua")
 else

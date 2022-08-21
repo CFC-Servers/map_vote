@@ -6,25 +6,22 @@ util.AddNetworkString("RTV_Delay")
 MapVote.Continued = false
 
 net.Receive("RAM_MapVoteUpdate", function(len, ply)
-    if (MapVote.Allow) then
-        if (IsValid(ply)) then
-            local update_type = net.ReadUInt(3)
+    if not MapVote.Allow then return end
+    if not IsValid(ply) then return end
 
-            if (update_type == MapVote.UPDATE_VOTE) then
-                local map_id = net.ReadUInt(32)
+    local update_type = net.ReadUInt(3)
+    if update_type ~= MapVote.UPDATE_VOTE then return end
 
-                if (MapVote.CurrentMaps[map_id]) then
-                    MapVote.Votes[ply:SteamID()] = map_id
+    local map_id = net.ReadUInt(32)
+    if not MapVote.CurrentMaps[map_id] then return end
+    
+    MapVote.Votes[ply:SteamID()] = map_id
 
-                    net.Start("RAM_MapVoteUpdate")
-                    net.WriteUInt(MapVote.UPDATE_VOTE, 3)
-                    net.WriteEntity(ply)
-                    net.WriteUInt(map_id, 32)
-                    net.Broadcast()
-                end
-            end
-        end
-    end
+    net.Start("RAM_MapVoteUpdate")
+        net.WriteUInt(MapVote.UPDATE_VOTE, 3)
+        net.WriteEntity(ply)
+        net.WriteUInt(map_id, 32)
+    net.Broadcast()
 end)
 
 if file.Exists("mapvote/recentmaps.txt", "DATA") then
@@ -37,12 +34,6 @@ if file.Exists("mapvote/playcount.txt", "DATA") then
     playCount = util.JSONToTable(file.Read("mapvote/playcount.txt", "DATA"))
 else
     playCount = {}
-end
-
-if file.Exists("mapvote/config.txt", "DATA") then
-    MapVote.Config = util.JSONToTable(file.Read("mapvote/config.txt", "DATA"))
-else
-    MapVote.Config = {}
 end
 
 function CoolDownDoStuff()
@@ -109,14 +100,17 @@ function MapVote.Start(length, current, limit, prefix, callback)
             plays = 0
         end
 
-        if (not ((not current and game.GetMap():lower() .. ".bsp" == map) or
-            (cooldown and table.HasValue(recentmaps, map)))) then
+        local isExcludedMap = MapVote.Config.ExcludedMaps[map]
+        local isCurrentMap = not current and game.GetMap():lower() .. ".bsp" == map
+        local isOnCooldown = table.HasValue(recentmaps, map) and cooldown
+
+        if not (isCurrentMap or isOnCooldown or isExcludedMap) then
             if MapVote.Config.IncludedMaps[map] then
-        vote_maps[#vote_maps +1] = map:sub(1, -5)
-        play_counts[#play_counts + 1] = plays
-        amt = amt + 1
-        elseif is_expression then
-                if (string.find(map, prefix)) then -- This might work (from gamemode.txt)
+                vote_maps[#vote_maps +1] = map:sub(1, -5)
+                play_counts[#play_counts + 1] = plays
+                amt = amt + 1
+            elseif is_expression then
+                if string.find(map, prefix) then -- This might work (from gamemode.txt)
                     vote_maps[#vote_maps + 1] = map:sub(1, -5)
                     play_counts[#play_counts + 1] = plays
                     amt = amt + 1
