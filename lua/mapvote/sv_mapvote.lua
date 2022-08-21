@@ -6,22 +6,22 @@ util.AddNetworkString("RTV_Delay")
 MapVote.Continued = false
 
 net.Receive("RAM_MapVoteUpdate", function(len, ply)
-    if MapVote.Allow then return end
+    if not MapVote.Allow then return end
     if not IsValid(ply) then return end
 
     local update_type = net.ReadUInt(3)
+    if update_type ~= MapVote.UPDATE_VOTE then return end
+
     local map_id = net.ReadUInt(32)
+    if not MapVote.CurrentMaps[map_id] then return end
+    
+    MapVote.Votes[ply:SteamID()] = map_id
 
-    if update_type == MapVote.UPDATE_VOTE and MapVote.CurrentMaps[map_id] then
-        MapVote.Votes[ply:SteamID()] = map_id
-
-        net.Start("RAM_MapVoteUpdate")
-            net.WriteUInt(MapVote.UPDATE_VOTE, 3)
-            net.WriteEntity(ply)
-            net.WriteUInt(map_id, 32)
-        net.Broadcast()
-    end
-      
+    net.Start("RAM_MapVoteUpdate")
+        net.WriteUInt(MapVote.UPDATE_VOTE, 3)
+        net.WriteEntity(ply)
+        net.WriteUInt(map_id, 32)
+    net.Broadcast()
 end)
 
 if file.Exists("mapvote/recentmaps.txt", "DATA") then
