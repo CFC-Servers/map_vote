@@ -20,6 +20,7 @@ function RTV.RemoveVote()
 end
 
 function RTV.Start()
+    RTV.ChangingMaps = true
     if GAMEMODE_NAME == "terrortown" then
         net.Start("RTV_Delay")
         net.Broadcast()
