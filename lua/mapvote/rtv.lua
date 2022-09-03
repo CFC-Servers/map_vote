@@ -2,8 +2,6 @@ RTV = RTV or {}
 
 RTV.ChatCommands = {"!rtv", "/rtv", "rtv"}
 
-RTV.TotalVotes = 0
-
 RTV.Wait = 60 -- The wait time in seconds. This is how long a player has to wait before voting when the map changes. 
 
 RTV._ActualWait = CurTime() + RTV.Wait
@@ -11,12 +9,43 @@ RTV._ActualWait = CurTime() + RTV.Wait
 RTV.PlayerCount = MapVote.Config.RTVPlayerCount or 3
 RTV.PercentPlayersRequired = MapVote.Config.RTVPercentPlayersRequired or 0.66
 
-function RTV.ShouldChange()
-    return RTV.TotalVotes >= math.Round(#player.GetAll() * RTV.PercentPlayersRequired)
+function RTV.ShouldCountPlayer(ply)
+    local result = hook.Run("RTV_ShouldCountPlayer", ply)
+    if result ~= nil then return result end
+
+    return true
 end
 
-function RTV.RemoveVote()
-    RTV.TotalVotes = math.Clamp(RTV.TotalVotes - 1, 0, math.huge)
+function RTV.GetPlayerCount()
+    local count = 0
+    for _, ply in pairs(player.GetHumans()) do
+        if RTV.ShouldCountPlayer(ply) then
+            count = count + 1
+        end
+    end
+    return count
+end
+
+function RTV.GetVoteCount()
+    local count = 0
+    for _, ply in pairs(player.GetHumans()) do
+        if RTV.ShouldCountPlayer(ply) and ply.RTVVoted then
+            count = count + 1
+        end
+    end
+    return count
+end
+
+function RTV.ShouldChange()
+    local totalVotes = RTV.GetVoteCount()
+    local totalPlayers = RTV.GetPlayerCount()
+    return totalVotes > math.Round(totalPlayers * RTV.PercentPlayersRequired)
+end
+
+function RTV.StartIfShouldChange()
+    if RTV.ShouldChange() then
+        MapVote.Start()
+    end
 end
 
 function RTV.Start()
@@ -44,27 +73,16 @@ function RTV.Start()
 end
 
 function RTV.AddVote(ply)
-
-    if RTV.CanVote(ply) then
-        RTV.TotalVotes = RTV.TotalVotes + 1
-        ply.RTVoted = true
-        MsgN(ply:Nick() .. " has voted to Rock the Vote.")
-        PrintMessage(HUD_PRINTTALK,
-                     ply:Nick() .. " has voted to Rock the Vote. (" ..
-                         RTV.TotalVotes .. "/" ..
-                         math.Round(#player.GetAll() * RTV.PercentPlayersRequired) .. ")")
-
-        if RTV.ShouldChange() then RTV.Start() end
-    end
-
+    ply.RTVoted = true
+    MsgN(ply:Nick() .. " has voted to Rock the Vote.")
+    PrintMessage(HUD_PRINTTALK,
+                    ply:Nick() .. " has voted to Rock the Vote. (" ..
+                        RTV.GetVoteCount() .. "/" ..
+                        math.Round(RTV.GetPlayerCount() * RTV.PercentPlayersRequired) .. ")")
 end
 
 hook.Add("PlayerDisconnected", "Remove RTV", function(ply)
-
-    if ply.RTVoted then RTV.RemoveVote() end
-
-    timer.Simple(0.1, function() if RTV.ShouldChange() then RTV.Start() end end)
-
+    timer.Simple(0.1, RTV.StartIfShouldChange)
 end)
 
 function RTV.CanVote(ply)
@@ -79,7 +97,7 @@ function RTV.CanVote(ply)
     end
 
     if ply.RTVoted then
-        return false, "You have already voted to Rock the Vote!"
+        return false, string.format("You have already voted to Rock the Vote! (%s/%s)", RTV.GetVoteCount(), RTV.GetPlayerCount())
     end
 
     if RTV.ChangingMaps then
@@ -104,7 +122,7 @@ function RTV.StartVote(ply)
     end
 
     RTV.AddVote(ply)
-
+    RTV.StartIfShouldChange()
 end
 
 concommand.Add("rtv_start", RTV.StartVote)

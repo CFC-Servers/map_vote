@@ -38,6 +38,11 @@ if SERVER then
     include("mapvote/config.lua")
     include("mapvote/sv_mapvote.lua")
     include("mapvote/rtv.lua")
+
+    local files = file.Find("mapvote/integrations/*.lua", "LUA")
+    for _, file in pairs(files) do
+        include("mapvote/integrations/" .. file)
+    end
 else
     include("mapvote/cl_mapvote.lua")
     include("mapvote/cl_mapvote_reopen_hint.lua")
