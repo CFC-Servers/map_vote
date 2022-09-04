@@ -39,7 +39,7 @@ end
 function RTV.ShouldChange()
     local totalVotes = RTV.GetVoteCount()
     local totalPlayers = RTV.GetPlayerCount()
-    return totalVotes > math.Round(totalPlayers * RTV.PercentPlayersRequired)
+    return totalVotes >= math.Round(totalPlayers * RTV.PercentPlayersRequired)
 end
 
 function RTV.StartIfShouldChange()
