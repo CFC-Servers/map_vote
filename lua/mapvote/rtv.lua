@@ -97,7 +97,7 @@ function RTV.CanVote(ply)
     end
 
     if ply.RTVVoted then
-        return false, string.format("You have already voted to Rock the Vote! (%s/%s)", RTV.GetVoteCount(), RTV.GetPlayerCount())
+        return false, string.format("You have already voted to Rock the Vote! (%s/%s)", RTV.GetVoteCount(), math.Round(RTV.GetPlayerCount() * RTV.PercentPlayersRequired))
     end
 
     if RTV.ChangingMaps then
