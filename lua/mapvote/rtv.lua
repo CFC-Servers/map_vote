@@ -73,7 +73,7 @@ function RTV.Start()
 end
 
 function RTV.AddVote(ply)
-    ply.RTVoted = true
+    ply.RTVVoted = true
     MsgN(ply:Nick() .. " has voted to Rock the Vote.")
     PrintMessage(HUD_PRINTTALK,
                     ply:Nick() .. " has voted to Rock the Vote. (" ..
@@ -96,7 +96,7 @@ function RTV.CanVote(ply)
         return false, "There is currently a vote in progress!"
     end
 
-    if ply.RTVoted then
+    if ply.RTVVoted then
         return false, string.format("You have already voted to Rock the Vote! (%s/%s)", RTV.GetVoteCount(), RTV.GetPlayerCount())
     end
 
