@@ -115,7 +115,6 @@ function RTV.CanVote( ply )
 end
 
 function RTV.StartVote( ply )
-
     local can, err = RTV.CanVote( ply )
 
     if not can then
