@@ -129,7 +129,7 @@ end
 concommand.Add( "rtv_start", RTV.StartVote )
 
 hook.Add( "PlayerSay", "RTV Chat Commands", function( ply, text )
-    if not RTV.ChatCommands[tostring( text )] then return end
+    if not RTV.ChatCommands[string.lower( text )] then return end
     RTV.StartVote( ply )
     return ""
 end )
