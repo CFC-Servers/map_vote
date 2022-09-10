@@ -2,7 +2,7 @@ MapVote = {}
 MapVote.Config = {}
 
 -- Default Config
-MapVoteConfigDefault = {
+local MapVoteConfigDefault = {
     MapLimit = 24,
     TimeLimit = 28,
     AllowCurrentMap = false,

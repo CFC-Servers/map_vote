@@ -60,7 +60,7 @@ function CoolDownDoStuff()
     file.Write( "mapvote/playcount.txt", util.TableToJSON( playCount ) )
 end
 
-local function mapVoteOver( callback )
+local function mapVoteOver( autoGamemode, callback )
     MapVote.Allow = false
     local map_results = {}
 
@@ -128,7 +128,7 @@ function MapVote.Start( length, current, limit, prefix, callback )
     limit = limit or MapVote.Config.MapLimit or 24
     cooldown = MapVote.Config.EnableCooldown or MapVote.Config.EnableCooldown == nil and true
     prefix = prefix or MapVote.Config.MapPrefixes
-    autoGamemode = autoGamemode or MapVote.Config.AutoGamemode or MapVote.Config.AutoGamemode == nil and true
+    local autoGamemode = autoGamemode or MapVote.Config.AutoGamemode or MapVote.Config.AutoGamemode == nil and true
 
     local is_expression = false
 
@@ -207,7 +207,7 @@ function MapVote.Start( length, current, limit, prefix, callback )
     MapVote.Votes = {}
 
     timer.Create( "RAM_MapVote_Timer", length, 1, function()
-        mapVoteOver( callback )
+        mapVoteOver( autoGamemode, callback )
     end )
 end
 
