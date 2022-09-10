@@ -1,6 +1,10 @@
 RTV = RTV or {}
 
-RTV.ChatCommands = { "!rtv", "/rtv", "rtv" }
+RTV.ChatCommands = {
+    ["!rtv"] = true,
+    ["/rtv"] = true,
+    ["rtv"] = true
+}
 
 RTV.Wait = 60 -- The wait time in seconds. This is how long a player has to wait before voting when the map changes. 
 
@@ -57,7 +61,7 @@ function RTV.Start()
 
         hook.Add( "TTTEndRound", "MapvoteDelayed", function()
             timer.Simple( 20, function()
-                MapVote.Start() 
+                MapVote.Start()
             end )
         end )
     elseif GAMEMODE_NAME == "deathrun" then
@@ -125,8 +129,7 @@ end
 concommand.Add( "rtv_start", RTV.StartVote )
 
 hook.Add( "PlayerSay", "RTV Chat Commands", function( ply, text )
-    if table.HasValue( RTV.ChatCommands, string.lower( text ) ) then
-        RTV.StartVote( ply )
-        return ""
-    end
+    if not RTV.ChatCommands[tostring( text )] then return end
+    RTV.StartVote( ply )
+    return ""
 end )
