@@ -11,7 +11,7 @@ function AMB_mapvote( calling_ply, votetime, should_cancel )
 end
 
 local mapvotecmd = ulx.command( CATEGORY_NAME, "mapvote", AMB_mapvote, "!mapvote" )
-mapvotecmd:addParam{ type = ULib.cmds.NumArg, min = 15, default = 25, hint="time", ULib.cmds.optional, ULib.cmds.round }
+mapvotecmd:addParam{ type = ULib.cmds.NumArg, min = 15, default = 25, hint = "time", ULib.cmds.optional, ULib.cmds.round }
 mapvotecmd:addParam{ type = ULib.cmds.BoolArg, invisible = true }
 mapvotecmd:defaultAccess( ULib.ACCESS_ADMIN )
 mapvotecmd:help( "Invokes the map vote logic" )

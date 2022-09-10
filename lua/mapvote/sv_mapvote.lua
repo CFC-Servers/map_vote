@@ -57,6 +57,68 @@ function CoolDownDoStuff()
     file.Write( "mapvote/playcount.txt", util.TableToJSON( playCount ) )
 end
 
+local function mapVoteOver()
+    MapVote.Allow = false
+    local map_results = {}
+
+    for k, v in pairs( MapVote.Votes ) do
+        if ( not map_results[v] ) then map_results[v] = 0 end
+
+        for _, v2 in pairs( player.GetAll() ) do
+            if ( v2:SteamID() == k ) then
+                map_results[v] = map_results[v] + 1
+            end
+        end
+
+    end
+
+    CoolDownDoStuff()
+
+    local winner = table.GetWinningKey( map_results ) or 1
+
+    net.Start( "RAM_MapVoteUpdate" )
+    net.WriteUInt( MapVote.UPDATE_WIN, 3 )
+
+    net.WriteUInt( winner, 32 )
+    net.Broadcast()
+
+    local map = MapVote.CurrentMaps[winner]
+
+    local gamemode = nil
+
+    if autoGamemode then
+        -- check if map matches a gamemode's map pattern
+        for _, gm in pairs( engine.GetGamemodes() ) do
+            -- ignore empty patterns
+            if gm.maps and gm.maps ~= "" then
+                -- patterns are separated by "|"
+                for _, pattern in pairs( string.Split( gm.maps, "|" ) ) do
+                    if string.match( map, pattern ) then
+                        gamemode = gm.name
+                        break
+                    end
+                end
+            end
+        end
+    else
+        print( "not enabled" )
+    end
+
+    timer.Simple( 4, function()
+        if ( hook.Run( "MapVoteChange", map ) ~= false ) then
+            if ( callback ) then
+                callback( map )
+            else
+                -- if map requires another gamemode then switch to it
+                if ( gamemode and gamemode ~= engine.ActiveGamemode() ) then
+                    RunConsoleCommand( "gamemode", gamemode )
+                end
+                RunConsoleCommand( "changelevel", map )
+            end
+        end
+    end )
+end
+
 function MapVote.Start( length, current, limit, prefix, callback )
     current = current or MapVote.Config.AllowCurrentMap or false
     length = length or MapVote.Config.TimeLimit or 28
@@ -141,67 +203,7 @@ function MapVote.Start( length, current, limit, prefix, callback )
     MapVote.CurrentMaps = vote_maps
     MapVote.Votes = {}
 
-    timer.Create( "RAM_MapVote", length, 1, function()
-        MapVote.Allow = false
-        local map_results = {}
-
-        for k, v in pairs( MapVote.Votes ) do
-            if ( not map_results[v] ) then map_results[v] = 0 end
-
-            for _, v2 in pairs( player.GetAll() ) do
-                if ( v2:SteamID() == k ) then
-                    map_results[v] = map_results[v] + 1
-                end
-            end
-
-        end
-
-        CoolDownDoStuff()
-
-        local winner = table.GetWinningKey( map_results ) or 1
-
-        net.Start( "RAM_MapVoteUpdate" )
-        net.WriteUInt( MapVote.UPDATE_WIN, 3 )
-
-        net.WriteUInt( winner, 32 )
-        net.Broadcast()
-
-        local map = MapVote.CurrentMaps[winner]
-
-        local gamemode = nil
-
-        if autoGamemode then
-            -- check if map matches a gamemode's map pattern
-            for _, gm in pairs( engine.GetGamemodes() ) do
-                -- ignore empty patterns
-                if gm.maps and gm.maps ~= "" then
-                    -- patterns are separated by "|"
-                    for _, pattern in pairs( string.Split( gm.maps, "|" ) ) do
-                        if string.match( map, pattern ) then
-                            gamemode = gm.name
-                            break
-                        end
-                    end
-                end
-            end
-        else
-            print( "not enabled" )
-        end
-
-        timer.Simple( 4, function()
-            if ( hook.Run( "MapVoteChange", map ) ~= false ) then
-                if ( callback ) then
-                    callback( map )
-                else
-                    -- if map requires another gamemode then switch to it
-                    if ( gamemode and gamemode ~= engine.ActiveGamemode() ) then
-                        RunConsoleCommand( "gamemode", gamemode )
-                    end
-                    RunConsoleCommand( "changelevel", map )
-                end
-            end
-        end )
-    end )
+    timer.Create( "RAM_MapVote_Timer", length, 1, mapVoteOver )
 end
 
 hook.Add( "Shutdown", "RemoveRecentMaps", function()
