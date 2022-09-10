@@ -37,6 +37,7 @@ function RTV.GetVoteCount()
 end
 
 function RTV.ShouldChange()
+    if RTV.ChangingMaps then return end
     local totalVotes = RTV.GetVoteCount()
     local totalPlayers = RTV.GetPlayerCount()
     return totalVotes >= math.Round(totalPlayers * RTV.PercentPlayersRequired)
