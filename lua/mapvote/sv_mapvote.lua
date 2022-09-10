@@ -39,8 +39,8 @@ else
     playCount = {}
 end
 
-function CoolDownDoStuff()
-    cooldownnum = MapVote.Config.MapsBeforeRevote or 3
+local function CoolDownDoStuff()
+    local cooldownnum = MapVote.Config.MapsBeforeRevote or 3
 
     if #recentmaps == cooldownnum then table.remove( recentmaps ) end
 
