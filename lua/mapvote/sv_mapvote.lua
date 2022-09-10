@@ -57,7 +57,7 @@ function CoolDownDoStuff()
     file.Write( "mapvote/playcount.txt", util.TableToJSON( playCount ) )
 end
 
-local function mapVoteOver()
+local function mapVoteOver( callback )
     MapVote.Allow = false
     local map_results = {}
 
@@ -203,7 +203,9 @@ function MapVote.Start( length, current, limit, prefix, callback )
     MapVote.CurrentMaps = vote_maps
     MapVote.Votes = {}
 
-    timer.Create( "RAM_MapVote_Timer", length, 1, mapVoteOver )
+    timer.Create( "RAM_MapVote_Timer", length, 1, function()
+        mapVoteOver( callback )
+    end )
 end
 
 hook.Add( "Shutdown", "RemoveRecentMaps", function()
