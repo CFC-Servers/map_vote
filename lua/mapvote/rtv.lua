@@ -79,7 +79,8 @@ end
 function RTV.AddVote( ply )
     ply.RTVVoted = true
     MsgN( ply:Nick() .. " has voted to Rock the Vote." )
-    PrintMessage( HUD_PRINTTALK, ply:Nick() .. " has voted to Rock the Vote. (" .. RTV.GetVoteCount() .. "/" .. math.Round( RTV.GetPlayerCount() * RTV.PercentPlayersRequired ) .. ")" )
+    local percentage = math.Round( RTV.GetPlayerCount() * RTV.PercentPlayersRequired )
+    PrintMessage( HUD_PRINTTALK, ply:Nick() .. " has voted to Rock the Vote. (" .. RTV.GetVoteCount() .. "/" .. percentage .. ")" )
 end
 
 hook.Add( "PlayerDisconnected", "Remove RTV", function()
