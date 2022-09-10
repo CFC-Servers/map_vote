@@ -106,10 +106,10 @@ function PANEL:Init()
     end
 
     self.mapList = vgui.Create( "DPanelList", self.Canvas )
-    self.mapList:SetDrawBackground( false )
+    self.mapList:SetPaintBackground( false )
     self.mapList:SetSpacing( 4 )
     self.mapList:SetPadding( 4 )
-    self.mapList:EnableHorizontal(true)
+    self.mapList:EnableHorizontal( true )
     self.mapList:EnableVerticalScrollbar()
 
     self.closeButton = vgui.Create( "DButton", self.Canvas )
@@ -258,7 +258,7 @@ function PANEL:SetMaps( maps )
             net.SendToServer()
         end
 
-        button:SetPos(2,2);
+        button:SetPos( 2, 2 );
         button:SetSize( 196, 196 )
 
         local playCountLabel = vgui.Create( "DLabel", button )
@@ -270,7 +270,7 @@ function PANEL:SetMaps( maps )
         playCountLabel:SetPaintBackgroundEnabled( true )
 
         function playCountLabel:PerformLayout()
-            self:SetBGColor(0,0,0,220)
+            self:SetBGColor( 0, 0, 0, 220 )
         end
 
         local text = vgui.Create( "DLabel", button )
