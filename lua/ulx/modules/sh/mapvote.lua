@@ -1,6 +1,6 @@
 local CATEGORY_NAME = "MapVote"
 ------------------------------ VoteMap ------------------------------
-function AMB_mapvote( calling_ply, votetime, should_cancel )
+local function AMB_mapvote( calling_ply, votetime, should_cancel )
 	if not should_cancel then
 		MapVote.Start( votetime )
 		ulx.fancyLogAdmin( calling_ply, "#A called a votemap!" )

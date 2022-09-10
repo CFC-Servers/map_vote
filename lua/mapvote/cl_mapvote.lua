@@ -80,6 +80,16 @@ net.Receive( "RTV_Delay", function()
     chat.AddText( Color( 102, 255, 51 ) , "[RTV]", Color( 255, 255, 255 ), " The vote has been rocked, map vote will begin on round end" )
 end )
 
+local function getMapThumbnail( name )
+    if file.Exists( "maps/thumb/" .. name .. ".png", "GAME" ) then
+        return "maps/thumb/" .. name .. ".png"
+    elseif file.Exists( "maps/" .. name .. ".png", "GAME" ) then
+        return "maps/" .. name .. ".png"
+    else
+        return "maps/thumb/noicon.png"
+    end
+end
+
 local PANEL = {}
 
 function PANEL:Init()
@@ -286,16 +296,6 @@ function PANEL:SetMaps( maps )
         end
 
         self.mapList:AddItem( panel )
-    end
-end
-
-function getMapThumbnail( name )
-    if file.Exists( "maps/thumb/" .. name .. ".png", "GAME" ) then
-        return "maps/thumb/" .. name .. ".png"
-    elseif file.Exists( "maps/" .. name .. ".png", "GAME" ) then
-        return "maps/" .. name .. ".png"
-    else
-        return "maps/thumb/noicon.png"
     end
 end
 
