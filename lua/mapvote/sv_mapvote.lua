@@ -5,6 +5,9 @@ util.AddNetworkString( "RTV_Delay" )
 
 MapVote.Continued = false
 
+local recentmaps = {}
+local playCount = {}
+
 net.Receive(  "RAM_MapVoteUpdate", function(  _, ply )
     if not MapVote.Allow then return end
     if not IsValid( ply ) then return end
