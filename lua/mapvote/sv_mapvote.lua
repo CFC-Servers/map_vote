@@ -215,6 +215,7 @@ hook.Add("Shutdown", "RemoveRecentMaps", function()
 end)
 
 function MapVote.Cancel()
+    RTV.ChangingMaps = false
     if MapVote.Allow then
         MapVote.Allow = false
 
