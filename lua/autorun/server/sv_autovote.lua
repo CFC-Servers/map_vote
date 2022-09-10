@@ -22,7 +22,7 @@ hook.Add( "Initialize", "AutoTTTMapVote", function()
                     return true
                 end )
                 timer.Simple( 20, function()
-                    MapVote.Start()f
+                    MapVote.Start()
                 end )
             end
         end
