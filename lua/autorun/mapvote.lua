@@ -40,8 +40,8 @@ if SERVER then
     include( "mapvote/rtv.lua" )
 
     local files = file.Find( "mapvote/integrations/*.lua", "LUA" )
-    for _, fil in pairs( files ) do
-        include( "mapvote/integrations/" .. fil )
+    for _, filename in pairs( files ) do
+        include( "mapvote/integrations/" .. filename )
     end
 else
     include( "mapvote/cl_mapvote.lua" )
