@@ -126,8 +126,8 @@ function MapVote.Start( length, current, limit, prefix, callback )
     current = current or MapVote.Config.AllowCurrentMap or false
     length = length or MapVote.Config.TimeLimit or 28
     limit = limit or MapVote.Config.MapLimit or 24
-    cooldown = MapVote.Config.EnableCooldown or MapVote.Config.EnableCooldown == nil and true
     prefix = prefix or MapVote.Config.MapPrefixes
+    local cooldown = MapVote.Config.EnableCooldown or MapVote.Config.EnableCooldown == nil and true
     local autoGamemode = autoGamemode or MapVote.Config.AutoGamemode or MapVote.Config.AutoGamemode == nil and true
 
     local is_expression = false
