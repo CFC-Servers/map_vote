@@ -41,7 +41,7 @@ function RTV.GetVoteCount()
 end
 
 function RTV.ShouldChange()
-    if RTV.ChangingMaps then return end
+    if MapVote.Allow then return end
     local totalVotes = RTV.GetVoteCount()
     local totalPlayers = RTV.GetPlayerCount()
     return totalVotes >= math.Round( totalPlayers * RTV.PercentPlayersRequired )
@@ -49,12 +49,11 @@ end
 
 function RTV.StartIfShouldChange()
     if RTV.ShouldChange() then
-        MapVote.Start()
+        RTV.Start()
     end
 end
 
 function RTV.Start()
-    RTV.ChangingMaps = true
     if GAMEMODE_NAME == "terrortown" then
         net.Start( "RTV_Delay" )
         net.Broadcast()
@@ -102,9 +101,9 @@ function RTV.CanVote( ply )
         return false, string.format( "You have already voted to Rock the Vote! (%s/%s)", RTV.GetVoteCount(), math.Round( RTV.GetPlayerCount() * RTV.PercentPlayersRequired ) )
     end
 
-    if RTV.ChangingMaps then
+    if MapVote.Allow then
         return false,
-               "There has already been a vote, the map is going to change!"
+               "There is already a vote in progress"
     end
     if plyCount < RTV.PlayerCount then
         return false, "You need more players before you can rock the vote!"
