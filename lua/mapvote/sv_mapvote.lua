@@ -94,24 +94,6 @@ local function mapVoteOver( autoGamemode, callback )
     end )
 end
 
--- returns prefix, isExpression
-function MapVote.GetMapPrefix() 
-    if not prefix then
-        local info = file.Read( GAMEMODE.Folder .. "/" .. GAMEMODE.FolderName .. ".txt", "GAME" )
-
-        if info then
-            info = util.KeyValuesToTable( info )
-            prefix = info.maps
-        else
-            error( "MapVote Prefix can not be loaded from gamemode" )
-        end
-
-        is_expression = true
-    else
-        if prefix and type( prefix ) ~= "table" then prefix = { prefix } end
-    end
-end
-
 local function isMapAllowed(m)
     local conf = MapVote.Config
     local prefixes = conf.MapPrefixes
