@@ -27,7 +27,7 @@ MapVote.Config.IncludedMaps = MapVote.Config.IncludedMaps or {}
 MapVote.Config.ExcludedMaps = MapVote.Config.ExcludedMaps or {}
 
  -- Normalise config values and populate empty values
- MapVote.Config.MapLimit = MapVote.Config.MapLimit or 24
+MapVote.Config.MapLimit = MapVote.Config.MapLimit or 24
 
 if MapVote.Config.MapPrefixes and type( MapVote.Config.MapPrefixes ) == "string" then
     MapVote.Config.MapPrefixes = { MapVote.Config.MapPrefixes }
