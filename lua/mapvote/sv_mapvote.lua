@@ -218,8 +218,8 @@ hook.Add( "Shutdown", "RemoveRecentMaps", function()
 end )
 
 function MapVote.Cancel()
-    MapVote.Allow = false
     if MapVote.Allow then
+        MapVote.Allow = false
         net.Start( "RAM_MapVoteCancel" )
         net.Broadcast()
 
