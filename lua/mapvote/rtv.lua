@@ -49,7 +49,7 @@ end
 
 function RTV.StartIfShouldChange()
     if RTV.ShouldChange() then
-        MapVote.Start()
+        RTV.Start()
     end
 end
 
