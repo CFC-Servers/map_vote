@@ -63,7 +63,7 @@ local function CoolDownDoStuff()
     file.Write( "mapvote/playcount.txt", util.TableToJSON( playCount ) )
 end
 
-local function mapVoteOver( autoGamemode, callback )
+local function mapVoteOver( callback )
     MapVote.IsInProgress = false
     local results = {}
 
@@ -92,7 +92,7 @@ local function mapVoteOver( autoGamemode, callback )
         if callback then
             callback( map )
         end
-        
+       
         RunConsoleCommand( "changelevel", map )
     end )
 end
@@ -107,7 +107,7 @@ local function isMapAllowed(m)
     if not MapVote.AllowCurrentMap and m == game.GetMap() then return false end -- dont allow current map in vote
     if MapVote.Config.EnableCooldown == true and table.HasValue( recentmaps, m ) then return false end -- dont allow recent maps in vote
     if MapVote.Config.ExcludedMaps[m] then return false end -- dont allow excluded maps in vote
-    
+
     if not MapVote.Config.IncludedMaps[m] then return true end -- skip prefix check if map is in included maps
 
     for _, v in pairs(prefixes) do
@@ -122,7 +122,7 @@ function MapVote.Start( length, callback )
     length = length or MapVote.Config.TimeLimit or 28
 
     local maps = file.Find( "maps/*.bsp", "GAME" )
-    
+
     local mapsInVote = {}
     local mapsInVotePlayCounts = {}
 
@@ -154,7 +154,7 @@ function MapVote.Start( length, callback )
     MapVote.Votes = {}
 
     timer.Create( "RAM_MapVote", length, 1, function()
-        mapVoteOver( autoGamemode, callback )
+        mapVoteOver( callback )
     end )
 end
 
