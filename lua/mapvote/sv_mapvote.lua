@@ -106,7 +106,7 @@ local function isMapAllowed(m)
 
     if not MapVote.AllowCurrentMap and m == game.GetMap() then return false end -- dont allow current map in vote
     if MapVote.Config.EnableCooldown == true and table.HasValue( recentmaps, m ) then return false end -- dont allow recent maps in vote
-    if MapVote.ExcludedMaps[m] then return false end -- dont allow excluded maps in vote
+    if MapVote.Config.ExcludedMaps[m] then return false end -- dont allow excluded maps in vote
     
     if not MapVote.Config.IncludedMaps[m] then return true end -- skip prefix check if map is in included maps
 
