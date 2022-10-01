@@ -8,7 +8,7 @@ MapVote.Continued = false
 local recentmaps = {}
 local playCount = {}
 
-net.Receive(  "RAM_MapVoteUpdate", function(  _, ply )
+net.Receive( "RAM_MapVoteUpdate", function(  _, ply )
     if not MapVote.IsInProgress then return end
     if not IsValid( ply ) then return end
 
@@ -27,12 +27,15 @@ net.Receive(  "RAM_MapVoteUpdate", function(  _, ply )
     net.Broadcast()
 end )
 
+
+-- TODO convert to database queries
 if file.Exists( "mapvote/recentmaps.txt", "DATA" ) then
     recentmaps = util.JSONToTable( file.Read( "mapvote/recentmaps.txt", "DATA" ) )
 else
     recentmaps = {}
 end
 
+--TODO convert to sql
 if file.Exists( "mapvote/playcount.txt", "DATA" ) then
     playCount = util.JSONToTable( file.Read( "mapvote/playcount.txt", "DATA" ) )
 else
