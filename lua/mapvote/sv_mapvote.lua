@@ -9,7 +9,7 @@ local recentmaps = {}
 local playCount = {}
 
 net.Receive(  "RAM_MapVoteUpdate", function(  _, ply )
-    if not MapVote.Allow then return end
+    if not MapVote.IsInProgress then return end
     if not IsValid( ply ) then return end
 
     local update_type = net.ReadUInt( 3 )
@@ -61,7 +61,7 @@ local function CoolDownDoStuff()
 end
 
 local function mapVoteOver( autoGamemode, callback )
-    MapVote.Allow = false
+    MapVote.IsInProgress = false
     local map_results = {}
 
     for k, v in pairs( MapVote.Votes ) do
@@ -122,16 +122,8 @@ local function mapVoteOver( autoGamemode, callback )
     end )
 end
 
-function MapVote.Start( length, current, limit, prefix, callback )
-    current = current or MapVote.Config.AllowCurrentMap or false
-    length = length or MapVote.Config.TimeLimit or 28
-    limit = limit or MapVote.Config.MapLimit or 24
-    prefix = prefix or MapVote.Config.MapPrefixes
-    local cooldown = MapVote.Config.EnableCooldown or MapVote.Config.EnableCooldown == nil and true
-    local autoGamemode = autoGamemode or MapVote.Config.AutoGamemode or MapVote.Config.AutoGamemode == nil and true
-
-    local is_expression = false
-
+-- returns prefix, isExpression
+function MapVote.GetMapPrefix() 
     if not prefix then
         local info = file.Read( GAMEMODE.Folder .. "/" .. GAMEMODE.FolderName .. ".txt", "GAME" )
 
@@ -146,63 +138,61 @@ function MapVote.Start( length, current, limit, prefix, callback )
     else
         if prefix and type( prefix ) ~= "table" then prefix = { prefix } end
     end
+end
+
+local function isMapAllowed(m)
+    local conf = MapVote.Config
+    local prefixes = conf.MapPrefixes
+    if prefixes and type(prefixes) == "string" then -- This should be done at configuration step
+        prefixes = { prefixes }
+    end
+
+    if not MapVote.AllowCurrentMap and m == game.GetMap() then return false end -- dont allow current map in vote
+    if MapVote.Config.EnableCooldown == true and table.HasValue( recentmaps, m ) then return false end -- dont allow recent maps in vote
+    if MapVote.ExcludedMaps[m] then return false end -- dont allow excluded maps in vote
+    
+    if not MapVote.Config.IncludedMaps[m] then return true end -- skip prefix check if map is in included maps
+
+    for _, v in pairs(prefixes) do
+        if string.find( m, "^" .. v ) then
+            return true
+        end
+    end
+    return false
+end
+
+function MapVote.Start( length, callback )
+    length = length or MapVote.Config.TimeLimit or 28
 
     local maps = file.Find( "maps/*.bsp", "GAME" )
-
-    local vote_maps = {}
-    local play_counts = {}
-
-    local amt = 0
+    
+    local mapsInVote = {}
+    local mapsInVotePlayCounts = {}
 
     for _, map in RandomPairs( maps ) do
         local plays = playCount[map]
+        plays = plays or 0
 
-        if ( plays == nil ) then
-            plays = 0
-        end
+        if isMapAllowed(map) then
+            table.insert( mapsInVote, map:sub( 1, -5))
+            table.insert( mapsInVotePlayCounts, plays )
 
-        local isExcludedMap = MapVote.Config.ExcludedMaps[map]
-        local isCurrentMap = not current and game.GetMap():lower() .. ".bsp" == map
-        local isOnCooldown = table.HasValue( recentmaps, map ) and cooldown
-
-        if not ( isCurrentMap or isOnCooldown or isExcludedMap ) then
-            if MapVote.Config.IncludedMaps[map] then
-                vote_maps[#vote_maps + 1] = map:sub( 1, -5 )
-                play_counts[#play_counts + 1] = plays
-                amt = amt + 1
-            elseif is_expression then
-                if string.find( map, prefix ) then -- This might work ( from gamemode.txt )
-                    vote_maps[#vote_maps + 1] = map:sub( 1, -5 )
-                    play_counts[#play_counts + 1] = plays
-                    amt = amt + 1
-                end
-            else
-                for _, v in pairs( prefix ) do
-                    if string.find( map, "^" .. v ) then
-                        vote_maps[#vote_maps + 1] = map:sub( 1, -5 )
-                        play_counts[#play_counts + 1] = plays
-                        amt = amt + 1
-                        break
-                    end
-                end
-            end
-
-            if ( limit and amt >= limit ) then break end
+            if #mapsInVote >= MapVote.Config.MapLimit then break end
         end
     end
 
     net.Start( "RAM_MapVoteStart" )
-    net.WriteUInt( #vote_maps, 32 )
+    net.WriteUInt( #mapsInVote, 32 )
 
-    for i = 1, #vote_maps do
-        net.WriteString( vote_maps[i] )
-        net.WriteUInt( play_counts[i], 32 )
+    for i = 1, #mapsInVote do
+        net.WriteString( mapsInVote[i] )
+        net.WriteUInt( mapsInVotePlayCounts[i], 32 )
     end
 
     net.WriteUInt( length, 32 )
     net.Broadcast()
 
-    MapVote.Allow = true
+    MapVote.IsInProgress = true
     MapVote.CurrentMaps = vote_maps
     MapVote.Votes = {}
 
@@ -218,8 +208,8 @@ hook.Add( "Shutdown", "RemoveRecentMaps", function()
 end )
 
 function MapVote.Cancel()
-    if MapVote.Allow then
-        MapVote.Allow = false
+    if MapVote.IsInProgress then
+        MapVote.IsInProgress = false
         net.Start( "RAM_MapVoteCancel" )
         net.Broadcast()
 

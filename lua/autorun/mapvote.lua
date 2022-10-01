@@ -25,7 +25,7 @@ end )
 MapVote.CurrentMaps = {}
 MapVote.Votes = {}
 
-MapVote.Allow = false
+MapVote.IsInProgress = false
 
 MapVote.UPDATE_VOTE = 1
 MapVote.UPDATE_WIN = 3

@@ -21,7 +21,7 @@ MapVote.Panel = false
 
 net.Receive( "RAM_MapVoteStart", function()
     MapVote.CurrentMaps = {}
-    MapVote.Allow = true
+    MapVote.IsInProgress = true
     MapVote.Votes = {}
 
     local amt = net.ReadUInt( 32 )
