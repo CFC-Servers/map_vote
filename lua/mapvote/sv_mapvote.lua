@@ -206,7 +206,7 @@ function MapVote.Start( length, current, limit, prefix, callback )
     MapVote.CurrentMaps = vote_maps
     MapVote.Votes = {}
 
-    timer.Create( "RAM_MapVote_Timer", length, 1, function()
+    timer.Create( "RAM_MapVote", length, 1, function()
         mapVoteOver( autoGamemode, callback )
     end )
 end
@@ -218,10 +218,8 @@ hook.Add( "Shutdown", "RemoveRecentMaps", function()
 end )
 
 function MapVote.Cancel()
-    RTV.ChangingMaps = false
+    MapVote.Allow = false
     if MapVote.Allow then
-        MapVote.Allow = false
-
         net.Start( "RAM_MapVoteCancel" )
         net.Broadcast()
 
