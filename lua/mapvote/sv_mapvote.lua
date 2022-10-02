@@ -108,7 +108,7 @@ local function isMapAllowed(m)
     if MapVote.Config.EnableCooldown == true and table.HasValue( recentmaps, m ) then return false end -- dont allow recent maps in vote
     if MapVote.Config.ExcludedMaps[m] then return false end -- dont allow excluded maps in vote
 
-    if not MapVote.Config.IncludedMaps[m] then return true end -- skip prefix check if map is in included maps
+    if MapVote.Config.IncludedMaps[m] then return true end -- skip prefix check if map is in included maps
 
     for _, v in pairs(prefixes) do
         if string.find( m, "^" .. v ) then
