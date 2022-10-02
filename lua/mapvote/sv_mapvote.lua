@@ -92,7 +92,7 @@ local function mapVoteOver( callback )
         if callback then
             callback( map )
         end
- 
+
         RunConsoleCommand( "changelevel", map )
     end )
 end
