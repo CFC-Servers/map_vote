@@ -28,7 +28,7 @@ MapVote.Config.ExcludedMaps = MapVote.Config.ExcludedMaps or {}
 
  -- Normalise config values and populate empty values
 MapVote.Config.MapLimit = MapVote.Config.MapLimit or 24
-
+ 
 if MapVote.Config.MapPrefixes and type( MapVote.Config.MapPrefixes ) == "string" then
     MapVote.Config.MapPrefixes = { MapVote.Config.MapPrefixes }
 end
@@ -38,7 +38,6 @@ if MapVote.Config.MapPrefixes == nil then -- load map prefix from gamemode txt f
 
     if info then
         local decoded = util.KeyValuesToTable( info )
-        prefix = info.maps
         if decoded.maps then
             if decoded.maps[0] == "^" then
                 MapVote.Config.MapPrefixes = { string.sub(decoded.maps, 2) }
