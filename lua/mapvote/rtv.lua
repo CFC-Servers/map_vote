@@ -41,7 +41,7 @@ function RTV.GetVoteCount()
 end
 
 function RTV.ShouldChange()
-    if MapVote.Allow then return end
+    if MapVote.IsInProgress then return end
     local totalVotes = RTV.GetVoteCount()
     local totalPlayers = RTV.GetPlayerCount()
     return totalVotes >= math.Round( totalPlayers * RTV.PercentPlayersRequired )
@@ -101,7 +101,7 @@ function RTV.CanVote( ply )
         return false, string.format( "You have already voted to Rock the Vote! (%s/%s)", RTV.GetVoteCount(), math.Round( RTV.GetPlayerCount() * RTV.PercentPlayersRequired ) )
     end
 
-    if MapVote.Allow then
+    if MapVote.IsInProgress then
         return false,
                "There is already a vote in progress"
     end
