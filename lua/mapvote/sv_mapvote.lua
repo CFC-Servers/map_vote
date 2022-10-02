@@ -97,7 +97,7 @@ local function mapVoteOver( callback )
     end )
 end
 
-local function isMapAllowed(m)
+local function isMapAllowed( m )
     local conf = MapVote.Config
     local prefixes = conf.MapPrefixes
     if prefixes and type(prefixes) == "string" then -- This should be done at configuration step
@@ -130,7 +130,7 @@ function MapVote.Start( length, callback )
         local plays = playCount[map]
         plays = plays or 0
 
-        if isMapAllowed(map) then
+        if isMapAllowed( map ) then
             table.insert( mapsInVote, map:sub( 1, -5))
             table.insert( mapsInVotePlayCounts, plays )
 
