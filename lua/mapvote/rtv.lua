@@ -132,7 +132,7 @@ end
 concommand.Add( "rtv_start", RTV.StartVote )
 
 hook.Add( "PlayerSay", "RTV Chat Commands", function( ply, text )
-    text = string.lower(text)
+    text = string.lower( text )
 
     local f = RTV.ChatCommands[text]
     if f then
@@ -140,6 +140,7 @@ hook.Add( "PlayerSay", "RTV Chat Commands", function( ply, text )
         return ""
     end
 )
+
 function RTV.HandleRTVCommand( ply )
     RTV.StartVote( ply )
 end
