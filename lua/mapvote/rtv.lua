@@ -139,7 +139,8 @@ hook.Add( "PlayerSay", "RTV Chat Commands", function( ply, text )
         cmd( ply )
         return ""
     end
-)
+
+end)
 
 function RTV.HandleRTVCommand( ply )
     RTV.StartVote( ply )
