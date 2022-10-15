@@ -136,7 +136,7 @@ hook.Add( "PlayerSay", "RTV Chat Commands", function( ply, text )
 
     local f = RTV.ChatCommands[text]
     if f then
-        cmd( ply )
+        f( ply )
         return ""
     end
 end)
@@ -147,7 +147,7 @@ end
 
 function RTV.HandleUnRTVCommand( ply )
     if not ply.RTVVoted then
-        ply:PrintMessage( HUD_PRINTTALK, "You have rocked the vote!" )
+        ply:PrintMessage( HUD_PRINTTALK, "You have already rocked the vote!" )
         return
     end
 
