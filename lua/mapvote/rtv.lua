@@ -1,9 +1,13 @@
 RTV = RTV or {}
 
 RTV.ChatCommands = {
-    ["!rtv"] = true,
-    ["/rtv"] = true,
-    ["rtv"] = true
+    ["!rtv"] = RTV.HandleRTVCommand,
+    ["/rtv"] = RTV.HandleRTVCommand,
+    ["rtv"] = RTV.HandleRTVCommand,
+
+    ["unrtv"] = RTV.HandleUnRTVCommand,
+    ["!unrtv"] = RTV.HandleUnRTVCommand,
+    ["/unrtv"] = RTV.HandleUnRTVCommand,
 }
 
 RTV.Wait = 60 -- The wait time in seconds. This is how long a player has to wait before voting when the map changes. 
@@ -128,7 +132,24 @@ end
 concommand.Add( "rtv_start", RTV.StartVote )
 
 hook.Add( "PlayerSay", "RTV Chat Commands", function( ply, text )
-    if not RTV.ChatCommands[string.lower( text )] then return end
+    text = string.lower(text)
+
+    local f = RTV.ChatCommands[text]
+    if f then
+        cmd( ply )
+        return ""
+    end
+)
+function RTV.HandleRTVCommand( ply )
     RTV.StartVote( ply )
-    return ""
-end )
+end
+
+function RTV.HandleUnRTVCommand( ply )
+    if not ply.RTVVoted then
+        ply:PrintMessage( HUD_PRINTTALK, "You have rocked the vote!" )
+        return
+    end
+
+    ply.RTVVoted = false
+    ply:PrintMessage( HUD_PRINTTALK, "Your vote has been removed!" )
+end
