@@ -147,7 +147,7 @@ end
 
 function RTV.HandleUnRTVCommand( ply )
     if not ply.RTVVoted then
-        ply:PrintMessage( HUD_PRINTTALK, "You have already rocked the vote!" )
+        ply:PrintMessage( HUD_PRINTTALK, "You have not rocked the vote!" )
         return
     end
 
