@@ -1,12 +1,12 @@
 RTV = RTV or {}
 
-RTV.ChatCommandPrefixes = {"!", "/", "."}
+RTV.ChatCommandPrefixes = {"!", "/"}
 RTV.ChatCommands = {
     ["rtv"] = function(...) RTV.HandleRTVCommand(...) end,
     ["unrtv"] = function(...) RTV.HandleUnRTVCommand(...) end,
 }
 
-function RTV.SetupChatCommands() 
+function RTV.SetupChatCommands()
     for _, prefix in ipairs(RTV.ChatCommandPrefixes) do
         for command, func in pairs(RTV.ChatCommands) do
             RTV.ChatCommands[prefix .. command] = func
