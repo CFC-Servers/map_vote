@@ -1,14 +1,20 @@
 RTV = RTV or {}
 
+RTV.ChatCommandPrefixes = {"!", "/"}
 RTV.ChatCommands = {
-    ["!rtv"] = RTV.HandleRTVCommand,
-    ["/rtv"] = RTV.HandleRTVCommand,
-    ["rtv"] = RTV.HandleRTVCommand,
-
-    ["unrtv"] = RTV.HandleUnRTVCommand,
-    ["!unrtv"] = RTV.HandleUnRTVCommand,
-    ["/unrtv"] = RTV.HandleUnRTVCommand,
+    ["rtv"] = function(...) RTV.HandleRTVCommand(...) end,
+    ["unrtv"] = function(...) RTV.HandleUnRTVCommand(...) end,
 }
+
+function RTV.SetupChatCommands()
+    for _, prefix in ipairs(RTV.ChatCommandPrefixes) do
+        for command, func in pairs(RTV.ChatCommands) do
+            RTV.ChatCommands[prefix .. command] = func
+        end
+    end
+end
+RTV.SetupChatCommands()
+
 
 RTV.Wait = 60 -- The wait time in seconds. This is how long a player has to wait before voting when the map changes. 
 
