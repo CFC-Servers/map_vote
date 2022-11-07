@@ -93,6 +93,7 @@ local function mapVoteOver( callback )
             callback( map )
         end
 
+        print( "MapVote Changing map to " .. map )
         RunConsoleCommand( "changelevel", map )
     end )
 end
