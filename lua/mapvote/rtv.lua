@@ -3,7 +3,11 @@ RTV = RTV or {}
 RTV.ChatCommandPrefixes = {"!", "/"}
 RTV.ChatCommands = {
     ["rtv"] = function(...) RTV.HandleRTVCommand(...) end,
+    ["votemap"] = function(...) RTV.HandleRTVCommand(...) end,
+    ["mapvote"] = function(...) RTV.HandleRTVCommand(...) end,
     ["unrtv"] = function(...) RTV.HandleUnRTVCommand(...) end,
+    ["unvotemap"] = function(...) RTV.HandleUnRTVCommand(...) end,
+    ["unmapvote"] = function(...) RTV.HandleUnRTVCommand(...) end,
 }
 
 function RTV.SetupChatCommands()
@@ -87,9 +91,9 @@ end
 
 function RTV.AddVote( ply )
     ply.RTVVoted = true
-    MsgN( ply:Nick() .. " has voted to Rock the Vote." )
+    MsgN( ply:Nick() .. " has voted to change the map." )
     local percentage = math.Round( RTV.GetPlayerCount() * RTV.PercentPlayersRequired )
-    PrintMessage( HUD_PRINTTALK, ply:Nick() .. " has voted to Rock the Vote. (" .. RTV.GetVoteCount() .. "/" .. percentage .. ")" )
+    PrintMessage( HUD_PRINTTALK, ply:Nick() .. " has voted to change the map. (" .. RTV.GetVoteCount() .. "/" .. percentage .. ")" )
 end
 
 hook.Add( "PlayerDisconnected", "Remove RTV", function()
@@ -108,7 +112,7 @@ function RTV.CanVote( ply )
     end
 
     if ply.RTVVoted then
-        return false, string.format( "You have already voted to Rock the Vote! (%s/%s)", RTV.GetVoteCount(), math.Round( RTV.GetPlayerCount() * RTV.PercentPlayersRequired ) )
+        return false, string.format( "You have already voted to change the map! (%s/%s)", RTV.GetVoteCount(), math.Round( RTV.GetPlayerCount() * RTV.PercentPlayersRequired ) )
     end
 
     if MapVote.IsInProgress then
@@ -116,7 +120,7 @@ function RTV.CanVote( ply )
                "There is already a vote in progress"
     end
     if plyCount < RTV.PlayerCount then
-        return false, "You need more players before you can rock the vote!"
+        return false, "You need more players before you can mapvote!"
     end
 
     return true
