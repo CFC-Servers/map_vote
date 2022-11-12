@@ -261,7 +261,11 @@ function PANEL:SetMaps( maps )
         local button = vgui.Create( "DImageButton", panel )
         button:SetImage( getMapThumbnail( map ) )
 
+        local nextSend = 0
         function button:OnMousePressed()
+            if nextSend > CurTime() then return end
+            nextSend = CurTime() + 0.05
+
             net.Start( "RAM_MapVoteUpdate" )
             net.WriteUInt( MapVote.UPDATE_VOTE, 3 )
             net.WriteUInt( panel.ID, 32 )
