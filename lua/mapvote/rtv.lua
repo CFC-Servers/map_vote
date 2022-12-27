@@ -10,7 +10,7 @@ hook.Add( "InitPostEntity", "RemoveULXVotemap", function()
     end
 
     ULib.removeSayCommand( "!votemap" )
-end
+end )
 
 RTV.ChatCommandPrefixes = {"!", "/"}
 RTV.ChatCommands = {
