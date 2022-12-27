@@ -1,5 +1,16 @@
 RTV = RTV or {}
 
+-- Removes the ulx votemap command.
+if ULib and ulx then
+    for k, v in pairs( ulx.cmdsByCategory["Voting"] ) do
+        if v.cmd == "ulx votemap" then
+            ulx.cmdsByCategory["Voting"][k] = nil
+        end
+    end
+
+    ULib.removeSayCommand( "!votemap" )
+end
+
 RTV.ChatCommandPrefixes = {"!", "/"}
 RTV.ChatCommands = {
     ["rtv"] = function(...) RTV.HandleRTVCommand(...) end,
