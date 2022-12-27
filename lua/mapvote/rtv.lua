@@ -7,7 +7,7 @@ if ULib and ulx then
             ulx.cmdsByCategory["Voting"][k] = nil
         end
     end
-    
+
     ULib.removeSayCommand( "!votemap" )
 end
 
