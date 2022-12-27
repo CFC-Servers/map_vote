@@ -1,7 +1,8 @@
 RTV = RTV or {}
 
 -- Removes the ulx votemap command.
-if ULib and ulx then
+hook.Add( "InitPostEntity", "RemoveULXVotemap", function()
+    if not ULib or not ulx then return end
     for k, v in pairs( ulx.cmdsByCategory["Voting"] ) do
         if v.cmd == "ulx votemap" then
             ulx.cmdsByCategory["Voting"][k] = nil
@@ -9,7 +10,7 @@ if ULib and ulx then
     end
 
     ULib.removeSayCommand( "!votemap" )
-end
+end )
 
 RTV.ChatCommandPrefixes = {"!", "/"}
 RTV.ChatCommands = {
