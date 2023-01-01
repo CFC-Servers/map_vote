@@ -88,7 +88,7 @@ local function mapVoteOver( callback )
     local map = MapVote.CurrentMaps[winner]
 
     timer.Simple( 4, function()
-        if hook.Run("MapVoteChange", map) == false then return end
+        if hook.Run( "MapVoteChange", map ) == false then return end
         if callback then
             callback( map )
         end
@@ -101,7 +101,7 @@ end
 local function isMapAllowed( m )
     local conf = MapVote.Config
     local prefixes = conf.MapPrefixes
-    if prefixes and type(prefixes) == "string" then -- This should be done at configuration step
+    if prefixes and type( prefixes ) == "string" then -- This should be done at configuration step
         prefixes = { prefixes }
     end
 
@@ -111,7 +111,7 @@ local function isMapAllowed( m )
 
     if MapVote.Config.IncludedMaps[m] then return true end -- skip prefix check if map is in included maps
 
-    for _, v in pairs(prefixes) do
+    for _, v in pairs( prefixes ) do
         if string.find( m, "^" .. v ) then
             return true
         end
@@ -132,7 +132,7 @@ function MapVote.Start( length, callback )
         plays = plays or 0
 
         if isMapAllowed( map ) then
-            table.insert( mapsInVote, map:sub( 1, -5))
+            table.insert( mapsInVote, map:sub( 1, -5 ) )
             table.insert( mapsInVotePlayCounts, plays )
 
             if #mapsInVote >= MapVote.Config.MapLimit then break end
