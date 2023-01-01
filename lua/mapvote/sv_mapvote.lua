@@ -105,7 +105,7 @@ local function isMapAllowed( m )
         prefixes = { prefixes }
     end
 
-    if not MapVote.AllowCurrentMap and m == game.GetMap() then return false end -- dont allow current map in vote
+    if not MapVote.AllowCurrentMap and m == game.GetMap():lower() .. ".bsp" then return false end -- dont allow current map in vote
     if MapVote.Config.EnableCooldown == true and table.HasValue( recentmaps, m ) then return false end -- dont allow recent maps in vote
     if MapVote.Config.ExcludedMaps[m] then return false end -- dont allow excluded maps in vote
 
