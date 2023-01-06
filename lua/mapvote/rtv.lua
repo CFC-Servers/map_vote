@@ -31,7 +31,7 @@ function RTV.SetupChatCommands()
 end
 RTV.SetupChatCommands()
 
-RTV._ActualWait = CurTime() + MapVote.Config.Wait
+RTV._ActualWait = CurTime() + MapVote.Config.RTVWait
 
 RTV.PlayerCount = MapVote.Config.RTVPlayerCount or 3
 RTV.PercentPlayersRequired = MapVote.Config.RTVPercentPlayersRequired or 0.66

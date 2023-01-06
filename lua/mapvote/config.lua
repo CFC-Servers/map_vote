@@ -2,7 +2,7 @@
 local MapVoteConfigDefault = {
     MapLimit = 24,
     TimeLimit = 28,
-    Wait = 60,
+    RTVWait = 60,
     AllowCurrentMap = false,
     EnableCooldown = true,
     MapsBeforeRevote = 3,
