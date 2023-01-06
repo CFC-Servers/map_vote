@@ -30,6 +30,7 @@ If it doesn't exist yet you can just create it.
 * "MapLimit" is the number of maps shown on the vote screen.
 * "TimeLimit" is how long the vote is shown for.
 * "AllowCurrentMap" true/false to allow the current map in the map vote list.
+* "Wait" time in seconds how long players have to wait rtv after a mapvote.
 * "MapPrefixes" are the prefixes of the maps that should be used in the vote.
 * "MapsBeforeRevote" is the number of maps that must be played before a map is in the vote menu again (if EnableCooldown is true)
 * "EnableCooldown" is a true/false variable on whether to remove a map from voting for a while after it's played.
