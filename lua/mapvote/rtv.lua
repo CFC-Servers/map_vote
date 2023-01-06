@@ -31,10 +31,7 @@ function RTV.SetupChatCommands()
 end
 RTV.SetupChatCommands()
 
-
-RTV.Wait = 60 -- The wait time in seconds. This is how long a player has to wait before voting when the map changes. 
-
-RTV._ActualWait = CurTime() + RTV.Wait
+RTV._ActualWait = CurTime() + MapVote.Config.RTVWait
 
 RTV.PlayerCount = MapVote.Config.RTVPlayerCount or 3
 RTV.PercentPlayersRequired = MapVote.Config.RTVPercentPlayersRequired or 0.66
