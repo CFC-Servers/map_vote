@@ -24,7 +24,7 @@ else
     MapVote.Config = MapVoteConfigDefault
 end
 
-for k, v in pairs(MapVoteConfigDefault) do
+for k, _ in pairs(MapVoteConfigDefault) do
     if MapVote.Config[k] == nil then
         MapVote.Config[k] = MapVoteConfigDefault[k]
     end
