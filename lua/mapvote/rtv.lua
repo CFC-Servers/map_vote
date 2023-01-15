@@ -65,6 +65,8 @@ end
 
 function RTV.ShouldChange()
     if MapVote.IsInProgress then return end
+    local plyCount = table.Count( player.GetAll() )
+    if plyCount < RTV.PlayerCount then return end
     local totalVotes = RTV.GetVoteCount()
     local totalPlayers = RTV.GetPlayerCount()
     return totalVotes >= math.Round( totalPlayers * RTV.PercentPlayersRequired )
