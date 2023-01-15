@@ -65,6 +65,8 @@ end
 
 function RTV.ShouldChange()
     if MapVote.IsInProgress then return end
+    local plyCount = player.GetCount()
+    if plyCount < RTV.PlayerCount then return end
     local totalVotes = RTV.GetVoteCount()
     local totalPlayers = RTV.GetPlayerCount()
     return totalVotes >= math.Round( totalPlayers * RTV.PercentPlayersRequired )
@@ -110,7 +112,7 @@ hook.Add( "PlayerDisconnected", "Remove RTV", function()
 end )
 
 function RTV.CanVote( ply )
-    local plyCount = table.Count( player.GetAll() )
+    local plyCount = player.GetCount()
 
     if RTV._ActualWait >= CurTime() then
         return false, "You must wait a bit before voting!"
