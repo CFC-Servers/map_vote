@@ -1,4 +1,6 @@
-RTV = RTV or {}
+MapVote.RTV = MapVote.RTV or {}
+local RTV = MapVote.RTV
+
 
 -- Removes the ulx votemap command.
 hook.Add( "InitPostEntity", "RemoveULXVotemap", function()
@@ -11,7 +13,6 @@ hook.Add( "InitPostEntity", "RemoveULXVotemap", function()
 
     ULib.removeSayCommand( "!votemap" )
 end )
-
 RTV.ChatCommandPrefixes = {"!", "/"}
 RTV.ChatCommands = {
     ["rtv"] = function(...) RTV.HandleRTVCommand(...) end,
@@ -79,25 +80,10 @@ function RTV.StartIfShouldChange()
 end
 
 function RTV.Start()
-    if GAMEMODE_NAME == "terrortown" then
-        net.Start( "RTV_Delay" )
-        net.Broadcast()
+    if hook.Run("MapVote_RTVStart") == false then return end
 
-        hook.Add( "TTTEndRound", "MapvoteDelayed", function()
-            timer.Simple( 20, function()
-                MapVote.Start()
-            end )
-        end )
-    elseif GAMEMODE_NAME == "deathrun" then
-        net.Start( "RTV_Delay" )
-        net.Broadcast()
-
-        hook.Add( "RoundEnd", "MapvoteDelayed",
-                 function() MapVote.Start() end )
-    else
-        PrintMessage( HUD_PRINTTALK, "The vote has been rocked, map vote imminent" )
-        timer.Simple( 4, function() MapVote.Start() end )
-    end
+    PrintMessage( HUD_PRINTTALK, "The vote has been rocked, map vote imminent" )
+    timer.Simple( 4, function() MapVote.Start() end )
 end
 
 function RTV.AddVote( ply )

@@ -10,9 +10,9 @@ local function AMB_forcemapvote( calling_ply, votetime, should_cancel )
 	end
 end
 
-local forcemapvotecmd = ulx.command( CATEGORY_NAME, "forcemapvote", AMB_forcemapvote, "!forcemapvote" )
+local forcemapvotecmd = ulx.command( CATEGORY_NAME, "startmapvote", AMB_forcemapvote, "!startmapvote" )
 forcemapvotecmd:addParam{ type = ULib.cmds.NumArg, min = 15, default = 25, hint = "time", ULib.cmds.optional, ULib.cmds.round }
 forcemapvotecmd:addParam{ type = ULib.cmds.BoolArg, invisible = true }
 forcemapvotecmd:defaultAccess( ULib.ACCESS_ADMIN )
 forcemapvotecmd:help( "Invokes the map vote logic" )
-forcemapvotecmd:setOpposite( "unforcemapvote", { _, _, true }, "!unforcemapvote" )
+forcemapvotecmd:setOpposite( "stopmapvote", { _, _, true }, "!stopmapvote" )

@@ -1,0 +1,142 @@
+util.AddNetworkString( "RAM_MapVoteStart" )
+util.AddNetworkString( "RAM_MapVoteUpdate" )
+util.AddNetworkString( "RAM_MapVoteCancel" )
+util.AddNetworkString( "RTV_Delay" )
+util.AddNetworkString( "MapVote_ChangeVote")
+
+util.AddNetworkString( "MapVote_PlayerChangedVote")
+MapVote.UPDATE_VOTE = 1
+MapVote.UPDATE_WIN = 3
+
+function MapVote.sendToClient(length, mapsInVote)
+    net.Start( "RAM_MapVoteStart" )
+        net.WriteUInt( #mapsInVote, 32 )
+        for _, map in ipairs(mapsInVote) do
+            net.WriteString( map )
+            net.WriteUInt( 0, 32 ) -- need this for backwards compatibility
+        end
+
+        net.WriteUInt( length, 32 )
+    net.Broadcast()
+end
+
+function MapVote.isMapAllowed( m ) -- TODO rewrite
+    local conf = MapVote.Config
+    local prefixes = conf.MapPrefixes
+    if prefixes and type( prefixes ) == "string" then -- This should be done at configuration step
+        prefixes = { prefixes }
+    end
+
+    if not MapVote.AllowCurrentMap and m == game.GetMap():lower() .. ".bsp" then return false end -- dont allow current map in vote
+    -- TODO if MapVote.Config.EnableCooldown == true and table.HasValue( recentmaps, m ) then return false end -- dont allow recent maps in vote
+    if MapVote.Config.ExcludedMaps[m] then return false end -- dont allow excluded maps in vote
+
+    if MapVote.Config.IncludedMaps[m] then return true end -- skip prefix check if map is in included maps
+
+    for _, v in pairs( prefixes ) do
+        if string.find( m, "^" .. v ) then
+            return true
+        end
+    end
+    return false
+end
+
+function MapVote.Start( length, callback )
+    length = length or MapVote.Config.TimeLimit or 30
+
+    local maps = file.Find( "maps/*.bsp", "GAME" )
+
+    local mapsInVote = {}
+    local mapsInVotePlayCounts = {}
+
+    for _, map in RandomPairs( maps ) do
+        if MapVote.isMapAllowed( map ) then
+            -- remove .bsp from map
+            table.insert( mapsInVote, map:sub( 1, -5 ) )
+
+            if #mapsInVote >= MapVote.Config.MapLimit then break end
+        end
+    end
+
+    MapVote.State.IsInProgress = true
+    MapVote.State.CurrentMaps = mapsInVote
+    MapVote.State.Votes = {}
+
+    MapVote.sendToClient(length, MapVote.State.CurrentMaps)
+
+    timer.Create( "MapVote_EndVote", length, 1, function()
+        MapVote.mapVoteOver( callback )
+    end )
+end
+
+function MapVote.resetState()
+    MapVote.State = {
+        IsInProgress = false,
+        CurrentMaps = {},
+        Votes = {}
+    }
+end
+MapVote.resetState()
+
+function MapVote.Cancel()
+    if not MapVote.State.InProgress then return end
+    
+    net.Start( "RAMMapVoteCancel" )
+    net.Broadcast()
+
+    timer.Remove( "MapVote_EndVote" )
+end
+
+function MapVote.mapVoteOver( callback )
+    local state = MapVote.State
+    MapVote.resetState()
+    local results = {}
+
+    for k, v in pairs( state.Votes ) do
+        if not results[v] then results[v] = 0 end
+
+        if player.GetBySteamID( k ) then
+            results[v] = results[v] + 1
+        end
+    end
+
+    local winner = table.GetWinningKey( results ) or 1
+    
+    hook.Run("MapVote_VoteFinished", {
+        state = state,
+        results = results,
+        winner= winner
+    })
+
+
+    net.Start( "RAM_MapVoteUpdate" )
+        net.WriteUInt( MapVote.UPDATE_WIN, 3 )
+        net.WriteUInt( winner, 32 )
+    net.Broadcast()
+    local map = state.CurrentMaps[winner]
+
+    timer.Simple( 4, function()
+        if hook.Run( "MapVoteChange", map ) == false then return end
+        if callback then
+            callback( map )
+        end
+
+        print( "MapVote Changing map to " .. map )
+        RunConsoleCommand( "changelevel", map )
+    end )
+end
+
+net.Receive( "MapVote_ChangeVote", function(  _, ply )
+    if not MapVote.State.IsInProgress then return end
+    if not IsValid( ply ) then return end
+
+    local mapID = net.ReadUInt( 32 )
+    if not MapVote.State.CurrentMaps[mapID] then return end
+
+    MapVote.State.Votes[ply:SteamID()] = mapID
+
+    net.Start( "MapVote_PlayerChangedVote" )
+        net.WriteEntity( ply )
+        net.WriteUInt( mapID, 32 )
+    net.Broadcast()
+end )

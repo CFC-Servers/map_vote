@@ -15,14 +15,18 @@ if SERVER then
     AddCSLuaFile( "mapvote/cl_mapvote_reopen_hint.lua" )
 
     include( "mapvote/config.lua" )
-    include( "mapvote/sv_mapvote.lua" )
-    include( "mapvote/rtv.lua" )
 
-    local files = file.Find( "mapvote/integrations/*.lua", "LUA" )
+    local files = file.Find( "mapvote/server/integrations/*.lua", "LUA" )
     for _, filename in pairs( files ) do
-        include( "mapvote/integrations/" .. filename )
+        include( "mapvote/server/integrations/" .. filename )
+    end
+    local files = file.Find( "mapvote/server/modules/*.lua", "LUA" )
+    for _, filename in pairs( files ) do
+        include( "mapvote/server/modules/" .. filename )
     end
 else
     include( "mapvote/cl_mapvote.lua" )
     include( "mapvote/cl_mapvote_reopen_hint.lua" )
 end
+
+
