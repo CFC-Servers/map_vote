@@ -49,7 +49,6 @@ function MapVote.Start( length, callback )
     local maps = file.Find( "maps/*.bsp", "GAME" )
 
     local mapsInVote = {}
-    local mapsInVotePlayCounts = {}
 
     for _, map in RandomPairs( maps ) do
         map = map:sub( 1, -5 ) -- strip .bsp

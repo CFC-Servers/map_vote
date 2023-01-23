@@ -36,6 +36,9 @@ If it doesn't exist yet you can just create it.
 * "EnableCooldown" is a true/false variable on whether to remove a map from voting for a while after it's played.
 * "MapsBeforeRevote" is how many maps before the map is taken off the cooldown list after it's played.
 * "RTVPercentPlayersRequired" percent of players 0 - 1 required to trigger an rtv
+* "MinimumPlayersBeforeReset" When the server drops bellow this number reset the map to default map
+* "DefaultMap" Default map to reset to
+* "TimeToReset" Time until map resets when players are bellow MinimumPlayersBeforReset
 Adding more Map prefixes
 
 ```JSON
@@ -51,3 +54,11 @@ Modifications
 * Replaced Text List with image grid
 * Added Play Count to maps
 * Some other visual tweaks
+
+
+Hooks
+======================
+- **MapVote_IsMapAllowed** Runs to check if a map is allowed in the map rotation, return true/false to modify the result
+- **MapVote_ConfigLoaded"** Runs when the mapvote config finnishes loading
+- **MapVote_VoteFinished** Runs when a vote finnishes is passed a table with `state`, `results`, and `winner`
+- **MapVoteChange** Runs right before the map changes, return false to stop the change. (This will be renamed in the future)
