@@ -43,7 +43,7 @@ function MapVote.isMapAllowed( m ) -- TODO rewrite
     return false
 end
 
-function MapVote.Start( length, callback )
+function MapVote.Start( length )
     length = length or MapVote.Config.TimeLimit or 30
 
     local maps = file.Find( "maps/*.bsp", "GAME" )
@@ -66,7 +66,7 @@ function MapVote.Start( length, callback )
     MapVote.sendToClient(length, MapVote.State.CurrentMaps)
 
     timer.Create( "MapVote_EndVote", length, 1, function()
-        MapVote.mapVoteOver( callback )
+        MapVote.mapVoteOver()
     end )
 end
 
@@ -90,7 +90,7 @@ function MapVote.Cancel()
     timer.Remove( "MapVote_EndVote" )
 end
 
-function MapVote.mapVoteOver( callback )
+function MapVote.mapVoteOver( )
     local state = MapVote.State
     MapVote.resetState()
     local results = {}
@@ -120,9 +120,6 @@ function MapVote.mapVoteOver( callback )
 
     timer.Simple( 4, function()
         if hook.Run( "MapVoteChange", map ) == false then return end
-        if callback then
-            callback( map )
-        end
 
         print( "MapVote Changing map to " .. map )
         RunConsoleCommand( "changelevel", map )
