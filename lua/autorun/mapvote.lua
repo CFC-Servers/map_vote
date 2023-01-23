@@ -28,5 +28,3 @@ else
     include( "mapvote/cl_mapvote.lua" )
     include( "mapvote/cl_mapvote_reopen_hint.lua" )
 end
-
-

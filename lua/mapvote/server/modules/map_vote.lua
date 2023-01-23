@@ -13,7 +13,7 @@ function MapVote.sendToClient(length, mapsInVote)
         net.WriteUInt( #mapsInVote, 32 )
         for _, map in ipairs(mapsInVote) do
             net.WriteString( map )
-            net.WriteUInt( 0, 32 ) -- need this for backwards compatibility
+            net.WriteUInt( MapVote.PlayCounts[map] or 0, 32 ) -- need this for backwards compatibility
         end
 
         net.WriteUInt( length, 32 )
@@ -27,8 +27,10 @@ function MapVote.isMapAllowed( m ) -- TODO rewrite
         prefixes = { prefixes }
     end
 
+    local hookResult = hook.Run( "MapVote_IsMapAllowed", m)
+    if hookResult ~= nil then return hookResult end
+
     if not MapVote.AllowCurrentMap and m == game.GetMap():lower() .. ".bsp" then return false end -- dont allow current map in vote
-    -- TODO if MapVote.Config.EnableCooldown == true and table.HasValue( recentmaps, m ) then return false end -- dont allow recent maps in vote
     if MapVote.Config.ExcludedMaps[m] then return false end -- dont allow excluded maps in vote
 
     if MapVote.Config.IncludedMaps[m] then return true end -- skip prefix check if map is in included maps
@@ -50,9 +52,9 @@ function MapVote.Start( length, callback )
     local mapsInVotePlayCounts = {}
 
     for _, map in RandomPairs( maps ) do
+        map = map:sub( 1, -5 ) -- strip .bsp
         if MapVote.isMapAllowed( map ) then
-            -- remove .bsp from map
-            table.insert( mapsInVote, map:sub( 1, -5 ) )
+            table.insert( mapsInVote, map )
 
             if #mapsInVote >= MapVote.Config.MapLimit then break end
         end
@@ -79,9 +81,11 @@ end
 MapVote.resetState()
 
 function MapVote.Cancel()
-    if not MapVote.State.InProgress then return end
-    
-    net.Start( "RAMMapVoteCancel" )
+    if not MapVote.State.IsInProgress then return end
+
+    MapVote.resetState()
+
+    net.Start( "RAM_MapVoteCancel" )
     net.Broadcast()
 
     timer.Remove( "MapVote_EndVote" )

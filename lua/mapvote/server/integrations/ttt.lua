@@ -33,6 +33,6 @@ hook.Add("MapVote_RTVStart", "MapVote_TTTStartVoteAfterRound", function()
     hook.Add( "TTTEndRound", "MapvoteDelayed", function()
         timer.Simple( 20, function()
             MapVote.Start()
-        end
+        end )
     end )
 end)
