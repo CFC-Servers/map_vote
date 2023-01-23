@@ -4,7 +4,7 @@ hook.Add("MapVote_IsMapAllowed", "MapVote_CheckRecentMaps", function(map)
         MapVote.recentMaps = {}
         local recentMaps = MapVote.DB.GetRecentMaps(MapVote.Config.MapsBeforeRevote or 3)
         for _, v in pairs( recentMaps ) do
-            MapVote.recentMaps[v.map] = true  
+            MapVote.recentMaps[v.map] = true
         end
     end
 

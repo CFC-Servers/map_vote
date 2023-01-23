@@ -4,9 +4,9 @@ function DB.CreateTable()
 	sql.Query( "CREATE TABLE IF NOT EXISTS mapvote_played_maps ( map TEXT UNIQUE, play_count INTEGER NOT NULL DEFAULT 0, last_played INTEGER )" )
 end
 
-function DB.MapPlayed(map) 
+function DB.MapPlayed(map)
     if sql.Query( string.format("INSERT OR IGNORE INTO mapvote_played_maps (map) VALUES(%s)", sql.SQLStr(map)) ) == false then
-    	print("MapVote SQLError: ", sql.LastError())	
+    	print("MapVote SQLError: ", sql.LastError())
 	end
     if sql.Query( string.format( "UPDATE mapvote_played_maps SET play_count = play_count+1, last_played=strftime('%%s') WHERE map = %s",  sql.SQLStr(map)  ) ) == false then
     	print("MapVote SQLError: ", sql.LastError())

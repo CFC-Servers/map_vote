@@ -16,12 +16,12 @@ if SERVER then
 
     include( "mapvote/config.lua" )
 
-    local files = file.Find( "mapvote/server/integrations/*.lua", "LUA" )
-    for _, filename in pairs( files ) do
+    local integrationsFiles = file.Find( "mapvote/server/integrations/*.lua", "LUA" )
+    for _, filename in pairs( integrationsFiles ) do
         include( "mapvote/server/integrations/" .. filename )
     end
-    local files = file.Find( "mapvote/server/modules/*.lua", "LUA" )
-    for _, filename in pairs( files ) do
+    local modulesFiles = file.Find( "mapvote/server/modules/*.lua", "LUA" )
+    for _, filename in pairs( modulesFiles ) do
         include( "mapvote/server/modules/" .. filename )
     end
 else

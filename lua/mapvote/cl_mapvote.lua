@@ -63,10 +63,8 @@ end)
 net.Receive( "RAM_MapVoteUpdate", function()
     local update_type = net.ReadUInt( 3 )
 
-    if update_type == MapVote.UPDATE_WIN then
-        if IsValid( MapVote.Panel ) then
-            MapVote.Panel:Flash( net.ReadUInt( 32 ) )
-        end
+    if update_type == MapVote.UPDATE_WIN and IsValid(MapVote.Panel) then
+        MapVote.Panel:Flash( net.ReadUInt( 32 ) )
     end
 end )
 
