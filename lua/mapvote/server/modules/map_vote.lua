@@ -10,17 +10,17 @@ function MapVote.sendToClient(length, mapsInVote)
         net.WriteUInt( #mapsInVote, 32 )
         for _, map in ipairs(mapsInVote) do
             net.WriteString( map )
-            net.WriteUInt( MapVote.PlayCounts[map] or 0, 32 ) -- need this for backwards compatibility
+            net.WriteUInt( MapVote.PlayCounts[map] or 0, 32 )
         end
 
         net.WriteUInt( length, 32 )
     net.Broadcast()
 end
 
-function MapVote.isMapAllowed( m ) -- TODO rewrite
+function MapVote.isMapAllowed( m )
     local conf = MapVote.Config
     local prefixes = conf.MapPrefixes
-    if prefixes and type( prefixes ) == "string" then -- This should be done at configuration step
+    if prefixes then -- This should be done at configuration step
         prefixes = { prefixes }
     end
 
