@@ -10,7 +10,7 @@ local MapVoteConfigDefault = {
     IncludedMaps = {},
     ExcludedMaps = {},
    
-    MinimumPlayersBeforeReset = -1
+    MinimumPlayersBeforeReset = -1,
     TimeToReset = 5*60,
     DefaultMap = "gm_construct"
 }
@@ -45,3 +45,5 @@ if MapVote.Config.MapPrefixes == nil then -- load map prefix from gamemode txt f
         ErrorNoHalt( "MapVote Prefix can not be loaded from gamemode" )
     end
 end
+
+hook.Run("MapVote_ConfigLoaded")

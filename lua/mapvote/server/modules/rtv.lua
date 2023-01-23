@@ -32,10 +32,11 @@ function RTV.SetupChatCommands()
 end
 RTV.SetupChatCommands()
 
-RTV._ActualWait = CurTime() + MapVote.Config.RTVWait
-
-RTV.PlayerCount = MapVote.Config.RTVPlayerCount or 3
-RTV.PercentPlayersRequired = MapVote.Config.RTVPercentPlayersRequired or 0.66
+hook.Add( "MapVote_ConfigLoaded", "MapVote_RTVInit", function() 
+    RTV._ActualWait = CurTime() + MapVote.Config.RTVWait
+    RTV.PlayerCount = MapVote.Config.RTVPlayerCount or 3
+    RTV.PercentPlayersRequired = MapVote.Config.RTVPercentPlayersRequired or 0.66
+end)
 
 function RTV.ShouldCountPlayer( ply )
     local result = hook.Run( "MapVote_RTVShouldCountPlayer", ply )

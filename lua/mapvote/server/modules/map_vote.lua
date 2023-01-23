@@ -1,10 +1,9 @@
 util.AddNetworkString( "MapVote_VoteStarted" )
 util.AddNetworkString( "MapVote_VoteCancelled" )
-util.AddNetworkString( "RTV_Delay" )
 util.AddNetworkString( "MapVote_ChangeVote")
 util.AddNetworkString( "MapVote_VoteFinished" )
 util.AddNetworkString( "MapVote_PlayerChangedVote")
-
+util.AddNetworkString( "RTV_Delay" )
 function MapVote.sendToClient(length, mapsInVote)
     net.Start( "MapVote_VoteStarted" )
         net.WriteUInt( #mapsInVote, 32 )
@@ -20,9 +19,6 @@ end
 function MapVote.isMapAllowed( m )
     local conf = MapVote.Config
     local prefixes = conf.MapPrefixes
-    if prefixes then -- This should be done at configuration step
-        prefixes = { prefixes }
-    end
 
     local hookResult = hook.Run( "MapVote_IsMapAllowed", m)
     if hookResult ~= nil then return hookResult end
