@@ -1,15 +1,12 @@
-util.AddNetworkString( "RAM_MapVoteStart" )
-util.AddNetworkString( "RAM_MapVoteUpdate" )
-util.AddNetworkString( "RAM_MapVoteCancel" )
+util.AddNetworkString( "MapVote_VoteStarted" )
+util.AddNetworkString( "MapVote_VoteCancelled" )
 util.AddNetworkString( "RTV_Delay" )
 util.AddNetworkString( "MapVote_ChangeVote")
-
+util.AddNetworkString( "MapVote_VoteFinished" )
 util.AddNetworkString( "MapVote_PlayerChangedVote")
-MapVote.UPDATE_VOTE = 1
-MapVote.UPDATE_WIN = 3
 
 function MapVote.sendToClient(length, mapsInVote)
-    net.Start( "RAM_MapVoteStart" )
+    net.Start( "MapVote_VoteStarted" )
         net.WriteUInt( #mapsInVote, 32 )
         for _, map in ipairs(mapsInVote) do
             net.WriteString( map )
@@ -84,7 +81,7 @@ function MapVote.Cancel()
 
     MapVote.resetState()
 
-    net.Start( "RAM_MapVoteCancel" )
+    net.Start( "MapVote_VoteCancelled" )
     net.Broadcast()
 
     timer.Remove( "MapVote_EndVote" )
@@ -112,8 +109,7 @@ function MapVote.mapVoteOver( )
     })
 
 
-    net.Start( "RAM_MapVoteUpdate" )
-        net.WriteUInt( MapVote.UPDATE_WIN, 3 )
+    net.Start( "MapVote_VoteFinished" )
         net.WriteUInt( winner, 32 )
     net.Broadcast()
     local map = state.CurrentMaps[winner]

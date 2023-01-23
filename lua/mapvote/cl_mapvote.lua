@@ -19,7 +19,7 @@ surface.CreateFont( "RAM_VoteSysButton", { font = "Marlett", size = 13, weight =
 MapVote.EndTime = 0
 MapVote.Panel = false
 
-net.Receive( "RAM_MapVoteStart", function()
+net.Receive( "MapVote_VoteStarted", function()
     MapVote.CurrentMaps = {}
     MapVote.IsInProgress = true
     MapVote.Votes = {}
@@ -60,15 +60,14 @@ net.Receive("MapVote_PlayerChangedVote", function()
     end
 end)
 
-net.Receive( "RAM_MapVoteUpdate", function()
-    local update_type = net.ReadUInt( 3 )
+net.Receive( "MapVote_VoteFinished", function()
 
-    if update_type == MapVote.UPDATE_WIN and IsValid(MapVote.Panel) then
+    if IsValid(MapVote.Panel) then
         MapVote.Panel:Flash( net.ReadUInt( 32 ) )
     end
 end )
 
-net.Receive( "RAM_MapVoteCancel", function()
+net.Receive( "MapVote_VoteCancelled", function()
     if IsValid( MapVote.Panel ) then MapVote.Panel:Remove() end
 
     hook.Remove( "CFC_DisconnectInterface_ShouldShowInterface", "MapVote_DisableDisconnectInterface" )
