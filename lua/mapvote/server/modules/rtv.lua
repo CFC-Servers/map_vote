@@ -38,7 +38,7 @@ RTV.PlayerCount = MapVote.Config.RTVPlayerCount or 3
 RTV.PercentPlayersRequired = MapVote.Config.RTVPercentPlayersRequired or 0.66
 
 function RTV.ShouldCountPlayer( ply )
-    local result = hook.Run( "RTV_ShouldCountPlayer", ply )
+    local result = hook.Run( "MapVote_RTVShouldCountPlayer", ply )
     if result ~= nil then return result end
 
     return true
