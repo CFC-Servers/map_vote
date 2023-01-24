@@ -1,5 +1,5 @@
 hook.Add( "MapVote_IsMapAllowed", "MapVote_CheckRecentMaps", function( map )
-    if MapVote.Config.EnableCooldown ~= true then return nil end
+    if MapVote.Config.EnableCooldown ~= true then return end
     if not MapVote.recentMaps then
         MapVote.recentMaps = {}
         local recentMaps = MapVote.DB.GetRecentMaps( MapVote.Config.MapsBeforeRevote or 3 )
