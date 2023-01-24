@@ -4,10 +4,11 @@ util.AddNetworkString( "MapVote_ChangeVote")
 util.AddNetworkString( "MapVote_VoteFinished" )
 util.AddNetworkString( "MapVote_PlayerChangedVote")
 util.AddNetworkString( "RTV_Delay" )
-function MapVote.sendToClient(length, mapsInVote)
+
+function MapVote.sendToClient( length, mapsInVote )
     net.Start( "MapVote_VoteStarted" )
         net.WriteUInt( #mapsInVote, 32 )
-        for _, map in ipairs(mapsInVote) do
+        for _, map in ipairs( mapsInVote ) do
             net.WriteString( map )
             net.WriteUInt( MapVote.PlayCounts[map] or 0, 32 )
         end
@@ -20,13 +21,13 @@ function MapVote.isMapAllowed( m )
     local conf = MapVote.Config
     local prefixes = conf.MapPrefixes
 
-    local hookResult = hook.Run( "MapVote_IsMapAllowed", m)
+    local hookResult = hook.Run( "MapVote_IsMapAllowed", m )
     if hookResult ~= nil then return hookResult end
 
     if not MapVote.AllowCurrentMap and m == game.GetMap():lower() .. ".bsp" then return false end -- dont allow current map in vote
     if MapVote.Config.ExcludedMaps[m] then return false end -- dont allow excluded maps in vote
 
-    if MapVote.Config.IncludedMaps[m] then return true end -- skip prefix check if map is in included maps
+    if conf.IncludedMaps[m] then return true end -- skip prefix check if map is in included maps
 
     for _, v in pairs( prefixes ) do
         if string.find( m, "^" .. v ) then
@@ -56,11 +57,9 @@ function MapVote.Start( length )
     MapVote.State.CurrentMaps = mapsInVote
     MapVote.State.Votes = {}
 
-    MapVote.sendToClient(length, MapVote.State.CurrentMaps)
+    MapVote.sendToClient( length, mapsInVote )
 
-    timer.Create( "MapVote_EndVote", length, 1, function()
-        MapVote.mapVoteOver()
-    end )
+    timer.Create( "MapVote_EndVote", length, 1, MapVote.mapVoteOver )
 end
 
 function MapVote.resetState()
@@ -83,7 +82,7 @@ function MapVote.Cancel()
     timer.Remove( "MapVote_EndVote" )
 end
 
-function MapVote.mapVoteOver( )
+function MapVote.mapVoteOver()
     local state = MapVote.State
     MapVote.resetState()
     local results = {}
@@ -97,12 +96,11 @@ function MapVote.mapVoteOver( )
     end
 
     local winner = table.GetWinningKey( results ) or 1
-    
-    hook.Run("MapVote_VoteFinished", {
+    hook.Run( "MapVote_VoteFinished", {
         state = state,
         results = results,
-        winner= winner
-    })
+        winner = winner
+    } )
 
 
     net.Start( "MapVote_VoteFinished" )

@@ -1,4 +1,5 @@
-local resetMapTimerName = "CFC_MapVote_ResetMap"
+local resetMapTimerName = "MapVote_ResetMap"
+
 local function checkMapReset()
     local count = MapVote.RTV.GetPlayerCount()
     if count < MapVote.Config.MinimumPlayersBeforeReset then
@@ -15,5 +16,5 @@ end
 
 hook.Add( "MapVote_ConfigLoaded", function()
     if MapVote.Config.MinimumPlayersBeforeReset <= 0 then return end
-    timer.Create( "CFC_MapVote_CheckResetMap", 60, 0, checkMapReset )
+    timer.Create( "MapVote_CheckResetMap", 60, 0, checkMapReset )
 end)

@@ -32,7 +32,7 @@ function RTV.SetupChatCommands()
 end
 RTV.SetupChatCommands()
 
-hook.Add( "MapVote_ConfigLoaded", "MapVote_RTVInit", function() 
+hook.Add( "MapVote_ConfigLoaded", "MapVote_RTVInit", function()
     RTV._ActualWait = CurTime() + MapVote.Config.RTVWait
     RTV.PlayerCount = MapVote.Config.RTVPlayerCount or 3
     RTV.PercentPlayersRequired = MapVote.Config.RTVPercentPlayersRequired or 0.66
@@ -81,10 +81,10 @@ function RTV.StartIfShouldChange()
 end
 
 function RTV.Start()
-    if hook.Run("MapVote_RTVStart") == false then return end
+    if hook.Run( "MapVote_RTVStart" ) == false then return end
 
     PrintMessage( HUD_PRINTTALK, "The vote has been rocked, map vote imminent" )
-    timer.Simple( 4, function() MapVote.Start() end )
+    timer.Simple( 4, MapVote.Start )
 end
 
 function RTV.AddVote( ply )
