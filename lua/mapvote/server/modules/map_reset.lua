@@ -2,15 +2,15 @@ local resetMapTimerName = "MapVote_ResetMap"
 
 local function checkMapReset()
     local count = MapVote.RTV.GetPlayerCount()
-    if count < MapVote.Config.MinimumPlayersBeforeReset then
-        local map = MapVote.Config.DefaultMap
+    local conf = MapVote.Config
+
+    if count < conf.MinimumPlayersBeforeReset then
+        local map = conf.DefaultMap
         timer.Create( resetMapTimerName, 5 * 60, 1, function()
             RunConsoleCommand( "changelevel", map )
         end)
     else
-        if timer.Exists(resetMapTimerName) then
-            timer.Remove(resetMapTimerName)
-        end
+        timer.Remove( resetMapTimerName )
     end
 end
 

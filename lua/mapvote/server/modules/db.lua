@@ -28,7 +28,7 @@ end
 function DB.GetAllMaps()
     local data = sql.Query( "SELECT * FROM mapvote_played_maps" )
     if data == false then
-        print("MapVote SQLError: ", sql.LastError())
+        error( "MapVote SQLError: " .. sql.LastError() )
     end
 
     return data
