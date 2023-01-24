@@ -9,7 +9,7 @@ function DB.MapPlayed( map )
     	error( "MapVote SQLError: " .. sql.LastError() )
 	end
     if sql.Query( string.format( "UPDATE mapvote_played_maps SET play_count = play_count +1, last_played=strftime('%%s') WHERE map = %s",  sql.SQLStr( map )  ) ) == false then
-    	print("MapVote SQLError: ", sql.LastError())
+    	error( "MapVote SQLError: " .. sql.LastError() )
 	end
 end
 
@@ -20,7 +20,7 @@ function DB.GetRecentMaps( limit )
 
     local data = sql.Query( "SELECT * FROM mapvote_played_maps ORDER BY last_played DESC LIMIT " .. limit )
     if data == false then
-        print("MapVote SQLError: ", sql.LastError())
+        error( "MapVote SQLError: " .. sql.LastError() )
     end
     return data
 end
