@@ -6,7 +6,7 @@ end
 
 function DB.MapPlayed( map )
     if sql.Query( string.format( "INSERT OR IGNORE INTO mapvote_played_maps (map) VALUES(%s)", sql.SQLStr( map ) ) ) == false then
-    	print("MapVote SQLError: ", sql.LastError())
+    	error( "MapVote SQLError: " .. sql.LastError() )
 	end
     if sql.Query( string.format( "UPDATE mapvote_played_maps SET play_count = play_count +1, last_played=strftime('%%s') WHERE map = %s",  sql.SQLStr( map )  ) ) == false then
     	print("MapVote SQLError: ", sql.LastError())
