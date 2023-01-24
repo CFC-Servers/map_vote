@@ -7,37 +7,25 @@ local MapVoteConfigDefault = {
     EnableCooldown = true,
     MapsBeforeRevote = 3,
     RTVPlayerCount = 3,
-    MapPrefixes = { "ttt_" },
-    IncludedMaps = {}
+    IncludedMaps = {},
+    ExcludedMaps = {},
+    MinimumPlayersBeforeReset = -1,
+    TimeToReset = 5 * 60,
+    DefaultMap = "gm_construct"
 }
--- Default Config
-hook.Add( "Initialize", "MapVoteConfigSetup", function()
-    if not file.Exists( "mapvote", "DATA" ) then file.CreateDir( "mapvote" ) end
-    if not file.Exists( "mapvote/config.txt", "DATA" ) then
-        file.Write( "mapvote/config.txt", util.TableToJSON( MapVoteConfigDefault ) )
-    end
-end )
+if not file.Exists( "mapvote", "DATA" ) then file.CreateDir( "mapvote" ) end
 
 if file.Exists( "mapvote/config.txt", "DATA" ) then
     MapVote.Config = util.JSONToTable( file.Read( "mapvote/config.txt", "DATA" ) )
 else
     MapVote.Config = MapVoteConfigDefault
+    file.Write( "mapvote/config.txt", util.TableToJSON( MapVoteConfigDefault ) )
 end
 
 for k, _ in pairs(MapVoteConfigDefault) do
     if MapVote.Config[k] == nil then
         MapVote.Config[k] = MapVoteConfigDefault[k]
     end
-end
-
-MapVote.Config.IncludedMaps = MapVote.Config.IncludedMaps or {}
-MapVote.Config.ExcludedMaps = MapVote.Config.ExcludedMaps or {}
-
- -- Normalise config values and populate empty values
-MapVote.Config.MapLimit = MapVote.Config.MapLimit or 24
-
-if MapVote.Config.MapPrefixes and type( MapVote.Config.MapPrefixes ) == "string" then
-    MapVote.Config.MapPrefixes = { MapVote.Config.MapPrefixes }
 end
 
 if MapVote.Config.MapPrefixes == nil then -- load map prefix from gamemode txt file
@@ -56,3 +44,5 @@ if MapVote.Config.MapPrefixes == nil then -- load map prefix from gamemode txt f
         ErrorNoHalt( "MapVote Prefix can not be loaded from gamemode" )
     end
 end
+
+hook.Run("MapVote_ConfigLoaded")

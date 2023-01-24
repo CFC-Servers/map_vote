@@ -19,7 +19,7 @@ surface.CreateFont( "RAM_VoteSysButton", { font = "Marlett", size = 13, weight =
 MapVote.EndTime = 0
 MapVote.Panel = false
 
-net.Receive( "RAM_MapVoteStart", function()
+net.Receive( "MapVote_VoteStarted", function()
     MapVote.CurrentMaps = {}
     MapVote.IsInProgress = true
     MapVote.Votes = {}
@@ -49,28 +49,25 @@ net.Receive( "RAM_MapVoteStart", function()
     end )
 end )
 
-net.Receive( "RAM_MapVoteUpdate", function()
-    local update_type = net.ReadUInt( 3 )
+net.Receive("MapVote_PlayerChangedVote", function()
+    local ply = net.ReadEntity()
+    if not IsValid(ply) then return end
+    local map_id = net.ReadUInt( 32 )
+    MapVote.Votes[ply:SteamID()] = map_id
 
-    if update_type == MapVote.UPDATE_VOTE then
-        local ply = net.ReadEntity()
+    if IsValid( MapVote.Panel ) then
+        MapVote.Panel:AddVoter( ply )
+    end
+end)
 
-        if IsValid( ply ) then
-            local map_id = net.ReadUInt( 32 )
-            MapVote.Votes[ply:SteamID()] = map_id
+net.Receive( "MapVote_VoteFinished", function()
 
-            if IsValid( MapVote.Panel ) then
-                MapVote.Panel:AddVoter( ply )
-            end
-        end
-    elseif update_type == MapVote.UPDATE_WIN then
-        if IsValid( MapVote.Panel ) then
-            MapVote.Panel:Flash( net.ReadUInt( 32 ) )
-        end
+    if IsValid(MapVote.Panel) then
+        MapVote.Panel:Flash( net.ReadUInt( 32 ) )
     end
 end )
 
-net.Receive( "RAM_MapVoteCancel", function()
+net.Receive( "MapVote_VoteCancelled", function()
     if IsValid( MapVote.Panel ) then MapVote.Panel:Remove() end
 
     hook.Remove( "CFC_DisconnectInterface_ShouldShowInterface", "MapVote_DisableDisconnectInterface" )
@@ -266,9 +263,8 @@ function PANEL:SetMaps( maps )
             if nextSend > CurTime() then return end
             nextSend = CurTime() + 0.05
 
-            net.Start( "RAM_MapVoteUpdate" )
-            net.WriteUInt( MapVote.UPDATE_VOTE, 3 )
-            net.WriteUInt( panel.ID, 32 )
+            net.Start( "MapVote_ChangeVote" )
+                net.WriteUInt( panel.ID, 32 )
             net.SendToServer()
         end
 
