@@ -109,7 +109,7 @@ function MapVote.mapVoteOver()
     local map = state.CurrentMaps[winner]
 
     timer.Simple( 4, function()
-        if hook.Run( "MapVoteChange", map ) == false then return end
+        if hook.Run( "MapVote_ChangeMap", map ) == false then return end
 
         print( "MapVote Changing map to " .. map )
         RunConsoleCommand( "changelevel", map )
