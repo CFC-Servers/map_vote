@@ -19,9 +19,9 @@ if SERVER then
     for _, filename in pairs( integrationsFiles ) do
         include( "mapvote/server/integrations/" .. filename )
     end
-
-    hook.Run("MapVote_Loaded")
 else
     include( "mapvote/cl_mapvote.lua" )
     include( "mapvote/cl_mapvote_reopen_hint.lua" )
 end
+
+hook.Run("MapVote_Loaded")
