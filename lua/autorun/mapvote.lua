@@ -3,27 +3,25 @@ MapVote.Config = {}
 
 MapVote.CurrentMaps = {}
 MapVote.Votes = {}
-
 MapVote.IsInProgress = false
-
-MapVote.UPDATE_VOTE = 1
-MapVote.UPDATE_WIN = 3
 
 if SERVER then
     AddCSLuaFile()
     AddCSLuaFile( "mapvote/cl_mapvote.lua" )
     AddCSLuaFile( "mapvote/cl_mapvote_reopen_hint.lua" )
 
-    include( "mapvote/config.lua" )
+    include()
+    local modulesFiles = file.Find( "mapvote/server/modules/*.lua", "LUA" )
+    for _, filename in pairs( modulesFiles ) do
+        include( "mapvote/server/modules/" .. filename )
+    end
 
     local integrationsFiles = file.Find( "mapvote/server/integrations/*.lua", "LUA" )
     for _, filename in pairs( integrationsFiles ) do
         include( "mapvote/server/integrations/" .. filename )
     end
-    local modulesFiles = file.Find( "mapvote/server/modules/*.lua", "LUA" )
-    for _, filename in pairs( modulesFiles ) do
-        include( "mapvote/server/modules/" .. filename )
-    end
+
+    hook.Run("MapVote_Loaded")
 else
     include( "mapvote/cl_mapvote.lua" )
     include( "mapvote/cl_mapvote_reopen_hint.lua" )

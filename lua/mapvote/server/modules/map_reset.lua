@@ -14,7 +14,7 @@ local function checkMapReset()
     end
 end
 
-hook.Add( "MapVote_ConfigLoaded", function()
+hook.Add( "MapVote_Loaded", "MapVote_StartReset", function()
     if MapVote.Config.MinimumPlayersBeforeReset <= 0 then return end
     timer.Create( "MapVote_CheckResetMap", 60, 0, checkMapReset )
 end)

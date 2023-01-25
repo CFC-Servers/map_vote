@@ -68,10 +68,10 @@ end
 function RTV.ShouldChange()
     if MapVote.IsInProgress then return end
     local plyCount = player.GetCount()
-    if plyCount < RTV.PlayerCount then return end
+    if plyCount < MapVote.Config.RTVPlayerCount then return end
     local totalVotes = RTV.GetVoteCount()
     local totalPlayers = RTV.GetPlayerCount()
-    return totalVotes >= math.Round( totalPlayers * RTV.PercentPlayersRequired )
+    return totalVotes >= math.Round( totalPlayers * MapVote.Config.RTVPercentPlayersRequired )
 end
 
 function RTV.StartIfShouldChange()
@@ -101,7 +101,7 @@ end )
 function RTV.CanVote( ply )
     local plyCount = player.GetCount()
 
-    if RTV._ActualWait >= CurTime() then
+    if MapVote.Config.RTVWait >= CurTime() then
         return false, "You must wait a bit before voting!"
     end
 
@@ -117,7 +117,7 @@ function RTV.CanVote( ply )
         return false,
                "There is already a vote in progress"
     end
-    if plyCount < RTV.PlayerCount then
+    if plyCount < MapVote.Config.RTVPlayerCount then
         return false, "You need more players before you can mapvote!"
     end
 
