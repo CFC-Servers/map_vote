@@ -32,12 +32,6 @@ function RTV.SetupChatCommands()
 end
 RTV.SetupChatCommands()
 
-hook.Add( "MapVote_ConfigLoaded", "MapVote_RTVInit", function()
-    RTV._ActualWait = CurTime() + MapVote.Config.RTVWait
-    RTV.PlayerCount = MapVote.Config.RTVPlayerCount or 3
-    RTV.PercentPlayersRequired = MapVote.Config.RTVPercentPlayersRequired or 0.66
-end)
-
 function RTV.ShouldCountPlayer( ply )
     local result = hook.Run( "MapVote_RTVShouldCountPlayer", ply )
     if result ~= nil then return result end
@@ -68,10 +62,10 @@ end
 function RTV.ShouldChange()
     if MapVote.IsInProgress then return end
     local plyCount = player.GetCount()
-    if plyCount < RTV.PlayerCount then return end
+    if plyCount < MapVote.Config.RTVPlayerCount then return end
     local totalVotes = RTV.GetVoteCount()
     local totalPlayers = RTV.GetPlayerCount()
-    return totalVotes >= math.Round( totalPlayers * RTV.PercentPlayersRequired )
+    return totalVotes >= math.Round( totalPlayers * MapVote.Config.RTVPercentPlayersRequired )
 end
 
 function RTV.StartIfShouldChange()
@@ -90,7 +84,7 @@ end
 function RTV.AddVote( ply )
     ply.RTVVoted = true
     MsgN( ply:Nick() .. " has voted to change the map." )
-    local percentage = math.Round( RTV.GetPlayerCount() * RTV.PercentPlayersRequired )
+    local percentage = math.Round( RTV.GetPlayerCount() * MapVote.Config.RTVPercentPlayersRequired )
     PrintMessage( HUD_PRINTTALK, ply:Nick() .. " has voted to change the map. (" .. RTV.GetVoteCount() .. "/" .. percentage .. ")" )
 end
 
@@ -99,9 +93,9 @@ hook.Add( "PlayerDisconnected", "Remove RTV", function()
 end )
 
 function RTV.CanVote( ply )
-    local plyCount = player.GetCount()
+    local plyCount = #player.GetHumans()
 
-    if RTV._ActualWait >= CurTime() then
+    if MapVote.Config.RTVWait >= CurTime() then
         return false, "You must wait a bit before voting!"
     end
 
@@ -110,14 +104,14 @@ function RTV.CanVote( ply )
     end
 
     if ply.RTVVoted then
-        return false, string.format( "You have already voted to change the map! (%s/%s)", RTV.GetVoteCount(), math.Round( RTV.GetPlayerCount() * RTV.PercentPlayersRequired ) )
+        return false, string.format( "You have already voted to change the map! (%s/%s)", RTV.GetVoteCount(), math.Round( RTV.GetPlayerCount() * MapVote.Config.RTVPercentPlayersRequired ) )
     end
 
     if MapVote.IsInProgress then
         return false,
                "There is already a vote in progress"
     end
-    if plyCount < RTV.PlayerCount then
+    if plyCount < MapVote.Config.RTVPlayerCount then
         return false, "You need more players before you can mapvote!"
     end
 
