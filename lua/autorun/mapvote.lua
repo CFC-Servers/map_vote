@@ -10,7 +10,6 @@ if SERVER then
     AddCSLuaFile( "mapvote/cl_mapvote.lua" )
     AddCSLuaFile( "mapvote/cl_mapvote_reopen_hint.lua" )
 
-    include()
     local modulesFiles = file.Find( "mapvote/server/modules/*.lua", "LUA" )
     for _, filename in pairs( modulesFiles ) do
         include( "mapvote/server/modules/" .. filename )
