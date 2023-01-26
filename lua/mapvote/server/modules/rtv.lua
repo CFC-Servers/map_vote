@@ -60,7 +60,8 @@ function RTV.GetVoteCount()
 end
 
 function RTV.ShouldChange()
-    if MapVote.IsInProgress then return end
+    if MapVote.State.IsInProgress then return end
+
     local plyCount = player.GetCount()
     if plyCount < MapVote.Config.RTVPlayerCount then return end
     local totalVotes = RTV.GetVoteCount()
@@ -107,7 +108,7 @@ function RTV.CanVote( ply )
         return false, string.format( "You have already voted to change the map! (%s/%s)", RTV.GetVoteCount(), math.Round( RTV.GetPlayerCount() * MapVote.Config.RTVPercentPlayersRequired ) )
     end
 
-    if MapVote.IsInProgress then
+    if MapVote.State.IsInProgress then
         return false,
                "There is already a vote in progress"
     end
