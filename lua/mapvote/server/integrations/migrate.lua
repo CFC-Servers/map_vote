@@ -1,17 +1,17 @@
-concommand.Add( "mapvote_migrate_playcounts", function( ply, cmd, args )
+concommand.Add( "mapvote_migrate_playcounts", function( ply )
 	if IsValid( ply ) and not ply:IsSuperAdmin() then return end
 	local p = print
-	if IsValid( ply ) then 
+	if IsValid( ply ) then
 		p = function( msg ) ply:ChatPrint( msg ) end
 	end
 
 	local playCountsData = file.Read( "mapvote/playcount.txt" or "{}" )
-	if playCountsData == nil then 
+	if playCountsData == nil then
 		p( "could not find mapvote/playcounts.txt to migrate" )
-		return 
+		return
 	end
 	local playCounts = util.JSONToTable( playCountsData )
-	
+
 	for map, count in pairs( playCounts ) do
 		map = map:sub( 1, -5 )
 
