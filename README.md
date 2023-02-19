@@ -1,11 +1,3 @@
-Lumiens Map Vote
-=======================
-Forked from [Lumiens-Map-Vote](https://github.com/lumien231/Lumiens-Map-Vote)  
-Originally made by Willox
-Improved by Tyrantelf ([Github](https://github.com/tyrantelf/gmod-mapvote))
-
-Sadly neither Willox Profile nor the original forum threads still exist.
-
 Usage
 =======================
 Install the addon, should work out of the box for TTT and Deathrun.
@@ -64,3 +56,12 @@ Commands
 - **startmpvote** starts a mapvote
 - **stopmapvote** stops a mapvote
 - **mapvote_migrate_playcounts** migrates adds mapvote/playcount.txt data to playcounts in database, this will add to existing play counts not overwrite them.
+
+
+History of the addon
+===========
+The backend is completely rewritten but the clientside code is is still mostly code from [Lumiens-Map-Vote](https://github.com/lumien231/Lumiens-Map-Vote) 
+
+Originally made by Willox
+Improved by Tyrantelf ([Github](https://github.com/tyrantelf/gmod-mapvote))
+Sadly neither Willox Profile nor the original forum threads still exist.
