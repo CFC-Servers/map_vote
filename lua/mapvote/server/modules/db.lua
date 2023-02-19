@@ -12,16 +12,17 @@ function DB.MapPlayed( map )
     end
 end
 
-function DB.AddMap(map) 
+function DB.AddMap(map)
     if sql.Query( string.format( "INSERT OR IGNORE INTO mapvote_played_maps (map) VALUES(%s)", sql.SQLStr( map ) ) ) == false then
         error( "MapVote SQLError: " .. sql.LastError() )
     end
 end
+
 function DB.AddPlayCount(map, count)
     if not isnumber(count) then
         error("DB.AddPlayCount: Count was not a number (" .. tostring(count) .. ")" )
     end
-    
+
     if sql.Query( string.format( "UPDATE mapvote_played_maps SET play_count = play_count + %s WHERE map = %s",  count, sql.SQLStr( map )  ) ) == false then
         error( "MapVote SQLError: " .. sql.LastError() )
     end
