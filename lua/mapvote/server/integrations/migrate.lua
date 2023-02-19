@@ -5,7 +5,7 @@ concommand.Add( "mapvote_migrate_playcounts", function( ply, cmd, args )
 		p = function( msg ) ply:ChatPrint( msg ) end
 	end
 
-	local playCountsData = file.Read( "mapvote/playcounts.txt" or "{}" )
+	local playCountsData = file.Read( "mapvote/playcount.txt" or "{}" )
 	if playCountsData == nil then 
 		p( "could not find mapvote/playcounts.txt to migrate" )
 		return 
