@@ -1,4 +1,4 @@
-concommand.Add( "`", function( ply, cmd, args )
+concommand.Add( "mapvote_migrate_playcounts", function( ply, cmd, args )
 	if IsValid(ply) and not ply:IsSuperAdmin() then return end
 	local p = print
 	if IsValid(ply) then 
