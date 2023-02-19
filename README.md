@@ -10,10 +10,6 @@ Usage
 =======================
 Install the addon, should work out of the box for TTT and Deathrun.
 
-Since i only modified this addon for one specific server I will not fix issues in
-gamemodes other than TTT. (Though i will accept PRs for them)
-
-
 Config
 =======================
 
@@ -62,3 +58,9 @@ Hooks
 - **MapVote_ConfigLoaded"** Runs when the mapvote config finnishes loading
 - **MapVote_VoteFinished** Runs when a vote finnishes is passed a table with `state`, `results`, and `winner`
 - **MapVoteChange** Runs right before the map changes, return false to stop the change. (This will be renamed in the future)
+
+Commands
+===================
+- **startmpvote** starts a mapvote
+- **stopmapvote** stops a mapvote
+- **mapvote_migrate_playcounts** migrates adds mapvote/playcount.txt data to playcounts in database, this will add to existing play counts not overwrite them.
