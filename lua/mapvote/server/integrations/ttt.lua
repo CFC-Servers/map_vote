@@ -1,4 +1,4 @@
-if GAMEMODE_NAME ~= "terrortown" then return end
+if engine.ActiveGamemode() ~= "terrortown" then return end
 function CheckForMapSwitch() -- TODO see if this can be improved
     -- Check for mapswitch
     local rounds_left = math.max( 0, GetGlobalInt( "ttt_rounds_left", 6 ) - 1 )
@@ -35,4 +35,5 @@ hook.Add("MapVote_RTVStart", "MapVote_TTTStartVoteAfterRound", function()
             MapVote.Start()
         end )
     end )
+    return false
 end)
