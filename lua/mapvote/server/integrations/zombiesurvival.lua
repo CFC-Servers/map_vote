@@ -4,4 +4,5 @@ if GAMEMODE_NAME == "zombiesurvival" then
         MapVote.Start()
         return true
     end )
+    return false
 end

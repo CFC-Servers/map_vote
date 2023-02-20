@@ -35,4 +35,5 @@ hook.Add("MapVote_RTVStart", "MapVote_TTTStartVoteAfterRound", function()
             MapVote.Start()
         end )
     end )
+    return false
 end)
