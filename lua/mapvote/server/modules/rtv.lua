@@ -79,7 +79,7 @@ function RTV.Start()
     if hook.Run( "MapVote_RTVStart" ) == false then return end
 
     PrintMessage( HUD_PRINTTALK, "The vote has been rocked, map vote imminent" )
-    timer.Simple( 4, MapVote.Start )
+    MapVote.Start()
 end
 
 function RTV.AddVote( ply )
