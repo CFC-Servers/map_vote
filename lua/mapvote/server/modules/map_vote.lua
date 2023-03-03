@@ -44,7 +44,7 @@ function MapVote.Start( length )
 
     local mapsInVote = {}
 
-    for _, map in RandomPairs( maps ) do
+    for _, map in pairs( maps ) do
         map = map:sub( 1, -5 ) -- strip .bsp
         if MapVote.isMapAllowed( map ) then
             table.insert( mapsInVote, map )
