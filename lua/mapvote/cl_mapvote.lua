@@ -234,7 +234,7 @@ function PANEL:SetMaps( maps )
 
     local transCounter = 0
 
-    for k, v in RandomPairs( maps ) do
+    for k, v in Pairs( maps ) do
         local map = v["map"]
         local playCount = v["playcount"]
 
