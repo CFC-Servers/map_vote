@@ -1,5 +1,6 @@
 -- Default Config
 local MapVoteConfigDefault = {
+	ShuffleMaps=true,
     MapLimit = 24,
     TimeLimit = 28,
     RTVWait = 60,
