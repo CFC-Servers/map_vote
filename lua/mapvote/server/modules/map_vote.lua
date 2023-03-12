@@ -5,6 +5,8 @@ util.AddNetworkString( "MapVote_VoteFinished" )
 util.AddNetworkString( "MapVote_PlayerChangedVote")
 util.AddNetworkString( "RTV_Delay" )
 
+if MapVote.Config.ShuffleMaps then Shuffle = RandomPairs else Shuffle = pairs end
+
 function MapVote.sendToClient( length, mapsInVote )
     net.Start( "MapVote_VoteStarted" )
         net.WriteUInt( #mapsInVote, 32 )
@@ -44,7 +46,7 @@ function MapVote.Start( length )
 
     local mapsInVote = {}
 
-    for _, map in pairs( maps ) do
+    for _, map in Shuffle( maps ) do
         map = map:sub( 1, -5 ) -- strip .bsp
         if MapVote.isMapAllowed( map ) then
             table.insert( mapsInVote, map )
