@@ -19,6 +19,8 @@ surface.CreateFont( "RAM_VoteSysButton", { font = "Marlett", size = 13, weight =
 MapVote.EndTime = 0
 MapVote.Panel = false
 
+if MapVote.Config.ShuffleMaps then Shuffle = RandomPairs else Shuffle = pairs end
+
 net.Receive( "MapVote_VoteStarted", function()
     MapVote.CurrentMaps = {}
     MapVote.IsInProgress = true
@@ -234,7 +236,7 @@ function PANEL:SetMaps( maps )
 
     local transCounter = 0
 
-    for k, v in pairs( maps ) do
+    for k, v in Shuffle( maps ) do
         local map = v["map"]
         local playCount = v["playcount"]
 
