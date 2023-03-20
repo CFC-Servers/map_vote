@@ -12,7 +12,7 @@ local MapVoteConfigDefault = {
     MinimumPlayersBeforeReset = -1,
     TimeToReset = 5 * 60,
     DefaultMap = "gm_construct",
-    PercentPlayersRequired = 0.66,
+    RTVPercentPlayersRequired = 0.66,
     SortMaps = false
 }
 if not file.Exists( "mapvote", "DATA" ) then file.CreateDir( "mapvote" ) end
