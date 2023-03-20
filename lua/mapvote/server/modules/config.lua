@@ -12,7 +12,8 @@ local MapVoteConfigDefault = {
     MinimumPlayersBeforeReset = -1,
     TimeToReset = 5 * 60,
     DefaultMap = "gm_construct",
-    PercentPlayersRequired = 0.66
+    PercentPlayersRequired = 0.66,
+    SortMaps = false
 }
 if not file.Exists( "mapvote", "DATA" ) then file.CreateDir( "mapvote" ) end
 
@@ -42,6 +43,7 @@ if MapVote.Config.MapPrefixes == nil then -- load map prefix from gamemode txt f
             end
         end
     else
+        MapVote.Config.MapPrefixes = {} -- We still want the addon to function if map prefixes are not loaded
         ErrorNoHalt( "MapVote Prefix can not be loaded from gamemode" )
     end
 end

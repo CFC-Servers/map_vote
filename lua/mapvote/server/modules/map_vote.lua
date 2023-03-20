@@ -53,6 +53,8 @@ function MapVote.Start( length )
         end
     end
 
+    if MapVote.Config.SortMaps then table.sort( mapsInVote ) end
+
     MapVote.State.IsInProgress = true
     MapVote.State.CurrentMaps = mapsInVote
     MapVote.State.Votes = {}
