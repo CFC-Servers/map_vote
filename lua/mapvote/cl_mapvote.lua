@@ -103,8 +103,6 @@ end
 local PANEL = {}
 
 function PANEL:Init()
-    -- self:ParentToHUD()
-
     self.startTime = SysTime()
 
     self.Canvas = vgui.Create( "Panel", self )
