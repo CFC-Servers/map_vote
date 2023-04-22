@@ -1,6 +1,13 @@
+
 Usage
 =======================
 Install the addon, should work out of the box for TTT and Deathrun.
+
+## Map Icons
+Any missing map icons will be downloaded clientside when a vote is started
+It may still be beneficial to serve the map icons yourself or create custom icons for maps. You can still do this.
+MapVote will first search `maps/thumbs/<name>.png` or `maps/thumbs/<name>.jpg` for map icons.
+In most cases using the workshop to serve these custom icons will be the fastest option
 
 Config
 =======================
