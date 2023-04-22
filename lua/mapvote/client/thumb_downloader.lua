@@ -56,11 +56,11 @@ function ThumbDownloader:DownloadThumbnail( name, url )
             ext = ".jpg"
         end
         print( "Downloaded map thumb", name )
-        file.Write( "mapvote/thumb_cache" .. name .. ext, body )
+        file.Write( "mapvote/thumb_cache/" .. name .. ext, body )
         local callback = self.mapDownloadCallbacks[name]
         if callback then
             self.mapDownloadCallbacks[name] = nil
-            callback( "data/mapvote/thumb_cache" .. name .. ext )
+            callback( "data/mapvote/thumb_cache/" .. name .. ext )
         end
     end )
 end

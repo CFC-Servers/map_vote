@@ -80,7 +80,7 @@ end )
 local searchPaths = {
     "maps/thumb/",
     "maps/",
-    "data/mapvote/thumb_cache",
+    "data/mapvote/thumb_cache/",
 }
 local extensions = {
     ".png",
