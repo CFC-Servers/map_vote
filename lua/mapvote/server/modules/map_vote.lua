@@ -1,19 +1,19 @@
 util.AddNetworkString( "MapVote_VoteStarted" )
 util.AddNetworkString( "MapVote_VoteCancelled" )
-util.AddNetworkString( "MapVote_ChangeVote")
+util.AddNetworkString( "MapVote_ChangeVote" )
 util.AddNetworkString( "MapVote_VoteFinished" )
-util.AddNetworkString( "MapVote_PlayerChangedVote")
+util.AddNetworkString( "MapVote_PlayerChangedVote" )
 util.AddNetworkString( "RTV_Delay" )
 
 function MapVote.sendToClient( length, mapsInVote )
     net.Start( "MapVote_VoteStarted" )
-        net.WriteUInt( #mapsInVote, 32 )
-        for _, map in ipairs( mapsInVote ) do
-            net.WriteString( map )
-            net.WriteUInt( MapVote.PlayCounts[map] or 0, 32 )
-        end
+    net.WriteUInt( #mapsInVote, 32 )
+    for _, map in ipairs( mapsInVote ) do
+        net.WriteString( map )
+        net.WriteUInt( MapVote.PlayCounts[map] or 0, 32 )
+    end
 
-        net.WriteUInt( length, 32 )
+    net.WriteUInt( length, 32 )
     net.Broadcast()
 end
 
@@ -28,9 +28,8 @@ function MapVote.isMapAllowed( m )
     if conf.ExcludedMaps[m] then return false end -- dont allow excluded maps in vote
 
     if conf.IncludedMaps[m] then return true end -- skip prefix check if map is in included maps
-
     for _, v in pairs( prefixes ) do
-        if string.find( m, "^" .. v ) then
+        if string.find( m, v ) then
             return true
         end
     end
@@ -71,6 +70,7 @@ function MapVote.resetState()
         Votes = {}
     }
 end
+
 MapVote.resetState()
 
 function MapVote.Cancel()
@@ -104,9 +104,8 @@ function MapVote.mapVoteOver()
         winner = winner
     } )
 
-
     net.Start( "MapVote_VoteFinished" )
-        net.WriteUInt( winner, 32 )
+    net.WriteUInt( winner, 32 )
     net.Broadcast()
     local map = state.CurrentMaps[winner]
 
@@ -118,7 +117,7 @@ function MapVote.mapVoteOver()
     end )
 end
 
-net.Receive( "MapVote_ChangeVote", function(  _, ply )
+net.Receive( "MapVote_ChangeVote", function( _, ply )
     if not MapVote.State.IsInProgress then return end
     if not IsValid( ply ) then return end
 
@@ -128,7 +127,7 @@ net.Receive( "MapVote_ChangeVote", function(  _, ply )
     MapVote.State.Votes[ply:SteamID()] = mapID
 
     net.Start( "MapVote_PlayerChangedVote" )
-        net.WriteEntity( ply )
-        net.WriteUInt( mapID, 32 )
+    net.WriteEntity( ply )
+    net.WriteUInt( mapID, 32 )
     net.Broadcast()
 end )

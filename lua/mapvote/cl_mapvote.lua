@@ -49,20 +49,19 @@ net.Receive( "MapVote_VoteStarted", function()
     end )
 end )
 
-net.Receive("MapVote_PlayerChangedVote", function()
-    local ply = net.ReadEntity()
-    if not IsValid(ply) then return end
+net.Receive( "MapVote_PlayerChangedVote", function()
+    local ply = net.ReadEntity() --[[@as Player]]
+    if not IsValid( ply ) then return end
     local map_id = net.ReadUInt( 32 )
     MapVote.Votes[ply:SteamID()] = map_id
 
     if IsValid( MapVote.Panel ) then
         MapVote.Panel:AddVoter( ply )
     end
-end)
+end )
 
 net.Receive( "MapVote_VoteFinished", function()
-
-    if IsValid(MapVote.Panel) then
+    if IsValid( MapVote.Panel ) then
         MapVote.Panel:Flash( net.ReadUInt( 32 ) )
     end
 end )
@@ -74,24 +73,36 @@ net.Receive( "MapVote_VoteCancelled", function()
 end )
 
 net.Receive( "RTV_Delay", function()
-    chat.AddText( Color( 102, 255, 51 ) , "[RTV]", Color( 255, 255, 255 ), " The vote has been rocked, map vote will begin on round end" )
+    chat.AddText( Color( 102, 255, 51 ), "[RTV]", Color( 255, 255, 255 ),
+        " The vote has been rocked, map vote will begin on round end" )
 end )
 
+local searchPaths = {
+    "maps/thumb/",
+    "maps/",
+    "data/mapvote/thumb_cache/",
+}
+local extensions = {
+    ".png",
+    ".jpg",
+}
+local noIcon = "maps/thumb/noicon.png"
 local function getMapThumbnail( name )
-    if file.Exists( "maps/thumb/" .. name .. ".png", "GAME" ) then
-        return "maps/thumb/" .. name .. ".png"
-    elseif file.Exists( "maps/" .. name .. ".png", "GAME" ) then
-        return "maps/" .. name .. ".png"
-    else
-        return "maps/thumb/noicon.png"
+    for _, path in ipairs( searchPaths ) do
+        for _, ext in ipairs( extensions ) do
+            local fullPath = path .. name .. ext
+            if file.Exists( fullPath, "GAME" ) then
+                return fullPath
+            end
+        end
     end
+
+    return nil
 end
 
 local PANEL = {}
 
 function PANEL:Init()
-   -- self:ParentToHUD()
-
     self.startTime = SysTime()
 
     self.Canvas = vgui.Create( "Panel", self )
@@ -214,7 +225,6 @@ function PANEL:Think()
                 end
             end
         end
-
     end
 
     local timeLeft = math.Round( math.Clamp( MapVote.EndTime - CurTime(), 0, math.huge ) )
@@ -256,7 +266,13 @@ function PANEL:SetMaps( maps )
         end
 
         local button = vgui.Create( "DImageButton", panel )
-        button:SetImage( getMapThumbnail( map ) )
+        local thumb = getMapThumbnail( map )
+        if not thumb then
+            MapVote.ThumbDownloader:QueueDownload( map, function( filepath )
+                button:SetImage( filepath or noIcon )
+            end )
+        end
+        button:SetImage( thumb or noIcon )
 
         local nextSend = 0
         function button:OnMousePressed()
@@ -264,7 +280,7 @@ function PANEL:SetMaps( maps )
             nextSend = CurTime() + 0.05
 
             net.Start( "MapVote_ChangeVote" )
-                net.WriteUInt( panel.ID, 32 )
+            net.WriteUInt( panel.ID, 32 )
             net.SendToServer()
         end
 
@@ -297,6 +313,7 @@ function PANEL:SetMaps( maps )
 
         self.mapList:AddItem( panel )
     end
+    MapVote.ThumbDownloader:RequestWorkshopIDs()
 end
 
 function PANEL:GetMapButton( id )
@@ -334,7 +351,7 @@ function PANEL:Flash( id )
         timer.Simple( 1.0, function()
             bar:SetBGColor( 255, 0, 255, 255 )
             bar:SetPaintBackgroundEnabled( true )
-         end )
+        end )
     end
 end
 
