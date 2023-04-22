@@ -9,6 +9,7 @@ if SERVER then
     AddCSLuaFile()
     AddCSLuaFile( "mapvote/cl_mapvote.lua" )
     AddCSLuaFile( "mapvote/cl_mapvote_reopen_hint.lua" )
+    AddCSLuaFile( "mapvote/client/thumb_downloader.lua" )
 
     local modulesFiles = file.Find( "mapvote/server/modules/*.lua", "LUA" )
     for _, filename in pairs( modulesFiles ) do
@@ -22,6 +23,8 @@ if SERVER then
 else
     include( "mapvote/cl_mapvote.lua" )
     include( "mapvote/cl_mapvote_reopen_hint.lua" )
+    include( "mapvote/client/thumb_downloader.lua" )
 end
 
-hook.Run("MapVote_Loaded")
+hook.Run( "MapVote_Loaded" )
+

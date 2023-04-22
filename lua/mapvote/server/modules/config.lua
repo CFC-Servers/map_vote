@@ -24,28 +24,33 @@ else
     file.Write( "mapvote/config.txt", util.TableToJSON( MapVoteConfigDefault ) )
 end
 
-for k, _ in pairs(MapVoteConfigDefault) do
+for k, _ in pairs( MapVoteConfigDefault ) do
     if MapVote.Config[k] == nil then
         MapVote.Config[k] = MapVoteConfigDefault[k]
     end
 end
 
 if MapVote.Config.MapPrefixes == nil then -- load map prefix from gamemode txt file
-    local info = file.Read( GAMEMODE.Folder .. "/" .. GAMEMODE.FolderName .. ".txt", "GAME" )
+    local gamemode = engine.ActiveGamemode()
+    local info = file.Read( string.format( "gamemodes/%s/%s.txt", gamemode, gamemode ), "GAME" )
 
     if info then
         local decoded = util.KeyValuesToTable( info )
         if decoded.maps then
-            if decoded.maps[0] == "^" then
-                MapVote.Config.MapPrefixes = { string.sub(decoded.maps, 2) }
+            if decoded.maps[1] == "^" then
+                MapVote.Config.MapPrefixes = { string.sub( decoded.maps, 2 ) }
             else
                 MapVote.Config.MapPrefixes = { decoded.maps }
             end
         end
     else
-        MapVote.Config.MapPrefixes = {} -- We still want the addon to function if map prefixes are not loaded
+        MapVote.Config.MapPrefixes = { ".*" } -- We still want the addon to function if map prefixes are not loaded
         ErrorNoHalt( "MapVote Prefix can not be loaded from gamemode" )
+    end
+else
+    for k, v in pairs( MapVote.Config.MapPrefixes ) do
+        MapVote.Config.MapPrefixes[k] = "^" .. v
     end
 end
 
-hook.Run("MapVote_ConfigLoaded")
+hook.Run( "MapVote_ConfigLoaded" )
