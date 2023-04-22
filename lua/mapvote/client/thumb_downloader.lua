@@ -8,6 +8,8 @@ local ThumbDownloader = MapVote.ThumbDownloader
 
 net.Receive( "MapVote_WorkshopIDTable", function()
     ThumbDownloader.workshopIDLookup = net.ReadTable()
+    print( string.format( "MapVote: Received %s workshop IDs", table.Count( ThumbDownloader.workshopIDLookup ) ) )
+    ThumbDownloader:DownloadAll()
 end )
 
 function ThumbDownloader:QueueDownload( map, callback )
@@ -16,7 +18,16 @@ function ThumbDownloader:QueueDownload( map, callback )
     table.insert( self.mapsToDownload, map )
 end
 
+function ThumbDownloader:RequestWorkshopIDs()
+    if #self.mapsToDownload == 0 then return end
+
+    net.Start( "MapVote_RequestWorkshopIDTable" )
+    net.WriteTable( self.mapsToDownload )
+    net.SendToServer()
+end
+
 function ThumbDownloader:DownloadAll()
+    print( "MapVote: Downloading all queued map thumbs" )
     local mapNamesByWorkshopID = {}
     local mapsToDownload = {}
     for _, map in pairs( self.mapsToDownload ) do
@@ -29,7 +40,6 @@ function ThumbDownloader:DownloadAll()
 
     local requestBody = { ["itemcount"] = tostring( #mapsToDownload ) }
     for i, map in pairs( mapsToDownload ) do
-        print( "added " .. map .. "to request" )
         requestBody["publishedfileids[" .. tostring( i - 1 ) .. "]"] = self.workshopIDLookup[map]
     end
 
@@ -50,17 +60,19 @@ function ThumbDownloader:DownloadAll()
 end
 
 function ThumbDownloader:DownloadThumbnail( name, url )
+    file.CreateDir( "mapvote/thumb_cache" )
     http.Fetch( url, function( body, _, headers, _ )
         local ext = ".png"
         if headers["Content-Type"] == "image/jpeg" then
             ext = ".jpg"
         end
-        print( "Downloaded map thumb", name )
-        file.Write( "mapvote/thumb_cache/" .. name .. ext, body )
+        local filepath = "mapvote/thumb_cache/" .. name .. ext
+        print( "MapVote: Downloaded map thumb", name, filepath )
+        file.Write( filepath, body )
         local callback = self.mapDownloadCallbacks[name]
         if callback then
             self.mapDownloadCallbacks[name] = nil
-            callback( "data/mapvote/thumb_cache/" .. name .. ext )
+            callback( "data/" .. filepath )
         end
     end )
 end

@@ -50,7 +50,7 @@ net.Receive( "MapVote_VoteStarted", function()
 end )
 
 net.Receive( "MapVote_PlayerChangedVote", function()
-    local ply = net.ReadEntity()
+    local ply = net.ReadEntity() --[[@as Player]]
     if not IsValid( ply ) then return end
     local map_id = net.ReadUInt( 32 )
     MapVote.Votes[ply:SteamID()] = map_id
@@ -315,7 +315,7 @@ function PANEL:SetMaps( maps )
 
         self.mapList:AddItem( panel )
     end
-    MapVote.ThumbDownloader:DownloadAll()
+    MapVote.ThumbDownloader:RequestWorkshopIDs()
 end
 
 function PANEL:GetMapButton( id )

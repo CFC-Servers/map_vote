@@ -1,4 +1,5 @@
 util.AddNetworkString( "MapVote_WorkshopIDTable" )
+util.AddNetworkString( "MapVote_RequestWorkshopIDTable" )
 
 function MapVote.getAllWorkshopIDs()
     local addonWorkshopIDs = {}
@@ -11,9 +12,16 @@ function MapVote.getAllWorkshopIDs()
     MapVote.addonWorkshopIDs = addonWorkshopIDs
 end
 
-hook.Add( "PlayerInitialSpawn", "MapVote_SendWorkshopIDTable", function( ply )
+net.Receive( "MapVote_RequestWorkshopIDTable", function( _, ply )
+    local requestedMaps = net.ReadTable()
+    local addonWorkshopIDs = {}
+    for _, map in ipairs( requestedMaps ) do
+        if MapVote.addonWorkshopIDs[map] then
+            addonWorkshopIDs[map] = MapVote.addonWorkshopIDs[map]
+        end
+    end
     net.Start( "MapVote_WorkshopIDTable" )
-    net.WriteTable( MapVote.addonWorkshopIDs )
+    net.WriteTable( addonWorkshopIDs )
     net.Send( ply )
 end )
 hook.Add( "Initialize", "MapVote_GetWorkshopIDs", MapVote.getAllWorkshopIDs )
