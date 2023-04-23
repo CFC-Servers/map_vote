@@ -1,5 +1,65 @@
+require "schemavalidator"
+
+local schema = SV.Object {
+    MapLimit = SV.Int { min = 2 },
+    TimeLimit = SV.Int { min = 1 },
+    AllowCurrentMap = SV.Bool(),
+    RTVPercentPlayersRequired = SV.Number(),
+    RTVWait = SV.Number(),
+    SortMaps = SV.Bool(),
+    DefaultMap = SV.String(),
+    MapPrefixes = SV.List( SV.String() ):Optional(),
+    EnableCooldown = SV.Bool(),
+    MapsBeforeRevote = SV.Int { min = 1 },
+    RTVPlayerCount = SV.Int { min = 1 },
+    ExcludedMaps = SV.Map( SV.String(), SV.Bool() ),
+    IncludedMaps = SV.Map( SV.String(), SV.Bool() ),
+    MinimumPlayersBeforeReset = SV.Int {},
+    TimeToReset = SV.Int { min = 1 }
+}
+MapVote.Schema = schema
+
+function MapVote.GetConfig()
+    return MapVote.config
+end
+
+function MapVote.MergeConfig( conf )
+    for k, v in pairs( conf ) do
+        local valid, reason = schema:ValidateField( k, v )
+        if not valid then
+            print( "MapVote MergeConfig config is invalid: " .. reason )
+            return reason
+        end
+        MapVote.config[k] = v
+    end
+end
+
+function MapVote.SetConfig( conf )
+    local valid, reason = schema:Validate( conf )
+    if not valid then
+        print( "MapVote SetConfig config is invalid: " .. reason )
+        return reason
+    end
+    MapVote.config = conf
+end
+
+function MapVote.LoadConfigFromFile( filename )
+    local cfg = util.JSONToTable( file.Read( filename, "DATA" ) )
+    if not cfg then
+        print( "MapVote config is invalid: " .. filename .. " is not a valid JSON file" )
+        return
+    end
+    return MapVote.MergeConfig( cfg )
+end
+
+function MapVote.SaveConfigToFile( filename )
+    file.Write( filename, util.TableToJSON( MapVote.GetConfig() ) )
+end
+
+MapVote.DefaultFilename = "mapvote/config.json"
+
 -- Default Config
-local MapVoteConfigDefault = {
+local defaultConfigErr = MapVote.SetConfig {
     MapLimit = 24,
     TimeLimit = 28,
     RTVWait = 60,
@@ -13,44 +73,22 @@ local MapVoteConfigDefault = {
     TimeToReset = 5 * 60,
     DefaultMap = "gm_construct",
     RTVPercentPlayersRequired = 0.66,
-    SortMaps = false
+    SortMaps = false,
 }
+if defaultConfigErr then
+    Error( "MapVote default config is invalid: " .. defaultConfigErr )
+end
+
 if not file.Exists( "mapvote", "DATA" ) then file.CreateDir( "mapvote" ) end
 
-if file.Exists( "mapvote/config.txt", "DATA" ) then
-    MapVote.Config = util.JSONToTable( file.Read( "mapvote/config.txt", "DATA" ) )
-else
-    MapVote.Config = MapVoteConfigDefault
-    file.Write( "mapvote/config.txt", util.TableToJSON( MapVoteConfigDefault ) )
-end
-
-for k, _ in pairs( MapVoteConfigDefault ) do
-    if MapVote.Config[k] == nil then
-        MapVote.Config[k] = MapVoteConfigDefault[k]
-    end
-end
-
-if MapVote.Config.MapPrefixes == nil then -- load map prefix from gamemode txt file
-    local gamemode = engine.ActiveGamemode()
-    local info = file.Read( string.format( "gamemodes/%s/%s.txt", gamemode, gamemode ), "GAME" )
-
-    if info then
-        local decoded = util.KeyValuesToTable( info )
-        if decoded.maps then
-            if decoded.maps[1] == "^" then
-                MapVote.Config.MapPrefixes = { string.sub( decoded.maps, 2 ) }
-            else
-                MapVote.Config.MapPrefixes = { decoded.maps }
-            end
-        end
-    else
-        MapVote.Config.MapPrefixes = { ".*" } -- We still want the addon to function if map prefixes are not loaded
-        ErrorNoHalt( "MapVote Prefix can not be loaded from gamemode" )
+if file.Exists( MapVote.DefaultFilename, "DATA" ) then
+    local err = MapVote.LoadConfigFromFile( MapVote.DefaultFilename )
+    if err then
+        print( "MapVote config is invalid: " .. err )
     end
 else
-    for k, v in pairs( MapVote.Config.MapPrefixes ) do
-        MapVote.Config.MapPrefixes[k] = "^" .. v
-    end
+    MapVote.SaveConfigToFile( MapVote.DefaultFilename )
 end
 
+print( "MapVote config loaded" )
 hook.Run( "MapVote_ConfigLoaded" )

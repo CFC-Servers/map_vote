@@ -29,7 +29,7 @@ function MapVote.isMapAllowed( m )
 
     if conf.IncludedMaps[m] then return true end -- skip prefix check if map is in included maps
     for _, v in pairs( prefixes ) do
-        if string.find( m, v ) then
+        if string.find( m, "^" .. v ) then
             return true
         end
     end
