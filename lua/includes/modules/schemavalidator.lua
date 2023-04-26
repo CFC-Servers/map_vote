@@ -4,11 +4,11 @@
 ---@field Optional fun(self: SchemaType): SchemaType
 
 
-SV = {}
+SchemaValidator = {}
 
 ---@param valueType SchemaType
 ---@return SchemaType
-function SV.Optional( valueType )
+function SchemaValidator.Optional( valueType )
     return {
         _type = valueType,
         name = "Optional",
@@ -23,11 +23,11 @@ function SV.Optional( valueType )
 end
 
 ---@return SchemaType
-function SV.Bool()
+function SchemaValidator.Bool()
     return {
         name = "bool",
         Optional = function( self )
-            return SV.Optional( self )
+            return SchemaValidator.Optional( self )
         end,
         Validate = function( _, value )
             if type( value ) ~= "boolean" then
@@ -41,11 +41,11 @@ end
 
 ---@param opts { min: number, max: number }
 ---@return SchemaType
-function SV.Int( opts )
+function SchemaValidator.Int( opts )
     return {
         name = "int",
         Optional = function( self )
-            return SV.Optional( self )
+            return SchemaValidator.Optional( self )
         end,
         Validate = function( _, value )
             if type( value ) ~= "number" then
@@ -74,12 +74,12 @@ end
 
 ---@param tbl { [string]: SchemaType }
 ---@return SchemaTypeObject
-function SV.Object( tbl )
+function SchemaValidator.Object( tbl )
     return {
         _schema = tbl,
         name = "table",
         Optional = function( self )
-            return SV.Optional( self )
+            return SchemaValidator.Optional( self )
         end,
         ValidateField = function( self, key, value )
             local type = self._schema[key]
@@ -113,12 +113,12 @@ end
 
 ---@param t SchemaType
 ---@return SchemaType
-function SV.List( t )
+function SchemaValidator.List( t )
     return {
         _type = t,
         name = "list",
         Optional = function( self )
-            return SV.Optional( self )
+            return SchemaValidator.Optional( self )
         end,
         Validate = function( self, value )
             if type( value ) ~= "table" then
@@ -140,13 +140,13 @@ end
 ---@param keyType SchemaType
 ---@param valueType SchemaType
 ---@return SchemaType
-function SV.Map( keyType, valueType )
+function SchemaValidator.Map( keyType, valueType )
     return {
         _keyType = keyType,
         _type = valueType,
         name = "map",
         Optional = function( self )
-            return SV.Optional( self )
+            return SchemaValidator.Optional( self )
         end,
         Validate = function( self, value )
             if type( value ) ~= "table" then
@@ -171,11 +171,11 @@ function SV.Map( keyType, valueType )
 end
 
 ---@return SchemaType
-function SV.Number()
+function SchemaValidator.Number()
     return {
         name = "number",
         Optional = function( self )
-            return SV.Optional( self )
+            return SchemaValidator.Optional( self )
         end,
         Validate = function( _, value )
             if type( value ) ~= "number" then
@@ -188,11 +188,11 @@ function SV.Number()
 end
 
 ---@return SchemaType
-function SV.String()
+function SchemaValidator.String()
     return {
         name = "string",
         Optional = function( self )
-            return SV.Optional( self )
+            return SchemaValidator.Optional( self )
         end,
         Validate = function( _, value )
             if type( value ) ~= "string" then
@@ -203,3 +203,5 @@ function SV.String()
         end
     }
 end
+
+return "Hello world"

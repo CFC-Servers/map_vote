@@ -19,13 +19,10 @@ function MapVote.GetMapPrefixesFromGamemode()
             table.insert( prefixes, v )
         end
     end
+    return prefixes
 end
 
 hook.Add( "PostGamemodeLoaded", "MapVote_GetMapPrefixesFromGamemode", function()
-    local err = MapVote.MergeConfig( {
-        MapPrefixes = MapVote.GetMapPrefixesFromGamemode() or { ".*" }
-    } )
-    if err then
-        print( "MapVote: Failed to merge map prefixes from gamemode " .. err )
-    end
+    MapVote.GamemodeMapPrefixes = MapVote.GetMapPrefixesFromGamemode()
 end )
+

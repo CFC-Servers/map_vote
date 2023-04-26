@@ -15,7 +15,6 @@ surface.CreateFont( "RAM_VoteFontCountdown", {
 } )
 
 surface.CreateFont( "RAM_VoteSysButton", { font = "Marlett", size = 13, weight = 0, symbol = true } )
-
 MapVote.EndTime = 0
 MapVote.Panel = false
 
@@ -23,7 +22,6 @@ net.Receive( "MapVote_VoteStarted", function()
     MapVote.CurrentMaps = {}
     MapVote.IsInProgress = true
     MapVote.Votes = {}
-
     local amt = net.ReadUInt( 32 )
 
     for _ = 1, amt do
@@ -96,7 +94,6 @@ local function getMapThumbnail( name )
             end
         end
     end
-
     return nil
 end
 
@@ -104,12 +101,11 @@ local PANEL = {}
 
 function PANEL:Init()
     self.startTime = SysTime()
-
     self.Canvas = vgui.Create( "Panel", self )
     self.Canvas:MakePopup()
     self.Canvas:SetKeyboardInputEnabled( false )
 
-    self.countDown = vgui.Create( "DLabel", self.Canvas )
+    self.countDown = vgui.Create( "DLabel", self.Canvas ) --[[@as DLabel]]
     self.countDown:SetTextColor( color_white )
     self.countDown:SetFont( "RAM_VoteFontCountdown" )
     self.countDown:SetText( "" )
@@ -117,13 +113,12 @@ function PANEL:Init()
     self.countDown:SetAlpha( 0 )
     self.countDown:AlphaTo( 255, 0.8, 0 )
 
-
     function self.countDown:PerformLayout()
         self:SizeToContents()
         self:CenterHorizontal()
     end
 
-    self.mapList = vgui.Create( "DPanelList", self.Canvas )
+    self.mapList = vgui.Create( "DPanelList", self.Canvas ) --[[@as DPanelList]]
     self.mapList:SetPaintBackground( false )
     self.mapList:SetSpacing( 4 )
     self.mapList:SetPadding( 4 )
@@ -170,8 +165,8 @@ function PANEL:AddVoter( voter )
         if v.Player and v.Player == voter then return false end
     end
 
-    local icon_container = vgui.Create( "Panel", self.mapList:GetCanvas() )
-    local icon = vgui.Create( "AvatarImage", icon_container )
+    local icon_container = vgui.Create( "Panel", self.mapList:GetCanvas() ) --[[@as Panel | any]]
+    local icon = vgui.Create( "AvatarImage", icon_container ) --[[@as AvatarImage]]
     icon:SetSize( 32, 32 )
     icon:SetZPos( 1000 )
 

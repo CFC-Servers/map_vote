@@ -1,4 +1,3 @@
-
 if engine.ActiveGamemode() == "zombiesurvival" then
     hook.Add( "LoadNextMap", "MAPVOTEZS_LOADMAP", function()
         MapVote.Start()
@@ -6,3 +5,4 @@ if engine.ActiveGamemode() == "zombiesurvival" then
     end )
     return false
 end
+
