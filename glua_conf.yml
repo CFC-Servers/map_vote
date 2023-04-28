@@ -1,0 +1,3 @@
+dependencies:
+  - git: github.com/TeamUlysses/ulib@master
+  - git: github.com/TeamUlysses/ulib@master

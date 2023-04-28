@@ -1,5 +1,5 @@
 MapVote.TaskManager = MapVote.TaskManager or {
-    MaxTimePerTick = 0.01,
+    maxTimePerTick = 0.01,
     tasks = {}
 }
 local TaskManager = MapVote.TaskManager
@@ -12,6 +12,7 @@ function TaskManager.AddTask( task )
     table.insert( TaskManager.tasks, task )
 end
 
+---@param func function
 function TaskManager.AddFunc( func )
     local task = coroutine.create( func )
     TaskManager.AddTask( task )
@@ -20,7 +21,7 @@ end
 function TaskManager.StartLoop()
     hook.Add( "Tick", "MapVote_TaskLoop", function()
         local startTime = SysTime()
-        local maxPerTick = TaskManager.MaxTimePerTick
+        local maxPerTick = TaskManager.maxTimePerTick
         while SysTime() - startTime < maxPerTick do
             if #TaskManager.tasks == 0 then
                 print( "MapVote: Task list empty, removing hook" )

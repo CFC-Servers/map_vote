@@ -7,16 +7,13 @@ net.Receive( "MapVote_MapList", function()
         mapList[i] = net.ReadString()
     end
 
-    MapVote.FullMapList = mapList
+    MapVote.fullMapList = mapList
     hook.Run( "MapVote_MapListRecieved", mapList )
 end )
 
 net.Receive( "MapVote_Config", function()
     local config = net.ReadTable()
-    print( "Config recieved" )
-    print( "TEST" )
-    pcl = config
-    MapVote.Config = config
+    MapVote.config = config
     hook.Run( "MapVote_ConfigRecieved", config )
 end )
 
@@ -26,9 +23,10 @@ function MapVote.Net.SendMapListRequest( cb )
     net.Start( "MapVote_RequestMapList" )
     net.SendToServer()
 
-    hook.Add( "MapVote_MapListRecieved", "Temp_" .. tempID, function( mapList )
-        tempID = tempID + 1
-        hook.Remove( "MapVote_MapListRecieved", "Temp_" .. tempID )
+    tempID = tempID + 1
+    local hookID = tempID
+    hook.Add( "MapVote_MapListRecieved", "Temp_" .. hookID, function( mapList )
+        hook.Remove( "MapVote_MapListRecieved", "Temp_" .. hookID )
         if cb then
             cb( mapList )
         end
@@ -37,16 +35,17 @@ end
 
 function MapVote.Net.SendConfig()
     net.Start( "MapVote_Config" )
-    net.WriteTable( MapVote.Config )
+    net.WriteTable( MapVote.config )
     net.SendToServer()
 end
 
 function MapVote.Net.SendConfigRequest( cb )
     net.Start( "MapVote_RequestConfig" )
     net.SendToServer()
-    hook.Add( "MapVote_ConfigRecieved", "Temp_" .. tempID, function( config )
-        tempID = tempID + 1
-        hook.Remove( "MapVote_ConfigRecieved", "Temp_" .. tempID )
+    tempID = tempID + 1
+    local hookID = tempID
+    hook.Add( "MapVote_ConfigRecieved", "Temp_" .. hookID, function( config )
+        hook.Remove( "MapVote_ConfigRecieved", "Temp_" .. hookID )
         if cb then
             cb( config )
         end

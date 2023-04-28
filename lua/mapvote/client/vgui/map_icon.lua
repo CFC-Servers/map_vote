@@ -1,11 +1,8 @@
 local searchPaths = {
+    "maps/thumb",
     "maps/thumb/",
     "maps/",
     "data/mapvote/thumb_cache/",
-}
-local extensions = {
-    ".png",
-    ".jpg",
 }
 
 local noIcon = "maps/thumb/noicon.png"

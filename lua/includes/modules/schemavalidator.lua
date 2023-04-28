@@ -71,18 +71,19 @@ end
 
 ---@class SchemaTypeObject: SchemaType
 ---@field ValidateField fun(self: SchemaTypeObject, key: any, value: any): (boolean, string)
+---@field fields { [string]: SchemaType }
 
 ---@param tbl { [string]: SchemaType }
 ---@return SchemaTypeObject
 function SchemaValidator.Object( tbl )
     return {
-        _schema = tbl,
+        fields = tbl,
         name = "table",
         Optional = function( self )
             return SchemaValidator.Optional( self )
         end,
         ValidateField = function( self, key, value )
-            local type = self._schema[key]
+            local type = self.fields[key]
             if not type then
                 return false, "key " .. key .. " is not in in object"
             end
@@ -99,7 +100,7 @@ function SchemaValidator.Object( tbl )
                 return false, "value must be a table but was " .. type( value )
             end
 
-            for key, type in pairs( self._schema ) do
+            for key, type in pairs( self.fields ) do
                 local ok, err = type:Validate( value[key] )
                 if not ok then
                     return false, "key " .. key .. " " .. err
@@ -170,8 +171,10 @@ function SchemaValidator.Map( keyType, valueType )
     }
 end
 
+---@param opts? { min: number, max: number }
 ---@return SchemaType
-function SchemaValidator.Number()
+function SchemaValidator.Number( opts )
+    opts = opts or {}
     return {
         name = "number",
         Optional = function( self )
@@ -181,6 +184,14 @@ function SchemaValidator.Number()
             if type( value ) ~= "number" then
                 return false, "value must be a number but was " .. type( value )
             end
+            if opts.min and value < opts.min then
+                return false, "value must be greater than or equal to " .. opts.min
+            end
+
+            if opts.max and value > opts.max then
+                return false, "value must be less than or equal to " .. opts.max
+            end
+
 
             return true, ""
         end

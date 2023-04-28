@@ -13,23 +13,24 @@ hook.Add( "InitPostEntity", "RemoveULXVotemap", function()
 
     ULib.removeSayCommand( "!votemap" )
 end )
-RTV.ChatCommandPrefixes = {"!", "/"}
+RTV.ChatCommandPrefixes = { "!", "/" }
 RTV.ChatCommands = {
-    ["rtv"] = function(...) RTV.HandleRTVCommand(...) end,
-    ["votemap"] = function(...) RTV.HandleRTVCommand(...) end,
-    ["mapvote"] = function(...) RTV.HandleRTVCommand(...) end,
-    ["unrtv"] = function(...) RTV.HandleUnRTVCommand(...) end,
-    ["unvotemap"] = function(...) RTV.HandleUnRTVCommand(...) end,
-    ["unmapvote"] = function(...) RTV.HandleUnRTVCommand(...) end,
+    ["rtv"] = function( ... ) RTV.HandleRTVCommand( ... ) end,
+    ["votemap"] = function( ... ) RTV.HandleRTVCommand( ... ) end,
+    ["mapvote"] = function( ... ) RTV.HandleRTVCommand( ... ) end,
+    ["unrtv"] = function( ... ) RTV.HandleUnRTVCommand( ... ) end,
+    ["unvotemap"] = function( ... ) RTV.HandleUnRTVCommand( ... ) end,
+    ["unmapvote"] = function( ... ) RTV.HandleUnRTVCommand( ... ) end,
 }
 
 function RTV.SetupChatCommands()
-    for _, prefix in ipairs(RTV.ChatCommandPrefixes) do
-        for command, func in pairs(RTV.ChatCommands) do
+    for _, prefix in ipairs( RTV.ChatCommandPrefixes ) do
+        for command, func in pairs( RTV.ChatCommands ) do
             RTV.ChatCommands[prefix .. command] = func
         end
     end
 end
+
 RTV.SetupChatCommands()
 
 function RTV.ShouldCountPlayer( ply )
@@ -61,12 +62,12 @@ end
 
 function RTV.ShouldChange()
     if MapVote.State.IsInProgress then return end
-
+    local conf = MapVote.GetConfig()
     local plyCount = player.GetCount()
-    if plyCount < MapVote.Config.RTVPlayerCount then return end
+    if plyCount < conf.RTVPlayerCount then return end
     local totalVotes = RTV.GetVoteCount()
     local totalPlayers = RTV.GetPlayerCount()
-    return totalVotes >= math.Round( totalPlayers * MapVote.Config.RTVPercentPlayersRequired )
+    return totalVotes >= math.Round( totalPlayers * conf.RTVPercentPlayersRequired )
 end
 
 function RTV.StartIfShouldChange()
@@ -83,10 +84,12 @@ function RTV.Start()
 end
 
 function RTV.AddVote( ply )
+    local conf = MapVote.GetConfig()
     ply.RTVVoted = true
     MsgN( ply:Nick() .. " has voted to change the map." )
-    local percentage = math.Round( RTV.GetPlayerCount() * MapVote.Config.RTVPercentPlayersRequired )
-    PrintMessage( HUD_PRINTTALK, ply:Nick() .. " has voted to change the map. (" .. RTV.GetVoteCount() .. "/" .. percentage .. ")" )
+    local percentage = math.Round( RTV.GetPlayerCount() * conf.RTVPercentPlayersRequired )
+    PrintMessage( HUD_PRINTTALK,
+        ply:Nick() .. " has voted to change the map. (" .. RTV.GetVoteCount() .. "/" .. percentage .. ")" )
 end
 
 hook.Add( "PlayerDisconnected", "Remove RTV", function()
@@ -94,9 +97,11 @@ hook.Add( "PlayerDisconnected", "Remove RTV", function()
 end )
 
 function RTV.CanVote( ply )
+    local conf = MapVote.GetConfig()
+
     local plyCount = #player.GetHumans()
 
-    if MapVote.Config.RTVWait >= CurTime() then
+    if conf.RTVWait >= CurTime() then
         return false, "You must wait a bit before voting!"
     end
 
@@ -105,19 +110,20 @@ function RTV.CanVote( ply )
     end
 
     if ply.RTVVoted then
-        return false, string.format( "You have already voted to change the map! (%s/%s)", RTV.GetVoteCount(), math.Round( RTV.GetPlayerCount() * MapVote.Config.RTVPercentPlayersRequired ) )
+        return false,
+            string.format( "You have already voted to change the map! (%s/%s)", RTV.GetVoteCount(),
+                math.Round( RTV.GetPlayerCount() * conf.RTVPercentPlayersRequired ) )
     end
 
     if MapVote.State.IsInProgress then
         return false,
-               "There is already a vote in progress"
+            "There is already a vote in progress"
     end
-    if plyCount < MapVote.Config.RTVPlayerCount then
+    if plyCount < conf.RTVPlayerCount then
         return false, "You need more players before you can mapvote!"
     end
 
     return true
-
 end
 
 function RTV.StartVote( ply )
@@ -142,7 +148,7 @@ hook.Add( "PlayerSay", "RTV Chat Commands", function( ply, text )
         f( ply )
         return ""
     end
-end)
+end )
 
 function RTV.HandleRTVCommand( ply )
     RTV.StartVote( ply )

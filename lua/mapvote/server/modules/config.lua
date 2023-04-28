@@ -1,32 +1,10 @@
-require "schemavalidator"
-local SV = SchemaValidator
-
-local schema = SV.Object {
-    MapLimit = SV.Int { min = 2 },
-    TimeLimit = SV.Int { min = 1 },
-    AllowCurrentMap = SV.Bool(),
-    RTVPercentPlayersRequired = SV.Number(),
-    RTVWait = SV.Number(),
-    SortMaps = SV.Bool(),
-    DefaultMap = SV.String(),
-    MapPrefixes = SV.List( SV.String() ):Optional(),
-    EnableCooldown = SV.Bool(),
-    MapsBeforeRevote = SV.Int { min = 1 },
-    RTVPlayerCount = SV.Int { min = 1 },
-    ExcludedMaps = SV.Map( SV.String(), SV.Bool() ),
-    IncludedMaps = SV.Map( SV.String(), SV.Bool() ),
-    MinimumPlayersBeforeReset = SV.Int {},
-    TimeToReset = SV.Int { min = 1 }
-}
-MapVote.Schema = schema
-
 function MapVote.GetConfig()
     return MapVote.config
 end
 
 function MapVote.MergeConfig( conf )
     for k, v in pairs( conf ) do
-        local valid, reason = schema:ValidateField( k, v )
+        local valid, reason = MapVote.schema:ValidateField( k, v )
         if not valid then
             MapVote.configIssues = {}
             print( "MapVote MergeConfig config is invalid: " .. reason )
@@ -37,7 +15,7 @@ function MapVote.MergeConfig( conf )
 end
 
 function MapVote.SetConfig( conf )
-    local valid, reason = schema:Validate( conf )
+    local valid, reason = MapVote.schema:Validate( conf )
     if not valid then
         print( "MapVote SetConfig config is invalid: " .. reason )
         return reason
