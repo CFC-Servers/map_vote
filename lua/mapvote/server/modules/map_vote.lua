@@ -104,6 +104,7 @@ function MapVote.Cancel()
 
     MapVote.resetState()
 
+
     net.Start( "MapVote_VoteCancelled" )
     net.Broadcast()
 

@@ -83,12 +83,12 @@ function SchemaValidator.Object( tbl )
             return SchemaValidator.Optional( self )
         end,
         ValidateField = function( self, key, value )
-            local type = self.fields[key]
-            if not type then
+            local fieldType = self.fields[key]
+            if not fieldType then
                 return false, "key " .. key .. " is not in in object"
             end
 
-            local ok, err = type:Validate( value )
+            local ok, err = fieldType:Validate( value )
             if not ok then
                 return false, "key " .. key .. " " .. err
             end
@@ -100,8 +100,8 @@ function SchemaValidator.Object( tbl )
                 return false, "value must be a table but was " .. type( value )
             end
 
-            for key, type in pairs( self.fields ) do
-                local ok, err = type:Validate( value[key] )
+            for key, fieldType in pairs( self.fields ) do
+                local ok, err = fieldType:Validate( value[key] )
                 if not ok then
                     return false, "key " .. key .. " " .. err
                 end
