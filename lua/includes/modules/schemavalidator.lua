@@ -155,14 +155,14 @@ function SchemaValidator.Map( keyType, valueType )
             end
 
             for key, val in pairs( value ) do
-                local ok, err = self._keyType:Validate( key )
-                if not ok then
-                    return false, "key " .. key .. " " .. err
+                local keyOk, keyErr = self._keyType:Validate( key )
+                if not keyOk then
+                    return false, "key " .. key .. " " .. keyErr
                 end
 
-                local ok, err = self._type:Validate( val )
-                if not ok then
-                    return false, "key " .. key .. " " .. err
+                local valueOk, valueErr = self._type:Validate( val )
+                if not valueOk then
+                    return false, "key " .. key .. " " .. valueErr
                 end
             end
 

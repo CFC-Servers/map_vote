@@ -4,7 +4,7 @@ end
 
 function MapVote.MergeConfig( conf )
     for k, v in pairs( conf ) do
-        local valid, reason = MapVote.schema:ValidateField( k, v )
+        local valid, reason = MapVote.configSchema:ValidateField( k, v )
         if not valid then
             MapVote.configIssues = {}
             print( "MapVote MergeConfig config is invalid: " .. reason )
@@ -15,7 +15,7 @@ function MapVote.MergeConfig( conf )
 end
 
 function MapVote.SetConfig( conf )
-    local valid, reason = MapVote.schema:Validate( conf )
+    local valid, reason = MapVote.configSchema:Validate( conf )
     if not valid then
         print( "MapVote SetConfig config is invalid: " .. reason )
         return reason
@@ -42,40 +42,29 @@ function MapVote.SaveConfigToFile( filename )
     file.Write( filename, util.TableToJSON( MapVote.GetConfig(), true ) )
 end
 
-MapVote.DefaultFilename = "mapvote/config.json"
+function MapVote.LoadConfig()
+    MapVote.DefaultFilename = "mapvote/config.json"
 
--- Default Config
-local defaultConfigErr = MapVote.SetConfig {
-    MapLimit = 24,
-    TimeLimit = 28,
-    RTVWait = 60,
-    AllowCurrentMap = false,
-    EnableCooldown = true,
-    MapsBeforeRevote = 3,
-    RTVPlayerCount = 3,
-    IncludedMaps = {},
-    ExcludedMaps = {},
-    MinimumPlayersBeforeReset = -1,
-    TimeToReset = 5 * 60,
-    DefaultMap = "gm_construct",
-    RTVPercentPlayersRequired = 0.66,
-    SortMaps = false,
-}
+    -- Default Config
+    local defaultConfigErr = MapVote.SetConfig( MapVote.configDefault )
 
-if defaultConfigErr then
-    error( "MapVote default config is invalid: " .. defaultConfigErr )
-end
-
-if not file.Exists( "mapvote", "DATA" ) then file.CreateDir( "mapvote" ) end
-
-if file.Exists( MapVote.DefaultFilename, "DATA" ) then
-    local err = MapVote.LoadConfigFromFile( MapVote.DefaultFilename )
-    if err then
-        print( "MapVote config is invalid: " .. err )
+    if defaultConfigErr then
+        error( "MapVote default config is invalid: " .. defaultConfigErr )
     end
-else
-    MapVote.SaveConfigToFile( MapVote.DefaultFilename )
+
+    if not file.Exists( "mapvote", "DATA" ) then file.CreateDir( "mapvote" ) end
+
+    if file.Exists( MapVote.DefaultFilename, "DATA" ) then
+        local err = MapVote.LoadConfigFromFile( MapVote.DefaultFilename )
+        if err then
+            print( "MapVote config is invalid: " .. err )
+        end
+    else
+        MapVote.SaveConfigToFile( MapVote.DefaultFilename )
+    end
+
+    print( "MapVote config loaded" )
+    hook.Run( "MapVote_ConfigLoaded" )
 end
 
-print( "MapVote config loaded" )
-hook.Run( "MapVote_ConfigLoaded" )
+MapVote.LoadConfig()

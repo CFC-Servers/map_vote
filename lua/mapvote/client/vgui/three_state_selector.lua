@@ -32,7 +32,7 @@ function PANEL:SetState( state )
     self.state = state
 end
 
-function PANEL:OnStateChange( state )
+function PANEL:OnStateChange( _ )
     -- override me
 end
 

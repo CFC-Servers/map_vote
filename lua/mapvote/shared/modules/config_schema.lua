@@ -18,4 +18,23 @@ local schema = SV.Object {
     MinimumPlayersBeforeReset = SV.Int {},
     TimeToReset = SV.Int { min = 1 }
 }
-MapVote.schema = schema
+
+local default = {
+    MapLimit = 24,
+    TimeLimit = 28,
+    RTVWait = 60,
+    AllowCurrentMap = false,
+    EnableCooldown = true,
+    MapsBeforeRevote = 3,
+    RTVPlayerCount = 3,
+    IncludedMaps = {},
+    ExcludedMaps = {},
+    MinimumPlayersBeforeReset = -1,
+    TimeToReset = 5 * 60,
+    DefaultMap = "gm_construct",
+    RTVPercentPlayersRequired = 0.66,
+    SortMaps = false,
+}
+
+MapVote.configSchema = schema
+MapVote.configDefault = default

@@ -1,4 +1,5 @@
 MapVote.Net = MapVote.Net or {}
+
 -- receivers
 net.Receive( "MapVote_MapList", function()
     local mapList = {}
@@ -17,8 +18,8 @@ net.Receive( "MapVote_Config", function()
     hook.Run( "MapVote_ConfigRecieved", config )
 end )
 
-local tempID = 0
 -- senders
+local tempID = 0
 function MapVote.Net.SendMapListRequest( cb )
     net.Start( "MapVote_RequestMapList" )
     net.SendToServer()

@@ -21,8 +21,6 @@ function PANEL:AddConfigItem( displayName, itemType, action, startingValue )
     local entryPanel
     if itemType.name == "int" then
         entryPanel = vgui.Create( "DNumberWang", optionPanel ) --[[@as DNumberWang]]
-        entryPanel:DockMargin( 0, 5, 0, 5 )
-        entryPanel:Dock( LEFT )
         entryPanel:SetSize( 100, 25 )
         entryPanel:SetMax( 1e10 )
         entryPanel:SetValue( startingValue )
@@ -38,8 +36,6 @@ function PANEL:AddConfigItem( displayName, itemType, action, startingValue )
         -- TODO Do min and max
     elseif itemType.name == "bool" then
         entryPanel = vgui.Create( "DCheckBox", optionPanel ) --[[@as DCheckBox]]
-        entryPanel:DockMargin( 0, 5, 0, 5 )
-        entryPanel:Dock( LEFT )
         entryPanel:SetSize( 25, 25 )
         entryPanel:SetValue( startingValue or false )
         ---@diagnostic disable-next-line: duplicate-set-field
@@ -53,8 +49,6 @@ function PANEL:AddConfigItem( displayName, itemType, action, startingValue )
         end
     elseif itemType.name == "number" then
         entryPanel = vgui.Create( "DNumberWang", optionPanel ) --[[@as DNumberWang]]
-        entryPanel:DockMargin( 0, 5, 0, 5 )
-        entryPanel:Dock( LEFT )
         entryPanel:SetValue( startingValue or 0 )
         ---@diagnostic disable-next-line: duplicate-set-field
         entryPanel.OnValueChanged = function( _, val )
@@ -68,8 +62,6 @@ function PANEL:AddConfigItem( displayName, itemType, action, startingValue )
         entryPanel:SetSize( 100, 25 )
     elseif itemType.name == "string" then
         entryPanel = vgui.Create( "DTextEntry", optionPanel ) --[[@as DTextEntry]]
-        entryPanel:DockMargin( 0, 5, 0, 5 )
-        entryPanel:Dock( LEFT )
         entryPanel:SetSize( 100, 25 )
         entryPanel:SetValue( startingValue or "" )
         ---@diagnostic disable-next-line: duplicate-set-field
@@ -82,6 +74,9 @@ function PANEL:AddConfigItem( displayName, itemType, action, startingValue )
             end
         end
     end
+    entryPanel:Dock( LEFT )
+    entryPanel:DockMargin( 0, 5, 0, 5 )
+
     errLabel = vgui.Create( "DLabel", optionPanel ) --[[@as DLabel]]
     errLabel:SetText( "" )
     errLabel:Dock( LEFT )

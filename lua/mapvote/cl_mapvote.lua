@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-field, need-check-nil, param-type-mismatch
 surface.CreateFont( "RAM_VoteFont", {
     font = "Trebuchet MS",
     size = 19,
@@ -19,9 +20,9 @@ MapVote.EndTime = 0
 MapVote.Panel = false
 
 net.Receive( "MapVote_VoteStarted", function()
-    MapVote.CurrentMaps = {}
-    MapVote.IsInProgress = true
-    MapVote.Votes = {}
+    MapVote.currentMaps = {}
+    MapVote.isInProgress = true
+    MapVote.votes = {}
     local amt = net.ReadUInt( 32 )
 
     for _ = 1, amt do
@@ -32,7 +33,7 @@ net.Receive( "MapVote_VoteStarted", function()
         object["map"] = map
         object["playcount"] = playCount
 
-        MapVote.CurrentMaps[#MapVote.CurrentMaps + 1] = object
+        MapVote.currentMaps[#MapVote.currentMaps + 1] = object
     end
 
     MapVote.EndTime = CurTime() + net.ReadUInt( 32 )
@@ -40,7 +41,7 @@ net.Receive( "MapVote_VoteStarted", function()
     if IsValid( MapVote.Panel ) then MapVote.Panel:Remove() end
 
     MapVote.Panel = vgui.Create( "RAM_VoteScreen" )
-    MapVote.Panel:SetMaps( MapVote.CurrentMaps )
+    MapVote.Panel:SetMaps( MapVote.currentMaps )
 
     hook.Add( "CFC_DisconnectInterface_ShouldShowInterface", "MapVote_DisableDisconnectInterface", function()
         return false
@@ -51,7 +52,7 @@ net.Receive( "MapVote_PlayerChangedVote", function()
     local ply = net.ReadEntity() --[[@as Player]]
     if not IsValid( ply ) then return end
     local map_id = net.ReadUInt( 32 )
-    MapVote.Votes[ply:SteamID()] = map_id
+    MapVote.votes[ply:SteamID()] = map_id
 
     if IsValid( MapVote.Panel ) then
         MapVote.Panel:AddVoter( ply )
@@ -197,10 +198,10 @@ function PANEL:Think()
         if not IsValid( v.Player ) then
             v:Remove()
         else
-            if not MapVote.Votes[v.Player:SteamID()] then
+            if not MapVote.votes[v.Player:SteamID()] then
                 v:Remove()
             else
-                local bar = self:GetMapButton( MapVote.Votes[v.Player:SteamID()] )
+                local bar = self:GetMapButton( MapVote.votes[v.Player:SteamID()] )
 
                 local row = math.floor( bar.NumVotes / 5 )
                 local column = bar.NumVotes % 5

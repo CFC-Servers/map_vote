@@ -1,23 +1,4 @@
-require "schemavalidator"
-local SV = SchemaValidator
-
-local schema = SV.Object {
-    MapLimit = SV.Int { min = 2 },
-    TimeLimit = SV.Int { min = 1 },
-    AllowCurrentMap = SV.Bool(),
-    RTVPercentPlayersRequired = SV.Number(),
-    RTVWait = SV.Number(),
-    SortMaps = SV.Bool(),
-    DefaultMap = SV.String(),
-    MapPrefixes = SV.List( SV.String() ):Optional(),
-    EnableCooldown = SV.Bool(),
-    MapsBeforeRevote = SV.Int { min = 1 },
-    RTVPlayerCount = SV.Int { min = 1 },
-    ExcludedMaps = SV.Map( SV.String(), SV.Bool() ),
-    IncludedMaps = SV.Map( SV.String(), SV.Bool() ),
-    MinimumPlayersBeforeReset = SV.Int {},
-    TimeToReset = SV.Int { min = 1 }
-}
+local schema = MapVote.configSchema
 
 local function updateconfigKey( key )
     return function( value )
@@ -28,28 +9,19 @@ local function updateconfigKey( key )
 end
 
 local configMenuOptions = {
-    { "Map Limit",         schema.fields.MapLimit,        "MapLimit" },
-    { "Time Limit",        schema.fields.TimeLimit,       "TimeLimit" },
-    { "Allow Current Map", schema.fields.AllowCurrentMap, "AllowCurrentMap" },
-    {
-        "RTV Percent Players Required 0-1",
-        schema.fields.RTVPercentPlayersRequired,
-        "RTVPercentPlayersRequired"
-    },
-    { "RTV Wait",           schema.fields.RTVWait,          "RTVWait" },
-    { "Sort Maps",          schema.fields.SortMaps,         "SortMaps" },
-    { "Default Map",        schema.fields.DefaultMap,       "DefaultMap" },
-    -- { "Map Prefixes",       schema.fields.MapPrefixes,      "MapPrefixes"}, -- TODO
-    { "Enable Cooldown",    schema.fields.EnableCooldown,   "EnableCooldown" },
-    { "Maps Before Revote", schema.fields.MapsBeforeRevote, "MapsBeforeRevote" },
-    { "RTV Player Count",   schema.fields.RTVPlayerCount,   "RTVPlayerCount" },
-    {
-        "Minimum Players Before Reset",
-        schema.fields.MinimumPlayersBeforeReset,
-        "MinimumPlayersBeforeReset"
-    },
-    { "Time To Reset", schema.fields.TimeToReset, "TimeToReset" }
-
+    { "Map Limit",                        schema.fields.MapLimit,                  "MapLimit" },
+    { "Time Limit",                       schema.fields.TimeLimit,                 "TimeLimit" },
+    { "Allow Current Map",                schema.fields.AllowCurrentMap,           "AllowCurrentMap" },
+    { "RTV Percent Players Required 0-1", schema.fields.RTVPercentPlayersRequired, "RTVPercentPlayersRequired" },
+    { "RTV Wait",                         schema.fields.RTVWait,                   "RTVWait" },
+    { "Sort Maps",                        schema.fields.SortMaps,                  "SortMaps" },
+    { "Default Map",                      schema.fields.DefaultMap,                "DefaultMap" },
+    { "Enable Cooldown",                  schema.fields.EnableCooldown,            "EnableCooldown" },
+    { "Maps Before Revote",               schema.fields.MapsBeforeRevote,          "MapsBeforeRevote" },
+    { "RTV Player Count",                 schema.fields.RTVPlayerCount,            "RTVPlayerCount" },
+    { "Minimum Players Before Reset",     schema.fields.MinimumPlayersBeforeReset, "MinimumPlayersBeforeReset" },
+    { "Time To Reset",                    schema.fields.TimeToReset,               "TimeToReset" },
+    -- { "Map Prefixes",                     schema.fields.MapPrefixes,               "MapPrefixes" }, -- TODO
 }
 
 MapVote._mapconfigFrame = nil
@@ -88,6 +60,7 @@ function MapVote.openconfig()
         local buttonOpenMaps = vgui.Create( "DButton", configMenu ) --[[@as DButton]]
         buttonOpenMaps:SetText( "Open Map config" )
         buttonOpenMaps:Dock( TOP )
+
         ---@diagnostic disable-next-line: duplicate-set-field
         buttonOpenMaps.DoClick = function( _ )
             MapVote.openMapconfig()
@@ -122,62 +95,67 @@ function MapVote.openMapconfig()
     end )
 end
 
+function MapVote.addMapRow( scrollPanel, map )
+    local row = vgui.Create( "Panel", scrollPanel ) --[[@as Panel]]
+    row:SetSize( 800, 128 )
+
+    local mapIcon = vgui.Create( "MapVote_MapIcon", row ) --[[@as MapIcon]]
+    mapIcon:SetSize( 128, 128 )
+    mapIcon:SetMap( map )
+    mapIcon:Dock( LEFT )
+
+    local selectButtons = vgui.Create( "MapVote_3StateSelect", row ) --[[@as ThreeStateSelect]]
+    selectButtons:SetSize( 128, 128 )
+    selectButtons:Dock( LEFT )
+
+    ---@diagnostic disable-next-line: duplicate-set-field
+    selectButtons.OnStateChange = function( _, state )
+        if state == 1 then
+            MapVote.config.IncludedMaps[map] = true
+            MapVote.config.ExcludedMaps[map] = nil
+        elseif state == -1 then
+            MapVote.config.IncludedMaps[map] = nil
+            MapVote.config.ExcludedMaps[map] = true
+        else
+            MapVote.config.IncludedMaps[map] = nil
+            MapVote.config.ExcludedMaps[map] = nil
+        end
+    end
+
+    if MapVote.config.IncludedMaps[map] then
+        selectButtons:SetState( 1 )
+    elseif MapVote.config.ExcludedMaps[map] then
+        selectButtons:SetState( -1 )
+    else
+        selectButtons:SetState( 0 )
+    end
+
+    local infoPanel = vgui.Create( "Panel", row ) --[[@as Panel]]
+    infoPanel:SetSize( 200, row:GetTall() )
+
+    local label = vgui.Create( "DLabel", infoPanel ) --[[@as DLabel]]
+    label:SetText( map )
+    label:DockMargin( 5, 0, 0, 0 )
+    label:SetSize( label:GetTextSize() )
+    label:Dock( TOP )
+    infoPanel:Dock( LEFT )
+
+    local DButton = scrollPanel:Add( row )
+    DButton:Dock( TOP )
+    DButton:DockMargin( 0, 0, 0, 5 )
+end
+
 function MapVote.populateScrollPanel()
     if not IsValid( MapVote._mapconfigFramescrollPanel ) then
         return
     end
     local scrollPanel = MapVote._mapconfigFramescrollPanel
     scrollPanel:Clear()
+
+    if not MapVote.config then return end
+
     for _, map in pairs( MapVote.fullMapList or {} ) do
-        local row = vgui.Create( "Panel", scrollPanel ) --[[@as Panel]]
-        row:SetSize( 800, 128 )
-
-        local mapIcon = vgui.Create( "MapVote_MapIcon", row ) --[[@as MapIcon]]
-        mapIcon:SetSize( 128, 128 )
-        mapIcon:SetMap( map )
-        mapIcon:Dock( LEFT )
-
-        local selectButtons = vgui.Create( "MapVote_3StateSelect", row ) --[[@as ThreeStateSelect]]
-        selectButtons:SetSize( 128, 128 )
-        selectButtons:Dock( LEFT )
-
-        if MapVote.config then
-            ---@diagnostic disable-next-line: duplicate-set-field
-            selectButtons.OnStateChange = function( _, state )
-                if state == 1 then
-                    MapVote.config.IncludedMaps[map] = true
-                    MapVote.config.ExcludedMaps[map] = nil
-                elseif state == -1 then
-                    MapVote.config.IncludedMaps[map] = nil
-                    MapVote.config.ExcludedMaps[map] = true
-                else
-                    MapVote.config.IncludedMaps[map] = nil
-                    MapVote.config.ExcludedMaps[map] = nil
-                end
-            end
-
-            if MapVote.config.IncludedMaps[map] then
-                selectButtons:SetState( 1 )
-            elseif MapVote.config.ExcludedMaps[map] then
-                selectButtons:SetState( -1 )
-            else
-                selectButtons:SetState( 0 )
-            end
-        end
-
-        local infoPanel = vgui.Create( "Panel", row ) --[[@as Panel]]
-        infoPanel:SetSize( 200, row:GetTall() )
-
-        local label = vgui.Create( "DLabel", infoPanel ) --[[@as DLabel]]
-        label:SetText( map )
-        label:DockMargin( 5, 0, 0, 0 )
-        label:SetSize( label:GetTextSize() )
-        label:Dock( TOP )
-        infoPanel:Dock( LEFT )
-
-        local DButton = scrollPanel:Add( row )
-        DButton:Dock( TOP )
-        DButton:DockMargin( 0, 0, 0, 5 )
+        MapVote.addMapRow( scrollPanel, map )
     end
 
     MapVote.ThumbDownloader:RequestWorkshopIDs()

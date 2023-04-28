@@ -1,7 +1,6 @@
 MapVote.RTV = MapVote.RTV or {}
 local RTV = MapVote.RTV
 
-
 -- Removes the ulx votemap command.
 hook.Add( "InitPostEntity", "RemoveULXVotemap", function()
     if not ULib or not ulx then return end
@@ -61,7 +60,7 @@ function RTV.GetVoteCount()
 end
 
 function RTV.ShouldChange()
-    if MapVote.State.IsInProgress then return end
+    if MapVote.state.isInProgress then return end
     local conf = MapVote.GetConfig()
     local plyCount = player.GetCount()
     if plyCount < conf.RTVPlayerCount then return end
@@ -115,7 +114,7 @@ function RTV.CanVote( ply )
                 math.Round( RTV.GetPlayerCount() * conf.RTVPercentPlayersRequired ) )
     end
 
-    if MapVote.State.IsInProgress then
+    if MapVote.state.isInProgress then
         return false,
             "There is already a vote in progress"
     end

@@ -1,10 +1,6 @@
 MapVote = {}
 MapVote.config = {}
 
-MapVote.CurrentMaps = {}
-MapVote.Votes = {}
-MapVote.IsInProgress = false
-
 local function runOnDir( dir, action )
     local files = file.Find( dir .. "/*.lua", "LUA" )
     for _, filename in pairs( files ) do

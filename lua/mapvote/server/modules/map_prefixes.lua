@@ -1,4 +1,4 @@
-function MapVote.GetMapPrefixesFromGamemode()
+function MapVote.getMapPrefixesFromGamemode()
     local gamemode = engine.ActiveGamemode()
     local info = file.Read( string.format( "gamemodes/%s/%s.txt", gamemode, gamemode ), "GAME" )
 
@@ -23,6 +23,5 @@ function MapVote.GetMapPrefixesFromGamemode()
 end
 
 hook.Add( "PostGamemodeLoaded", "MapVote_GetMapPrefixesFromGamemode", function()
-    MapVote.GamemodeMapPrefixes = MapVote.GetMapPrefixesFromGamemode()
+    MapVote.gamemodeMapPrefixes = MapVote.getMapPrefixesFromGamemode()
 end )
-
