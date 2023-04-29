@@ -27,7 +27,7 @@ function PANEL:AddConfigItem( displayName, itemType, action, startingValue )
     if itemType.name == "int" then
         itemType = itemType --[[@as SchemaTypeNumber]]
 
-        entryPanel = vgui.Create( "DNumberWang", optionPanel ) --[[@as DNumberWang]]
+        entryPanel = vgui.Create( "MapVote_NumberWang", optionPanel ) --[[@as DNumberWang]]
         entryPanel:SetSize( 100, 25 )
         entryPanel:SetMax( itemType.max or 1e10 )
         entryPanel:SetMin( itemType.min or -1e10 )
@@ -57,7 +57,7 @@ function PANEL:AddConfigItem( displayName, itemType, action, startingValue )
     elseif itemType.name == "number" then
         itemType = itemType --[[@as SchemaTypeNumber]]
 
-        entryPanel = vgui.Create( "DNumberWang", optionPanel ) --[[@as DNumberWang]]
+        entryPanel = vgui.Create( "MapVote_NumberWang", optionPanel ) --[[@as DNumberWang]]
         entryPanel:SetValue( startingValue or 0 )
         entryPanel:SetMax( itemType.max or 1e10 )
         entryPanel:SetMin( itemType.min or -1e10 )
@@ -72,7 +72,7 @@ function PANEL:AddConfigItem( displayName, itemType, action, startingValue )
         end
         entryPanel:SetSize( 100, 25 )
     elseif itemType.name == "string" then
-        entryPanel = vgui.Create( "DTextEntry", optionPanel ) --[[@as DTextEntry]]
+        entryPanel = vgui.Create( "MapVote_TextEntry", optionPanel ) --[[@as DTextEntry]]
         entryPanel:SetSize( 100, 25 )
         entryPanel:SetValue( startingValue or "" )
         ---@diagnostic disable-next-line: duplicate-set-field

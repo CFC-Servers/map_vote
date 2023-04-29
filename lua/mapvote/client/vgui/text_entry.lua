@@ -1,0 +1,18 @@
+local PANEL = {}
+
+function PANEL:Init()
+    self.textEntry = vgui.Create( "DTextEntry", self ) --[[@as DTextEntry]]
+    self.textEntry:Dock( FILL )
+    self.textEntry.m_bBackground = false
+    self.textEntry:SetTextColor( Color( 255, 255, 255 ) )
+end
+
+function PANEL:Paint( w, h )
+    draw.RoundedBox( 2, 0, 0, w, h, MapVote.style.secondaryBG )
+end
+
+function PANEL:SetValue( val )
+    self.textEntry:SetValue( val )
+end
+
+vgui.Register( "MapVote_TextEntry", PANEL, "DPanel" )

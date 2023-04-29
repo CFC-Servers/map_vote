@@ -32,13 +32,11 @@ function MapVote.openconfig()
     if IsValid( MapVote._configFrame ) then
         return
     end
-    local frame = vgui.Create( "DFrame" ) --[[@as DFrame]]
+    local frame = vgui.Create( "MapVote_Frame" ) --[[@as DFrame]]
     frame:SetSize( 800, 600 )
     frame:Center()
     frame:MakePopup()
-    frame.Paint = function( _, w, h )
-        draw.RoundedBox( 0, 0, 0, w, h, MapVote.style.primaryBG )
-    end
+
     MapVote._configFrame = frame
     local configMenu = vgui.Create( "MapVote_ConfigPanel", frame ) --[[@as ConfigPanel]]
     configMenu:SetSize( 800, 600 )
@@ -77,13 +75,10 @@ function MapVote.openMapconfig()
         return
     end
 
-    local frame = vgui.Create( "DFrame" ) --[[@as DFrame]]
+    local frame = vgui.Create( "MapVote_Frame" ) --[[@as DFrame]]
     frame:SetSize( 800, 600 )
     frame:Center()
     frame:MakePopup()
-    frame.Paint = function( _, w, h )
-        draw.RoundedBox( 0, 0, 0, w, h, MapVote.style.primaryBG )
-    end
 
     ---@diagnostic disable-next-line: duplicate-set-field
     frame.OnClose = function( _ )
