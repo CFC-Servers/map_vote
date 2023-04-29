@@ -91,8 +91,9 @@ function PANEL:AddConfigItem( displayName, itemType, action, startingValue )
         entryPanel = vgui.Create( "MapVote_TextEntry", optionPanel ) --[[@as DTextEntry]]
         entryPanel:SetSize( 100, 25 )
         entryPanel:SetValue( startingValue or "" )
+
         ---@diagnostic disable-next-line: duplicate-set-field
-        entryPanel.OnValueChange = function( _, val )
+        entryPanel.OnValueChanged = function( _, val )
             local ok, err = itemType:Validate( val )
             errLabel:SetText( err or "" )
             errLabel:Dock( LEFT )

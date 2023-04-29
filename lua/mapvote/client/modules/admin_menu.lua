@@ -62,6 +62,7 @@ function MapVote.openconfig()
         buttonOpenMaps:SetText( "Open Map config" )
         buttonOpenMaps:Dock( LEFT )
         buttonOpenMaps:SetWide( 200 )
+
         ---@diagnostic disable-next-line: duplicate-set-field
         buttonOpenMaps.DoClick = function( _ )
             MapVote.openMapconfig()

@@ -33,7 +33,6 @@ end )
 
 net.Receive( "MapVote_Config", function( _, ply )
     if not ply:IsSuperAdmin() then return end
-
     local err = MapVote.SetConfig( net.ReadTable() )
     if err ~= nil then
         print( "MapVote: Config is invalid: " .. err )
