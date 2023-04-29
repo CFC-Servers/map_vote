@@ -3,15 +3,17 @@
 ---@field Validate fun(self: SchemaType, value: any): (boolean, string)
 ---@field Optional fun(self: SchemaType): SchemaType
 
+---@class SchemaTypeWithSubType : SchemaType
+---@field type SchemaType
 
 SchemaValidator = {}
 
 ---@param valueType SchemaType
----@return SchemaType
+---@return SchemaTypeWithSubType
 function SchemaValidator.Optional( valueType )
     return {
-        _type = valueType,
-        name = "Optional",
+        type = valueType,
+        name = "optional",
         Validate = function( self, value )
             if value == nil then
                 return true, ""

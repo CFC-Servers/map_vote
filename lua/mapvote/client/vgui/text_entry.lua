@@ -11,6 +11,10 @@ function PANEL:Paint( w, h )
     draw.RoundedBox( 2, 0, 0, w, h, MapVote.style.secondaryBG )
 end
 
+function PANEL:SetEnabled( enabled )
+    self.textEntry:SetEnabled( enabled )
+end
+
 function PANEL:SetValue( val )
     self.textEntry:SetValue( val )
 end

@@ -32,6 +32,11 @@ end
 ---@param itemType SchemaType
 function PANEL:AddConfigItem( displayName, itemType, action, startingValue )
     local optionPanel = self:configRow( displayName )
+    if itemType.name == "optional" then
+        -- TODO handle this
+        ---@cast itemType SchemaTypeWithSubType
+        itemType = itemType.type
+    end
 
     local errLabel
     local entryPanel
@@ -95,6 +100,14 @@ function PANEL:AddConfigItem( displayName, itemType, action, startingValue )
                 action( val )
             end
         end
+    elseif itemType.name == "list" then
+        if startingValue then
+            startingValue = table.concat( startingValue, ", " )
+        end
+        entryPanel = vgui.Create( "MapVote_TextEntry", optionPanel ) --[[@as DTextEntry]]
+        entryPanel:SetSize( 100, 25 )
+        entryPanel:SetValue( startingValue or "" )
+        entryPanel:SetEnabled( false )
     else
         error( "Unknown type " .. itemType.name )
     end

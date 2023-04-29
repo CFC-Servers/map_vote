@@ -21,7 +21,7 @@ local configMenuOptions = {
     { "RTV Player Count",                 schema.fields.RTVPlayerCount,            "RTVPlayerCount" },
     { "Minimum Players Before Reset",     schema.fields.MinimumPlayersBeforeReset, "MinimumPlayersBeforeReset" },
     { "Time To Reset",                    schema.fields.TimeToReset,               "TimeToReset" },
-    -- { "Map Prefixes",                     schema.fields.MapPrefixes,               "MapPrefixes" },
+    { "Map Prefixes",                     schema.fields.MapPrefixes,               "MapPrefixes" },
 }
 
 MapVote._mapconfigFrame = nil
