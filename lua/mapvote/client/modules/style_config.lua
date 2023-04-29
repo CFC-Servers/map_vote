@@ -1,6 +1,8 @@
 MapVote.style = {
     primaryBG = Color( 52, 70, 92, 255 ), -- used for backgrounds for main panels and frames
     secondaryBG = Color( 70, 93, 122 ),
+    errorLabelColor = Color( 255, 0, 0 ),
+    textEntryTextColor = Color( 255, 255, 255 ),
     configLabelFont = "MapVote_ConfigNameLabel"
 }
 

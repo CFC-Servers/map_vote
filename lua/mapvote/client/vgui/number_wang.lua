@@ -2,7 +2,7 @@ local PANEL = {}
 
 function PANEL:Init()
     self.numberWang = vgui.Create( "DNumberWang", self ) --[[@as DNumberWang]]
-    self.numberWang:SetTextColor( Color( 255, 255, 255 ) )
+    self.numberWang:SetTextColor( MapVote.style.textEntryTextColor )
     self.numberWang.m_bBackground = false
 
     ---@diagnostic disable-next-line: duplicate-set-field

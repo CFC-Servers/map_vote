@@ -4,7 +4,7 @@ function PANEL:Init()
     self.textEntry = vgui.Create( "DTextEntry", self ) --[[@as DTextEntry]]
     self.textEntry:Dock( FILL )
     self.textEntry.m_bBackground = false
-    self.textEntry:SetTextColor( Color( 255, 255, 255 ) )
+    self.textEntry:SetTextColor( MapVote.style.textEntryTextColor )
     ---@diagnostic disable-next-line: duplicate-set-field
     self.textEntry.OnChange = function()
         self:OnValueChanged( self.textEntry:GetValue() )
