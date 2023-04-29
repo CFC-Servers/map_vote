@@ -1,3 +1,5 @@
+MapVote.defaultConfigFilename = "mapvote/config.json"
+
 function MapVote.GetConfig()
     return MapVote.config
 end
@@ -42,29 +44,38 @@ function MapVote.SaveConfigToFile( filename )
     file.Write( filename, util.TableToJSON( MapVote.GetConfig(), true ) )
 end
 
-function MapVote.LoadConfig()
-    MapVote.DefaultFilename = "mapvote/config.json"
+---@return boolean @Did an old config get migrated to default config path
+function MapVote.MigrateOldConfigs()
+    if file.Exists( "mapvote/config.txt", "DATA" ) and not file.Exists( MapVote.defaultConfigFilename, "DATA" ) then -- original config
+        file.Rename( "mapvote/config.txt", MapVote.defaultConfigFilename )
+        return true
+    end
+    return false
+end
 
+function MapVote.LoadConfig()
     -- Default Config
     local defaultConfigErr = MapVote.SetConfig( MapVote.configDefault )
-
     if defaultConfigErr then
         error( "MapVote default config is invalid: " .. defaultConfigErr )
     end
 
-    if not file.Exists( "mapvote", "DATA" ) then file.CreateDir( "mapvote" ) end
-
-    if file.Exists( MapVote.DefaultFilename, "DATA" ) then
-        local err = MapVote.LoadConfigFromFile( MapVote.DefaultFilename )
+    if file.Exists( MapVote.defaultConfigFilename, "DATA" ) then
+        local err = MapVote.LoadConfigFromFile( MapVote.defaultConfigFilename )
         if err then
             print( "MapVote config is invalid: " .. err )
         end
     else
-        MapVote.SaveConfigToFile( MapVote.DefaultFilename )
+        if MapVote.MigrateOldConfigs() then
+            return MapVote.LoadConfig()
+        end
+        MapVote.SaveConfigToFile( MapVote.defaultConfigFilename )
     end
 
     print( "MapVote config loaded" )
     hook.Run( "MapVote_ConfigLoaded" )
 end
+
+if not file.Exists( "mapvote", "DATA" ) then file.CreateDir( "mapvote" ) end
 
 MapVote.LoadConfig()

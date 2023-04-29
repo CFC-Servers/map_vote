@@ -40,7 +40,7 @@ net.Receive( "MapVote_Config", function( _, ply )
         -- TODO return this to client
     end
 
-    MapVote.SaveConfigToFile( MapVote.DefaultFilename )
+    MapVote.SaveConfigToFile( MapVote.defaultConfigFilename )
 end )
 -- to client
 util.AddNetworkString( "MapVote_Config" )

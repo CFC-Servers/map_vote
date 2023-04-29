@@ -58,15 +58,15 @@ function MapVote.openconfig()
             end
         end
 
-        local buttonOpenMaps = vgui.Create( "DButton", configMenu ) --[[@as DButton]]
+        local buttonOpenMaps = vgui.Create( "DButton" ) --[[@as DButton]]
         buttonOpenMaps:SetText( "Open Map config" )
-        buttonOpenMaps:Dock( TOP )
-
+        buttonOpenMaps:Dock( LEFT )
+        buttonOpenMaps:SetWide( 200 )
         ---@diagnostic disable-next-line: duplicate-set-field
         buttonOpenMaps.DoClick = function( _ )
             MapVote.openMapconfig()
         end
-        configMenu:Add( buttonOpenMaps )
+        configMenu:AddConfigPanel( "Edit map selection", buttonOpenMaps )
     end )
 end
 

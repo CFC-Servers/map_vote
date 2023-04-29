@@ -8,9 +8,13 @@ function PANEL:Paint( w, h )
     draw.RoundedBox( 10, 0, 0, w, h, MapVote.style.primaryBG )
 end
 
----@param displayName string
----@param itemType SchemaType
-function PANEL:AddConfigItem( displayName, itemType, action, startingValue )
+function PANEL:AddConfigPanel( displayName, panel )
+    local row = self:configRow( displayName )
+    panel:SetParent( row )
+    self:AddItem( row )
+end
+
+function PANEL:configRow( displayName )
     local w = self:GetWide()
     local optionPanel = vgui.Create( "Panel", self ) --[[@as Panel]]
     optionPanel:SetSize( w, 35 )
@@ -21,6 +25,13 @@ function PANEL:AddConfigItem( displayName, itemType, action, startingValue )
     label:Dock( LEFT )
     label:SetSize( 200, 35 )
     label:SetFont( MapVote.style.configLabelFont )
+    return optionPanel
+end
+
+---@param displayName string
+---@param itemType SchemaType
+function PANEL:AddConfigItem( displayName, itemType, action, startingValue )
+    local optionPanel = self:configRow( displayName )
 
     local errLabel
     local entryPanel
