@@ -19,7 +19,7 @@ function SchemaValidator.Optional( valueType )
                 return true, ""
             end
 
-            return self._type:Validate( value )
+            return self.type:Validate( value )
         end
     }
 end
@@ -124,7 +124,7 @@ end
 ---@return SchemaType
 function SchemaValidator.List( t )
     return {
-        _type = t,
+        type = t,
         name = "list",
         Optional = function( self )
             return SchemaValidator.Optional( self )
@@ -135,7 +135,7 @@ function SchemaValidator.List( t )
             end
 
             for i, val in ipairs( value ) do
-                local ok, err = self._type:Validate( val )
+                local ok, err = self.type:Validate( val )
                 if not ok then
                     return false, "index " .. i .. " " .. err
                 end
@@ -151,8 +151,8 @@ end
 ---@return SchemaType
 function SchemaValidator.Map( keyType, valueType )
     return {
-        _keyType = keyType,
-        _type = valueType,
+        keyType = keyType,
+        type = valueType,
         name = "map",
         Optional = function( self )
             return SchemaValidator.Optional( self )
@@ -163,12 +163,12 @@ function SchemaValidator.Map( keyType, valueType )
             end
 
             for key, val in pairs( value ) do
-                local keyOk, keyErr = self._keyType:Validate( key )
+                local keyOk, keyErr = self.keyType:Validate( key )
                 if not keyOk then
                     return false, "key " .. key .. " " .. keyErr
                 end
 
-                local valueOk, valueErr = self._type:Validate( val )
+                local valueOk, valueErr = self.type:Validate( val )
                 if not valueOk then
                     return false, "key " .. key .. " " .. valueErr
                 end
