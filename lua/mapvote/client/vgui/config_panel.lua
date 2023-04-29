@@ -4,6 +4,10 @@ local PANEL = {}
 function PANEL:Init()
 end
 
+function PANEL:Paint( w, h )
+    draw.RoundedBox( 10, 0, 0, w, h, MapVote.style.primaryBG )
+end
+
 ---@param displayName string
 ---@param itemType SchemaType
 function PANEL:AddConfigItem( displayName, itemType, action, startingValue )
@@ -15,14 +19,18 @@ function PANEL:AddConfigItem( displayName, itemType, action, startingValue )
     local label = vgui.Create( "DLabel", optionPanel ) --[[@as DLabel]]
     label:SetText( displayName .. ": " )
     label:Dock( LEFT )
-    label:SetSize( label:GetTextSize() )
+    label:SetSize( 200, 35 )
+    label:SetFont( MapVote.style.configLabelFont )
 
     local errLabel
     local entryPanel
     if itemType.name == "int" then
+        itemType = itemType --[[@as SchemaTypeNumber]]
+
         entryPanel = vgui.Create( "DNumberWang", optionPanel ) --[[@as DNumberWang]]
         entryPanel:SetSize( 100, 25 )
-        entryPanel:SetMax( 1e10 )
+        entryPanel:SetMax( itemType.max or 1e10 )
+        entryPanel:SetMin( itemType.min or -1e10 )
         entryPanel:SetValue( startingValue )
         ---@diagnostic disable-next-line: duplicate-set-field
         entryPanel.OnValueChanged = function( _, val )
@@ -33,7 +41,6 @@ function PANEL:AddConfigItem( displayName, itemType, action, startingValue )
                 action( val )
             end
         end
-        -- TODO Do min and max
     elseif itemType.name == "bool" then
         entryPanel = vgui.Create( "DCheckBox", optionPanel ) --[[@as DCheckBox]]
         entryPanel:SetSize( 25, 25 )
@@ -48,8 +55,12 @@ function PANEL:AddConfigItem( displayName, itemType, action, startingValue )
             end
         end
     elseif itemType.name == "number" then
+        itemType = itemType --[[@as SchemaTypeNumber]]
+
         entryPanel = vgui.Create( "DNumberWang", optionPanel ) --[[@as DNumberWang]]
         entryPanel:SetValue( startingValue or 0 )
+        entryPanel:SetMax( itemType.max or 1e10 )
+        entryPanel:SetMin( itemType.min or -1e10 )
         ---@diagnostic disable-next-line: duplicate-set-field
         entryPanel.OnValueChanged = function( _, val )
             local ok, err = itemType:Validate( val )
@@ -73,6 +84,8 @@ function PANEL:AddConfigItem( displayName, itemType, action, startingValue )
                 action( val )
             end
         end
+    else
+        error( "Unknown type " .. itemType.name )
     end
     entryPanel:Dock( LEFT )
     entryPanel:DockMargin( 0, 5, 0, 5 )

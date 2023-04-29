@@ -39,15 +39,21 @@ function SchemaValidator.Bool()
     }
 end
 
+---@class SchemaTypeNumber : SchemaType
+---@field min? number
+---@field max? number
+--
 ---@param opts { min: number, max: number }
----@return SchemaType
+---@return SchemaTypeNumber
 function SchemaValidator.Int( opts )
     return {
         name = "int",
+        min = opts.min,
+        max = opts.max,
         Optional = function( self )
             return SchemaValidator.Optional( self )
         end,
-        Validate = function( _, value )
+        Validate = function( self, value )
             if type( value ) ~= "number" then
                 return false, "value must be a number but was " .. type( value )
             end
@@ -56,12 +62,12 @@ function SchemaValidator.Int( opts )
                 return false, "value must be an integer"
             end
 
-            if opts.min and value < opts.min then
-                return false, "value must be greater than or equal to " .. opts.min
+            if self.min and value < self.min then
+                return false, "value must be greater than or equal to " .. self.min
             end
 
-            if opts.max and value > opts.max then
-                return false, "value must be less than or equal to " .. opts.max
+            if self.max and value > self.max then
+                return false, "value must be less than or equal to " .. self.max
             end
 
             return true, ""
@@ -172,24 +178,26 @@ function SchemaValidator.Map( keyType, valueType )
 end
 
 ---@param opts? { min: number, max: number }
----@return SchemaType
+---@return SchemaTypeNumber
 function SchemaValidator.Number( opts )
     opts = opts or {}
     return {
         name = "number",
+        min = opts.min,
+        max = opts.max,
         Optional = function( self )
             return SchemaValidator.Optional( self )
         end,
-        Validate = function( _, value )
+        Validate = function( self, value )
             if type( value ) ~= "number" then
                 return false, "value must be a number but was " .. type( value )
             end
-            if opts.min and value < opts.min then
-                return false, "value must be greater than or equal to " .. opts.min
+            if self.min and value < opts.min then
+                return false, "value must be greater than or equal to " .. self.min
             end
 
-            if opts.max and value > opts.max then
-                return false, "value must be less than or equal to " .. opts.max
+            if self.max and value > opts.max then
+                return false, "value must be less than or equal to " .. self.max
             end
 
 

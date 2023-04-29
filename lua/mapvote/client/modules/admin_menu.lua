@@ -21,7 +21,7 @@ local configMenuOptions = {
     { "RTV Player Count",                 schema.fields.RTVPlayerCount,            "RTVPlayerCount" },
     { "Minimum Players Before Reset",     schema.fields.MinimumPlayersBeforeReset, "MinimumPlayersBeforeReset" },
     { "Time To Reset",                    schema.fields.TimeToReset,               "TimeToReset" },
-    -- { "Map Prefixes",                     schema.fields.MapPrefixes,               "MapPrefixes" }, -- TODO
+    -- { "Map Prefixes",                     schema.fields.MapPrefixes,               "MapPrefixes" },
 }
 
 MapVote._mapconfigFrame = nil
@@ -36,6 +36,9 @@ function MapVote.openconfig()
     frame:SetSize( 800, 600 )
     frame:Center()
     frame:MakePopup()
+    frame.Paint = function( _, w, h )
+        draw.RoundedBox( 0, 0, 0, w, h, MapVote.style.primaryBG )
+    end
     MapVote._configFrame = frame
     local configMenu = vgui.Create( "MapVote_ConfigPanel", frame ) --[[@as ConfigPanel]]
     configMenu:SetSize( 800, 600 )
@@ -78,6 +81,9 @@ function MapVote.openMapconfig()
     frame:SetSize( 800, 600 )
     frame:Center()
     frame:MakePopup()
+    frame.Paint = function( _, w, h )
+        draw.RoundedBox( 0, 0, 0, w, h, MapVote.style.primaryBG )
+    end
 
     ---@diagnostic disable-next-line: duplicate-set-field
     frame.OnClose = function( _ )
