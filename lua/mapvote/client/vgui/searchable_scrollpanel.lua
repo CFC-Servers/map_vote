@@ -12,10 +12,11 @@ end
 ---@param entry Panel
 function PANEL:BindToEntry( entry )
     entry.OnValueChanged = function( _, value )
-        timer.Create( "MapVote_SearchableScrollPanel_Refresh", 0.5, 1, function()
+        local timeWithoutTypingToRefresh = 0.5
+        timer.Create( "MapVote_SearchableScrollPanel_Refresh", timeWithoutTypingToRefresh, 1, function()
             self:SetSearch( value )
             self:Refresh()
-        end ) -- this means that the search will only refresh after 2 seconds of no typing
+        end )
     end
 end
 
