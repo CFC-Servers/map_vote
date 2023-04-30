@@ -4,7 +4,7 @@ function CheckForMapSwitch() -- TODO see if this can be improved
     local rounds_left = math.max( 0, GetGlobalInt( "ttt_rounds_left", 6 ) - 1 )
     SetGlobalInt( "ttt_rounds_left", rounds_left )
 
-    local time_left = math.max( 0, ( GetConVar( "ttt_time_limit_minutes" ):GetInt() * 60 ) - CurTime() )
+    local time_left = math.max( 0, (GetConVar( "ttt_time_limit_minutes" ):GetInt() * 60) - CurTime() )
     local switchmap = false
     local nextmap = string.upper( game.GetMapNext() )
 
@@ -26,7 +26,7 @@ function CheckForMapSwitch() -- TODO see if this can be improved
     end
 end
 
-hook.Add("MapVote_RTVStart", "MapVote_TTTStartVoteAfterRound", function()
+hook.Add( "MapVote_RTVStart", "MapVote_TTTStartVoteAfterRound", function()
     net.Start( "RTV_Delay" )
     net.Broadcast()
 
@@ -36,4 +36,5 @@ hook.Add("MapVote_RTVStart", "MapVote_TTTStartVoteAfterRound", function()
         end )
     end )
     return false
-end)
+end )
+

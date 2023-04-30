@@ -1,56 +1,81 @@
--- Default Config
-local MapVoteConfigDefault = {
-    MapLimit = 24,
-    TimeLimit = 28,
-    RTVWait = 60,
-    AllowCurrentMap = false,
-    EnableCooldown = true,
-    MapsBeforeRevote = 3,
-    RTVPlayerCount = 3,
-    IncludedMaps = {},
-    ExcludedMaps = {},
-    MinimumPlayersBeforeReset = -1,
-    TimeToReset = 5 * 60,
-    DefaultMap = "gm_construct",
-    RTVPercentPlayersRequired = 0.66,
-    SortMaps = false
-}
-if not file.Exists( "mapvote", "DATA" ) then file.CreateDir( "mapvote" ) end
+MapVote.defaultConfigFilename = "mapvote/config.json"
 
-if file.Exists( "mapvote/config.txt", "DATA" ) then
-    MapVote.Config = util.JSONToTable( file.Read( "mapvote/config.txt", "DATA" ) )
-else
-    MapVote.Config = MapVoteConfigDefault
-    file.Write( "mapvote/config.txt", util.TableToJSON( MapVoteConfigDefault ) )
+function MapVote.GetConfig()
+    return MapVote.config
 end
 
-for k, _ in pairs( MapVoteConfigDefault ) do
-    if MapVote.Config[k] == nil then
-        MapVote.Config[k] = MapVoteConfigDefault[k]
+function MapVote.MergeConfig( conf )
+    for k, v in pairs( conf ) do
+        local valid, reason = MapVote.configSchema:ValidateField( k, v )
+        if not valid then
+            MapVote.configIssues = {}
+            print( "MapVote MergeConfig config is invalid: " .. reason )
+            return reason
+        end
+        MapVote.config[k] = v
     end
 end
 
-if MapVote.Config.MapPrefixes == nil then -- load map prefix from gamemode txt file
-    local gamemode = engine.ActiveGamemode()
-    local info = file.Read( string.format( "gamemodes/%s/%s.txt", gamemode, gamemode ), "GAME" )
+function MapVote.SetConfig( conf )
+    local valid, reason = MapVote.configSchema:Validate( conf )
+    if not valid then
+        print( "MapVote SetConfig config is invalid: " .. reason )
+        return reason
+    end
+    MapVote.config = conf
+    return nil
+end
 
-    if info then
-        local decoded = util.KeyValuesToTable( info )
-        if decoded.maps then
-            if decoded.maps[1] == "^" then
-                MapVote.Config.MapPrefixes = { string.sub( decoded.maps, 2 ) }
-            else
-                MapVote.Config.MapPrefixes = { decoded.maps }
-            end
+function MapVote.LoadConfigFromFile( filename )
+    local fileData = file.Read( filename, "DATA" )
+    if not fileData then
+        print( "MapVote config is invalid: " .. filename .. " does not exist" )
+        return
+    end
+    local cfg = util.JSONToTable( fileData )
+    if not cfg then
+        print( "MapVote config is invalid: " .. filename .. " is not a valid JSON file" )
+        return
+    end
+    return MapVote.MergeConfig( cfg )
+end
+
+function MapVote.SaveConfigToFile( filename )
+    file.Write( filename, util.TableToJSON( MapVote.GetConfig(), true ) )
+end
+
+---@return boolean @Did an old config get migrated to default config path
+function MapVote.MigrateOldConfigs()
+    if file.Exists( "mapvote/config.txt", "DATA" ) and not file.Exists( MapVote.defaultConfigFilename, "DATA" ) then -- original config
+        file.Rename( "mapvote/config.txt", MapVote.defaultConfigFilename )
+        return true
+    end
+    return false
+end
+
+function MapVote.LoadConfig()
+    -- Default Config
+    local defaultConfigErr = MapVote.SetConfig( MapVote.configDefault )
+    if defaultConfigErr then
+        error( "MapVote default config is invalid: " .. defaultConfigErr )
+    end
+
+    if file.Exists( MapVote.defaultConfigFilename, "DATA" ) then
+        local err = MapVote.LoadConfigFromFile( MapVote.defaultConfigFilename )
+        if err then
+            print( "MapVote config is invalid: " .. err )
         end
     else
-        MapVote.Config.MapPrefixes = { ".*" } -- We still want the addon to function if map prefixes are not loaded
-        ErrorNoHalt( "MapVote Prefix can not be loaded from gamemode" )
+        if MapVote.MigrateOldConfigs() then
+            return MapVote.LoadConfig()
+        end
+        MapVote.SaveConfigToFile( MapVote.defaultConfigFilename )
     end
-else
-    for k, v in pairs( MapVote.Config.MapPrefixes ) do
-        MapVote.Config.MapPrefixes[k] = "^" .. v
-    end
+
+    print( "MapVote config loaded" )
+    hook.Run( "MapVote_ConfigLoaded" )
 end
 
-hook.Run( "MapVote_ConfigLoaded" )
+if not file.Exists( "mapvote", "DATA" ) then file.CreateDir( "mapvote" ) end
+
+MapVote.LoadConfig()
