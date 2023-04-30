@@ -3,6 +3,8 @@ local PANEL = {}
 function PANEL:Init()
     self.numberWang = vgui.Create( "DNumberWang", self ) --[[@as DNumberWang]]
     self.numberWang:SetTextColor( MapVote.style.textEntryTextColor )
+    self.numberWang:SetCursorColor( MapVote.style.textEntryTextColor )
+    self.numberWang:Dock( FILL )
     self.numberWang.m_bBackground = false
 
     ---@diagnostic disable-next-line: duplicate-set-field

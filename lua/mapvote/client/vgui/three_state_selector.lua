@@ -12,7 +12,9 @@ end
 function PANEL:newStateButton( name, state )
     local button = vgui.Create( "DButton", self ) --[[@as DButton]]
     button:SetText( name )
+    button:SetTextColor( MapVote.style.textEntryTextColor )
     button:Dock( TOP )
+    button:DockMargin( 1, 1, 1, 1 )
     ---@diagnostic disable-next-line: duplicate-set-field
     button.DoClick = function()
         self.state = state
@@ -20,12 +22,13 @@ function PANEL:newStateButton( name, state )
     end
     button.Paint = function( _, w, h )
         if self.state ~= 0 and self.state == state then
-            surface.SetDrawColor( 78, 66, 245 )
-        else
-            surface.SetDrawColor( 150, 150, 150 )
+            draw.RoundedBox( 3, 0, 0, w, h, MapVote.style.selectedButton )
+            return
         end
-        surface.DrawRect( 0, 0, w, h )
+        draw.RoundedBox( 3, 0, 0, w, h, MapVote.style.secondaryFG )
     end
+
+    return button
 end
 
 function PANEL:SetState( state )
@@ -34,6 +37,14 @@ end
 
 function PANEL:OnStateChange( _ )
     -- override me
+end
+
+function PANEL:GetButtonsHeight()
+    return self.on:GetTall() * 3 + 10
+end
+
+function PANEL:Paint( w, h )
+    draw.RoundedBox( 3, 0, 0, w, h, MapVote.style.secondaryBG )
 end
 
 vgui.Register( "MapVote_3StateSelect", PANEL, "Panel" )

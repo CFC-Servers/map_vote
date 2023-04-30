@@ -36,6 +36,7 @@ function MapVote.openconfig()
     frame:SetSize( 800, 600 )
     frame:Center()
     frame:MakePopup()
+    frame:SetTitle( "MapVote Config" )
 
     MapVote._configFrame = frame
     local configMenu = vgui.Create( "MapVote_ConfigPanel", frame ) --[[@as ConfigPanel]]
@@ -87,9 +88,16 @@ function MapVote.openMapconfig()
         MapVote._mapconfigFramescrollPanel = nil
     end
     MapVote._mapconfigFrame = frame
+    local textEntry = vgui.Create( "MapVote_TextEntry", frame ) --[[@as DTextEntry]]
+    textEntry:Dock( TOP )
+    textEntry:DockMargin( 15, 5, 15, 5 )
+    textEntry:SetPlaceholderText( "Search for a map..." )
 
-    local scrollPanel = vgui.Create( "DScrollPanel", frame ) --[[@as DScrollPanel]]
+    local scrollPanel = vgui.Create( "MapVote_SearchableScrollPanel", frame ) --[[@as SearchableScrollPanel]]
     scrollPanel:Dock( FILL )
+    scrollPanel:BindToEntry( textEntry )
+    scrollPanel:DockMargin( 15, 5, 15, 5 )
+
     MapVote._mapconfigFramescrollPanel = scrollPanel
 
     MapVote.Net.SendMapListRequest( function( _ )
@@ -97,8 +105,8 @@ function MapVote.openMapconfig()
     end )
 end
 
-function MapVote.addMapRow( scrollPanel, map )
-    local row = vgui.Create( "Panel", scrollPanel ) --[[@as Panel]]
+function MapVote.addMapRow( map )
+    local row = vgui.Create( "Panel" ) --[[@as Panel]]
     row:SetSize( 800, 128 )
 
     local mapIcon = vgui.Create( "MapVote_MapIcon", row ) --[[@as MapIcon]]
@@ -106,9 +114,16 @@ function MapVote.addMapRow( scrollPanel, map )
     mapIcon:SetMap( map )
     mapIcon:Dock( LEFT )
 
-    local selectButtons = vgui.Create( "MapVote_3StateSelect", row ) --[[@as ThreeStateSelect]]
-    selectButtons:SetSize( 128, 128 )
-    selectButtons:Dock( LEFT )
+    local selectContainer = vgui.Create( "Panel", row ) --[[@as Panel]]
+    selectContainer:Dock( LEFT )
+    selectContainer:SetSize( 100, 128 )
+
+    local selectButtons = vgui.Create( "MapVote_3StateSelect", selectContainer ) --[[@as ThreeStateSelect]]
+    selectButtons:Dock( TOP )
+    selectButtons:DockMargin( 5, 0, 5, 0 )
+    selectButtons:DockPadding( 1, 1, 1, 1 )
+    selectButtons:SetSize( 300, 128 )
+    selectButtons:SetSize( 100, selectButtons:GetButtonsHeight() )
 
     ---@diagnostic disable-next-line: duplicate-set-field
     selectButtons.OnStateChange = function( _, state )
@@ -142,9 +157,10 @@ function MapVote.addMapRow( scrollPanel, map )
     label:Dock( TOP )
     infoPanel:Dock( LEFT )
 
-    local DButton = scrollPanel:Add( row )
-    DButton:Dock( TOP )
-    DButton:DockMargin( 0, 0, 0, 5 )
+    row:Dock( TOP )
+    row:DockMargin( 5, 5, 5, 5 )
+
+    return row
 end
 
 function MapVote.populateScrollPanel()
@@ -157,9 +173,11 @@ function MapVote.populateScrollPanel()
     if not MapVote.config then return end
 
     for _, map in pairs( MapVote.fullMapList or {} ) do
-        MapVote.addMapRow( scrollPanel, map )
+        scrollPanel:AddNamedPanel( map, function()
+            return MapVote.addMapRow( map )
+        end )
     end
-
+    scrollPanel:Refresh()
     MapVote.ThumbDownloader:RequestWorkshopIDs()
 end
 

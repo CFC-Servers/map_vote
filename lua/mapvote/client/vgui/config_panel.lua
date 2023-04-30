@@ -119,7 +119,7 @@ function PANEL:AddConfigItem( displayName, itemType, action, startingValue )
     errLabel:SetText( "" )
     errLabel:Dock( LEFT )
     errLabel:SetSize( 500, 25 )
-    errLabel:SetColor( MapVote.style.errorLabelColor )
+    errLabel:SetColor( MapVote.style.errorColor )
 
     if not entryPanel then
         error( "Unknown type " .. itemType.name )
