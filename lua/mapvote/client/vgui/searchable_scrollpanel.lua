@@ -31,8 +31,7 @@ end
 ---@param name string
 ---@protected
 function PANEL:PassesFilter( name )
-    local result = not not string.find( name, self.filter )
-    return result
+    return string.find( name, self.filter ) ~= nil
 end
 
 function PANEL:Refresh()

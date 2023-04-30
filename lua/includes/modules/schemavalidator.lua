@@ -224,5 +224,3 @@ function SchemaValidator.String()
         end
     }
 end
-
-return "Hello world"
