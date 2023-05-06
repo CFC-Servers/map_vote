@@ -31,8 +31,10 @@ function ThumbDownloader:DownloadAll()
     local mapNamesByWorkshopID = {}
     local mapsToDownload = {}
     for _, map in pairs( self.mapsToDownload ) do
-        if self.workshopIDLookup[map] then
-            mapNamesByWorkshopID[self.workshopIDLookup[map]] = map
+        local wsid = self.workshopIDLookup[map]
+        if wsid then
+            mapNamesByWorkshopID[wsid] = mapNamesByWorkshopID[wsid] or {}
+            table.insert( mapNamesByWorkshopID[wsid], map )
             table.insert( mapsToDownload, map )
         end
     end
@@ -52,7 +54,9 @@ function ThumbDownloader:DownloadAll()
 
             for _, addon in pairs( data.response.publishedfiledetails ) do
                 if addon and addon.preview_url then
-                    self:DownloadThumbnail( mapNamesByWorkshopID[addon.publishedfileid], addon.preview_url )
+                    for _, map in pairs( mapNamesByWorkshopID[addon.publishedfileid] ) do
+                        self:DownloadThumbnail( map, addon.preview_url )
+                    end
                 end
             end
         end
