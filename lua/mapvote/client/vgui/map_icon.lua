@@ -43,7 +43,7 @@ function PANEL:Init()
 end
 
 function PANEL:Paint( w, h )
-    surface.SetDrawColor( Color( 100, 100, 100 ) )
+    surface.SetDrawColor( MapVote.style.colorSecondaryFG )
     surface.DrawRect( 0, 0, w, h )
 end
 
