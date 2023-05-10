@@ -1,3 +1,4 @@
+---@class MapVote_Frame : DFrame
 local PANEL = {}
 
 local function disableColor( c )
@@ -31,6 +32,10 @@ local function drawCircle( x, y, radius, seg )
     surface.DrawPoly( cir )
 end
 
+function PANEL:SetHideOnClose( hide )
+    self.hideOnClose = hide
+end
+
 function PANEL:Init()
     self.btnClose:SetSize( 25, 25 )
     ---@diagnostic disable-next-line: duplicate-set-field
@@ -57,6 +62,14 @@ function PANEL:Init()
         surface.SetDrawColor( disableColor( MapVote.style.colorYellow ) )
         draw.NoTexture()
         drawCircle( w / 2, h / 2, r, 100 )
+    end
+    self.btnClose.DoClick = function()
+        if self.hideOnClose then
+            self:SetVisible( false )
+            return
+        end
+
+        self:Close()
     end
 end
 

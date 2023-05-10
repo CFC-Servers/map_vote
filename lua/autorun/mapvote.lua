@@ -10,8 +10,6 @@ end
 
 if SERVER then
     AddCSLuaFile()
-    AddCSLuaFile( "mapvote/cl_mapvote.lua" )
-    AddCSLuaFile( "mapvote/cl_mapvote_reopen_hint.lua" )
     AddCSLuaFile( "includes/modules/schemavalidator.lua" )
 
     runOnDir( "mapvote/shared/modules", function( f )
@@ -19,18 +17,22 @@ if SERVER then
         include( f )
     end )
 
-    runOnDir( "mapvote/server/modules/", include )
-    runOnDir( "mapvote/server/integrations/", include )
+    -- load plugins before modules so they can add hooks
+    runOnDir( "mapvote/server/modules", include )
+    runOnDir( "mapvote/server/plugins", include )
 
+    -- add cs lua
     runOnDir( "mapvote/client/modules", AddCSLuaFile )
     runOnDir( "mapvote/client/vgui", AddCSLuaFile )
+    runOnDir( "mapvote/client/plugins", AddCSLuaFile )
 else
-    include( "mapvote/cl_mapvote.lua" )
-    include( "mapvote/cl_mapvote_reopen_hint.lua" )
-
+    -- load modules and vgui
     runOnDir( "mapvote/shared/modules", include )
     runOnDir( "mapvote/client/modules", include )
     runOnDir( "mapvote/client/vgui", include )
+
+    -- plugins
+    runOnDir( "mapvote/client/plugins", include )
 end
 
 hook.Run( "MapVote_Loaded" )
