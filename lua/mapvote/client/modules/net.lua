@@ -36,10 +36,7 @@ net.Receive( "MapVote_VoteStarted", function()
     MapVote.Panel = MapVote.OpenPanel( MapVote.currentMaps, MapVote.EndTime )
     MapVote.Panel.voteArea:SetMaps( MapVote.currentMaps )
 
-    -- TODO move this into plugin/integration
-    hook.Add( "CFC_DisconnectInterface_ShouldShowInterface", "MapVote_DisableDisconnectInterface", function()
-        return false
-    end )
+    hook.Run( "MapVote_VoteStarted" )
 end )
 
 net.Receive( "MapVote_PlayerChangedVote", function()
@@ -63,8 +60,7 @@ end )
 net.Receive( "MapVote_VoteCancelled", function()
     if IsValid( MapVote.Panel ) then MapVote.Panel:Remove() end
 
-    -- TODO move this into plugin/integration
-    hook.Remove( "CFC_DisconnectInterface_ShouldShowInterface", "MapVote_DisableDisconnectInterface" )
+    hook.Run( "MapVote_VoteCancelled" )
 end )
 
 net.Receive( "RTV_Delay", function()
