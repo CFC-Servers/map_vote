@@ -33,7 +33,7 @@ net.Receive( "MapVote_VoteStarted", function()
 
     if IsValid( MapVote.Panel ) then MapVote.Panel:Remove() end
 
-    MapVote.Panel = MapVote.OpenPanel( MapVote.currentMaps )
+    MapVote.Panel = MapVote.OpenPanel( MapVote.currentMaps, MapVote.EndTime )
     MapVote.Panel.voteArea:SetMaps( MapVote.currentMaps )
 
     -- TODO move this into plugin/integration
@@ -44,9 +44,10 @@ end )
 
 net.Receive( "MapVote_PlayerChangedVote", function()
     local ply = net.ReadEntity() --[[@as Player]]
+    local mapID = net.ReadUInt( 32 )
+
     if not IsValid( ply ) then return end
     if not IsValid( MapVote.Panel ) then return end
-    local mapID = net.ReadUInt( 32 )
     local mapData = MapVote.Panel.voteArea:GetMapDataByIndex( mapID )
 
     MapVote.Panel.voteArea:SetVote( ply, mapData.map )
@@ -55,7 +56,7 @@ end )
 net.Receive( "MapVote_VoteFinished", function()
     if IsValid( MapVote.Panel ) then
         -- TODO flash
-        -- MapVote.Panel:Flash( net.ReadUInt( 32 ) )
+        MapVote.Panel.voteArea:Flash( net.ReadUInt( 32 ) )
     end
 end )
 

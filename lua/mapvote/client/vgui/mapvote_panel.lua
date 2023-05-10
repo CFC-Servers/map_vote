@@ -201,4 +201,28 @@ function PANEL:GetTotalRowHeight()
     return #self.rows * self.rows[1]:GetTall()
 end
 
+function PANEL:Flash( id )
+    local data = self:GetMapDataByIndex( id )
+    local panel = data.panel
+    timer.Simple( 0.0, function()
+        panel:SetBGColor( MapVote.style.colorPurple )
+        panel:SetPaintBackgroundEnabled( true )
+        surface.PlaySound( "hl1/fvox/blip.wav" )
+    end )
+    timer.Simple( 0.2, function() panel:SetPaintBackgroundEnabled( false ) end )
+    timer.Simple( 0.4, function()
+        panel:SetPaintBackgroundEnabled( true )
+        surface.PlaySound( "hl1/fvox/blip.wav" )
+    end )
+    timer.Simple( 0.6, function() panel:SetPaintBackgroundEnabled( false ) end )
+    timer.Simple( 0.8, function()
+        panel:SetPaintBackgroundEnabled( true )
+        surface.PlaySound( "hl1/fvox/blip.wav" )
+    end )
+    timer.Simple( 1.0, function()
+        panel:SetPaintBackgroundEnabled( true )
+    end )
+    timer.Simple( 1.5, function() panel:SetPaintBackgroundEnabled( false ) end )
+end
+
 vgui.Register( "MapVote_Vote", PANEL, "Panel" )
