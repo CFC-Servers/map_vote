@@ -44,7 +44,11 @@ function ThumbDownloader:DownloadAll()
     end
 
     http.Post( "https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/", requestBody,
-        function( body )
+        function( body, _, _, code )
+            if code ~= 200 then
+                print( "Non 200 response received from steam", code )
+                return
+            end
             local data = util.JSONToTable( body )
             if not data then return end
             if not data.response then return end

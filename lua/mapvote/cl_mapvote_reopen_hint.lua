@@ -1,3 +1,4 @@
+do return end
 surface.CreateFont( "MapVote_ReopenText", {
     font = "Marlett",
     extended = false,

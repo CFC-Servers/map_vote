@@ -1,3 +1,4 @@
+do return end
 ---@diagnostic disable: undefined-field, need-check-nil, param-type-mismatch
 surface.CreateFont( "RAM_VoteFont", {
     font = "Trebuchet MS",

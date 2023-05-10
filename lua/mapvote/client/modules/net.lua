@@ -18,6 +18,60 @@ net.Receive( "MapVote_Config", function()
     hook.Run( "MapVote_ConfigRecieved", config )
 end )
 
+net.Receive( "MapVote_VoteStarted", function()
+    MapVote.currentMaps = {}
+    MapVote.isInProgress = true
+    MapVote.votes = {}
+    local amt = net.ReadUInt( 32 )
+    for _ = 1, amt do
+        local map = net.ReadString()
+        net.ReadUInt( 32 ) -- this is playcount, TODO
+        table.insert( MapVote.currentMaps, map )
+    end
+
+    MapVote.EndTime = CurTime() + net.ReadUInt( 32 )
+
+    if IsValid( MapVote.Panel ) then MapVote.Panel:Remove() end
+
+    MapVote.Panel = MapVote.OpenPanel( MapVote.currentMaps )
+    MapVote.Panel.voteArea:SetMaps( MapVote.currentMaps )
+
+    -- TODO move this into plugin/integration
+    hook.Add( "CFC_DisconnectInterface_ShouldShowInterface", "MapVote_DisableDisconnectInterface", function()
+        return false
+    end )
+end )
+
+net.Receive( "MapVote_PlayerChangedVote", function()
+    local ply = net.ReadEntity() --[[@as Player]]
+    if not IsValid( ply ) then return end
+    if not IsValid( MapVote.Panel ) then return end
+    local mapID = net.ReadUInt( 32 )
+    local mapData = MapVote.Panel.voteArea:GetMapDataByIndex( mapID )
+
+    MapVote.Panel.voteArea:SetVote( ply, mapData.map )
+end )
+
+net.Receive( "MapVote_VoteFinished", function()
+    if IsValid( MapVote.Panel ) then
+        -- TODO flash
+        -- MapVote.Panel:Flash( net.ReadUInt( 32 ) )
+    end
+end )
+
+net.Receive( "MapVote_VoteCancelled", function()
+    if IsValid( MapVote.Panel ) then MapVote.Panel:Remove() end
+
+    -- TODO move this into plugin/integration
+    hook.Remove( "CFC_DisconnectInterface_ShouldShowInterface", "MapVote_DisableDisconnectInterface" )
+end )
+
+net.Receive( "RTV_Delay", function()
+    chat.AddText( Color( 102, 255, 51 ), "[RTV]", Color( 255, 255, 255 ),
+        " The vote has been rocked, map vote will begin on round end" )
+end )
+
+
 -- senders
 local tempID = 0
 function MapVote.Net.SendMapListRequest( cb )
