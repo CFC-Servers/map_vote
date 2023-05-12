@@ -13,15 +13,15 @@ net.Receive( "MapVote_MapList", function()
 end )
 
 net.Receive( "MapVote_Config", function()
-    local config = net.ReadTable()
-    MapVote.config = config
-    hook.Run( "MapVote_ConfigRecieved", config )
+    MapVote.config = net.ReadTable()
+    hook.Run( "MapVote_ConfigRecieved", MapVote.config )
 end )
 
 net.Receive( "MapVote_VoteStarted", function()
     MapVote.currentMaps = {}
     MapVote.isInProgress = true
     MapVote.votes = {}
+
     local amt = net.ReadUInt( 32 )
     for _ = 1, amt do
         local map = net.ReadString()
@@ -33,8 +33,7 @@ net.Receive( "MapVote_VoteStarted", function()
 
     if IsValid( MapVote.Panel ) then MapVote.Panel:Remove() end
 
-    MapVote.Panel = MapVote.OpenPanel( MapVote.currentMaps, MapVote.EndTime )
-    MapVote.Panel.voteArea:SetMaps( MapVote.currentMaps )
+    MapVote.OpenPanel( MapVote.currentMaps, MapVote.EndTime )
 
     hook.Run( "MapVote_VoteStarted" )
 end )
@@ -45,6 +44,7 @@ net.Receive( "MapVote_PlayerChangedVote", function()
 
     if not IsValid( ply ) then return end
     if not IsValid( MapVote.Panel ) then return end
+
     local mapData = MapVote.Panel.voteArea:GetMapDataByIndex( mapID )
 
     MapVote.Panel.voteArea:SetVote( ply, mapData.map )
@@ -71,7 +71,7 @@ end )
 
 -- senders
 local tempID = 0
-function MapVote.Net.SendMapListRequest( cb )
+function MapVote.Net.sendMapListRequest( cb )
     net.Start( "MapVote_RequestMapList" )
     net.SendToServer()
 
@@ -85,13 +85,13 @@ function MapVote.Net.SendMapListRequest( cb )
     end )
 end
 
-function MapVote.Net.SendConfig()
+function MapVote.Net.sendConfig()
     net.Start( "MapVote_Config" )
     net.WriteTable( MapVote.config )
     net.SendToServer()
 end
 
-function MapVote.Net.SendConfigRequest( cb )
+function MapVote.Net.sendConfigRequest( cb )
     net.Start( "MapVote_RequestConfig" )
     net.SendToServer()
     tempID = tempID + 1

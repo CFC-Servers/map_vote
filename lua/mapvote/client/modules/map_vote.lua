@@ -1,4 +1,10 @@
+function MapVote.SetMaps( maps )
+    MapVote.Panel.voteArea:SetMaps( maps )
+end
+
 function MapVote.OpenPanel( maps, endTime )
+    if IsValid( MapVote.Panel ) then MapVote.Panel:Remove() end
+
     local frame = vgui.Create( "MapVote_Frame" ) --[[@as MapVote_Frame]]
     frame:SetSize( ScrW() * 0.8, ScrH() * 0.85 )
     frame:Center()
@@ -55,5 +61,6 @@ function MapVote.OpenPanel( maps, endTime )
 
     frame.voteArea = voteArea
     MapVote.ThumbDownloader:RequestWorkshopIDs()
-    return frame
+
+    MapVote.Panel = frame
 end

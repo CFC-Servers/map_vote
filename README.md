@@ -24,7 +24,7 @@ table.Merge(MapVote.style, {
 ## Plugins directory
 You can create file in lua/mapvote/client/plugins and lua/mapvote/server/plugins these files will be loaded after the main mapvote modules have been loaded
 
-## Hooks
+## Usable Hooks
 | Name                    | description                                                                        | args    | realm  |
 | ----------------------- | ---------------------------------------------------------------------------------- | ------- | ------ |
 | MapVote_IsMapAllowed    | Called to determine if a map is allowed, return true/false to allow/disallow a map | map     | server |
@@ -32,7 +32,7 @@ You can create file in lua/mapvote/client/plugins and lua/mapvote/server/plugins
 | MapVote_ChangeMap       | Called just before mapvote changes the map, return false to skip                   | map     | server |
 | MapVote_RTVStart        | Called when the vote has been rocked, return false to prevent map vote starting    |         | server |
 | MapVote_Loaded          | Called when all lua files for mapvote have been loaded                             |         | shared |
-- hook.Run( "MapVote_MapListRecieved", mapList )
+
 # History of the addon
 The addon is mostly rewritten but the original code base was forked from Lumiens mapvote
 
