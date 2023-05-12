@@ -1,5 +1,5 @@
 MapVote.style = {
-    colorPrimaryBG = Color( 30, 30, 46 ),
+    colorPrimaryBG = Color( 30, 30, 46, 255 ),
     colorSecondaryBG = Color( 49, 50, 68 ),
     colorSecondaryFG = Color( 69, 71, 90 ),
 
@@ -15,6 +15,7 @@ MapVote.style = {
     frameBlurLevel = 0,
     configLabelFont = "MapVote_ConfigNameLabel",
     mapVoteTitleFont = "MapVote_Title",
+
 }
 
 -- fonts

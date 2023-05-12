@@ -15,7 +15,7 @@ function MapVote.OpenPanel( maps, endTime )
     titleLabel:SetText( "Vote for a new map!" )
     titleLabel:Dock( LEFT )
     titleLabel:SetWide( 500 )
-    titleLabel:DockMargin( 5, 5, 5, 5 )
+    titleLabel:DockMargin( 10, 5, 5, 5 )
     titleLabel:SetFont( MapVote.style.mapVoteTitleFont )
 
     local countdownLabel = vgui.Create( "DLabel", infoRow ) --[[@as DLabel]]
@@ -23,7 +23,7 @@ function MapVote.OpenPanel( maps, endTime )
     countdownLabel:SetText( "00:45" )
     countdownLabel:Dock( RIGHT )
     countdownLabel:SetWide( 80 )
-    countdownLabel:DockMargin( 5, 5, 5, 5 )
+    countdownLabel:DockMargin( 5, 5, 5, 10 )
     countdownLabel:SetFont( MapVote.style.mapVoteTitleFont )
     timer.Create( "MapVoteCountdown", 0.1, 0, function()
         if not IsValid( countdownLabel ) then
