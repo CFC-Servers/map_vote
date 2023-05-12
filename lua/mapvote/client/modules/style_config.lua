@@ -11,6 +11,7 @@ MapVote.style = {
     colorYellow = Color( 249, 226, 175 ),
     colorGreen = Color( 166, 227, 161 ),
     colorPurple = Color( 203, 166, 247 ),
+    colorCloseButton = Color( 240, 62, 92 ),
     frameBlurLevel = 0,
     configLabelFont = "MapVote_ConfigNameLabel",
     mapVoteTitleFont = "MapVote_Title",

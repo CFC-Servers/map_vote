@@ -15,8 +15,6 @@ local function drawCircle( x, y, radius, seg )
             {
                 x = x + math.sin( a ) * radius,
                 y = y + math.cos( a ) * radius,
-                u = math.sin( a ) / 2 + 0.5,
-                v = math.cos( a ) / 2 + 0.5
             } )
     end
 
@@ -25,11 +23,18 @@ local function drawCircle( x, y, radius, seg )
         {
             x = x + math.sin( a ) * radius,
             y = y + math.cos( a ) * radius,
-            u = math.sin( a ) / 2 + 0.5,
-            v = math.cos( a ) / 2 + 0.5
         } )
 
     surface.DrawPoly( cir )
+end
+function surface.DrawTexturedRectRotatedPoint( x, y, w, h, rot, x0, y0 )
+    local c = math.cos( math.rad( rot ) )
+    local s = math.sin( math.rad( rot ) )
+
+    local newx = y0 * s - x0 * c
+    local newy = y0 * c + x0 * s
+
+    surface.DrawTexturedRectRotated( x + newx, y + newy, w, h, rot )
 end
 
 function PANEL:SetHideOnClose( hide )
@@ -41,9 +46,12 @@ function PANEL:Init()
     ---@diagnostic disable-next-line: duplicate-set-field
     self.btnClose.Paint = function( _, w, h )
         local r = (w - 13) / 2
-        surface.SetDrawColor( MapVote.style.colorRed )
+        surface.SetDrawColor( MapVote.style.colorCloseButton )
         draw.NoTexture()
-        drawCircle( w / 2, h / 2, r, 100 )
+        drawCircle( w / 2, h / 2 + 2, r, 365 )
+        surface.SetDrawColor( MapVote.style.colorTextPrimary )
+        surface.DrawTexturedRectRotatedPoint( w / 2, h / 2 + 2, r * 1.5, 2, 45, 0, 0 )
+        surface.DrawTexturedRectRotatedPoint( w / 2, h / 2 + 2, r * 1.5, 2, 315, 0, 0 )
     end
 
     self.btnMaxim:SetSize( 25, 25 )
@@ -52,7 +60,7 @@ function PANEL:Init()
         local r = (w - 13) / 2
         surface.SetDrawColor( disableColor( MapVote.style.colorGreen ) )
         draw.NoTexture()
-        drawCircle( w / 2, h / 2, r, 100 )
+        drawCircle( w / 2, h / 2 + 2, r, 365 )
     end
 
     self.btnMinim:SetSize( 25, 25 )
@@ -61,7 +69,7 @@ function PANEL:Init()
         local r = (w - 13) / 2
         surface.SetDrawColor( disableColor( MapVote.style.colorYellow ) )
         draw.NoTexture()
-        drawCircle( w / 2, h / 2, r, 100 )
+        drawCircle( w / 2, h / 2 + 2, r, 365 )
     end
     self.btnClose.DoClick = function()
         if self.hideOnClose then

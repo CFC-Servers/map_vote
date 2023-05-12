@@ -165,11 +165,7 @@ function PANEL:setup()
 
         local row = vgui.Create( "Panel", self )
         table.insert( self.rows, row )
-
         row:SetSize( rowWidth, iconHeight )
-        row.Paint = function( _, w, h )
-            draw.RoundedBox( 12, 0, 0, w, h, Color( 255, 0, 255, 0 ) )
-        end
         local extraSpace = math.max( 0, self:GetWide() - rowWidth )
 
         row:SetPos( extraSpace / 2, iconHeight * (rowNumber - 1) )
@@ -192,8 +188,32 @@ function PANEL:setup()
     end
 end
 
+function PANEL:UpdateRowPositions()
+    local count = #self.maps
+    local margin = 2
+    local iconWidth, iconHeight = maxIconSize( self:GetWide(), self:GetTall(), count, 1 )
+    iconWidth = iconWidth - margin * 2
+
+    local maxItemsPerRow = math.floor( self:GetWide() / iconWidth )
+    for i, row in ipairs( self.rows ) do
+        local rowNumber = i
+        local itemsLeft = count - (rowNumber - 1) * maxItemsPerRow
+        local itemsInRow = math.min( maxItemsPerRow, itemsLeft )
+        local rowWidth = (iconWidth + margin * 2) * itemsInRow
+
+        local extraSpace = math.max( 0, self:GetWide() - rowWidth )
+
+        row:SetPos( extraSpace / 2, iconHeight * (rowNumber - 1) )
+    end
+end
+
 function PANEL:OnMapClicked( _, _ )
     -- implement
+end
+
+function PANEL:GetTotalRowWidth()
+    if #self.rows == 0 then return 0 end
+    return self.rows[1]:GetWide()
 end
 
 function PANEL:GetTotalRowHeight()

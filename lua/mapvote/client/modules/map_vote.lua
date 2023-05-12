@@ -35,16 +35,19 @@ function MapVote.OpenPanel( maps, endTime )
         countdownLabel:SetText( string.FormattedTime( timeLeft or 0, "%02i:%02i" ) )
     end )
     local voteArea = vgui.Create( "MapVote_Vote", frame ) --[[@as VoteArea]]
-    voteArea:Dock( FILL )
-    voteArea:DockMargin( 5, 5, 5, 5 )
+    local margin = 10
+    voteArea:DockMargin( margin, margin, margin, margin )
     voteArea:SetMaps( maps )
     voteArea:InvalidateLayout( true )
     voteArea:InvalidateParent( true )
-    local height = voteArea:GetTotalRowHeight() + 50
-    if height < frame:GetTall() then
-        frame:SetSize( frame:GetWide(), height )
-    end
-
+    voteArea:Dock( FILL )
+    timer.Simple( 0, function()
+        frame:SetTall( voteArea:GetTotalRowHeight() + infoRow:GetTall() + margin * 2 + 34 )
+        frame:SetWide( voteArea:GetTotalRowWidth() + margin * 2 + 10 )
+        voteArea:InvalidateParent( true )
+        frame:Center()
+        voteArea:UpdateRowPositions()
+    end )
 
     ---@diagnostic disable-next-line: duplicate-set-field
     voteArea.OnMapClicked = function( _, index, _ )

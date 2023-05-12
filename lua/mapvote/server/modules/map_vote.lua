@@ -14,7 +14,6 @@ function MapVote.sendToClient( length, mapsInVote )
         net.WriteString( map )
         net.WriteUInt( MapVote.PlayCounts[map] or 0, 32 )
     end
-
     net.WriteUInt( length, 32 )
     net.Broadcast()
 end
