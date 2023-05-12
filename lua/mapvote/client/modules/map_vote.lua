@@ -36,24 +36,21 @@ function MapVote.OpenPanel( maps, endTime )
     end )
     local voteArea = vgui.Create( "MapVote_Vote", frame ) --[[@as VoteArea]]
     local margin = 10
+    voteArea:Dock( FILL )
     voteArea:DockMargin( margin, margin, margin, margin )
     voteArea:SetMaps( maps )
     voteArea:InvalidateLayout( true )
     voteArea:InvalidateParent( true )
-    voteArea:Dock( FILL )
-    timer.Simple( 0, function()
-        frame:SetTall( voteArea:GetTotalRowHeight() + infoRow:GetTall() + margin * 2 + 34 )
-        frame:SetWide( voteArea:GetTotalRowWidth() + margin * 2 + 10 )
-        voteArea:InvalidateParent( true )
-        frame:Center()
-        voteArea:UpdateRowPositions()
-    end )
+
+    frame:SetTall( voteArea:GetTotalRowHeight() + infoRow:GetTall() + margin * 2 + 34 )
+    frame:SetWide( voteArea:GetTotalRowWidth() + margin * 2 + 10 )
+    voteArea:InvalidateParent( true )
+    frame:Center()
+    voteArea:UpdateRowPositions()
 
     ---@diagnostic disable-next-line: duplicate-set-field
     voteArea.OnMapClicked = function( _, index, _ )
-        net.Start( "MapVote_ChangeVote" )
-        net.WriteUInt( index, 32 )
-        net.SendToServer()
+        MapVote.Net.changeVote( index )
     end
 
     frame.voteArea = voteArea

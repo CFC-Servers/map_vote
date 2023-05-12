@@ -1,23 +1,3 @@
-util.AddNetworkString( "MapVote_VoteStarted" )
-util.AddNetworkString( "MapVote_VoteCancelled" )
-util.AddNetworkString( "MapVote_ChangeVote" )
-util.AddNetworkString( "MapVote_VoteFinished" )
-util.AddNetworkString( "MapVote_PlayerChangedVote" )
-util.AddNetworkString( "MapVote_RequestMapList" )
-util.AddNetworkString( "MapVote_MapList" )
-util.AddNetworkString( "RTV_Delay" )
-
-function MapVote.sendToClient( length, mapsInVote )
-    net.Start( "MapVote_VoteStarted" )
-    net.WriteUInt( #mapsInVote, 32 )
-    for _, map in ipairs( mapsInVote ) do
-        net.WriteString( map )
-        net.WriteUInt( MapVote.PlayCounts[map] or 0, 32 )
-    end
-    net.WriteUInt( length, 32 )
-    net.Broadcast()
-end
-
 function MapVote.isMapAllowed( m )
     local conf = MapVote.config
     local prefixes = conf.MapPrefixes or MapVote.gamemodeMapPrefixes or {}
@@ -50,18 +30,6 @@ function MapVote.getMapList()
     return maps
 end
 
-net.Receive( "MapVote_RequestMapList", function( _, ply )
-    if not ply:IsAdmin() then return end
-
-    local maps = MapVote.getMapList()
-    net.Start( "MapVote_MapList" )
-    net.WriteUInt( #maps, 32 )
-    for _, map in ipairs( maps ) do
-        net.WriteString( map )
-    end
-    net.Send( ply )
-end )
-
 function MapVote.Start( length )
     length = length or MapVote.config.TimeLimit or 30
 
@@ -83,7 +51,7 @@ function MapVote.Start( length )
     MapVote.state.currentMaps = mapsInVote
     MapVote.state.votes = {}
 
-    MapVote.sendToClient( length, mapsInVote )
+    MapVote.Net.sendVoteStart( length, mapsInVote )
 
     timer.Create( "MapVote_EndVote", length, 1, MapVote.mapVoteOver )
 end
@@ -142,18 +110,3 @@ function MapVote.mapVoteOver()
         RunConsoleCommand( "changelevel", map )
     end )
 end
-
-net.Receive( "MapVote_ChangeVote", function( _, ply )
-    if not MapVote.state.isInProgress then return end
-    if not IsValid( ply ) then return end
-
-    local mapID = net.ReadUInt( 32 )
-    if not MapVote.state.currentMaps[mapID] then return end
-
-    MapVote.state.votes[ply:SteamID()] = mapID
-
-    net.Start( "MapVote_PlayerChangedVote" )
-    net.WriteEntity( ply )
-    net.WriteUInt( mapID, 32 )
-    net.Broadcast()
-end )

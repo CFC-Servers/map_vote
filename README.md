@@ -1,66 +1,40 @@
-Usage
-=======================
-Install the addon, should work out of the box for TTT and Deathrun.
-
-Config
-=======================
-
-You can find the Config File at garrysmod/data/mapvote/config.txt
-
-Example:
-```JSON
-{"RTVPlayerCount":3,"MapLimit":24,"TimeLimit":28,"AllowCurrentMap":false,"MapPrefixes":{"1":"ttt_"},"MapsBeforeRevote":3,"EnableCooldown":true}
-```
-
-If it doesn't exist yet you can just create it.
-
-* "RTVPlayerCount" is the minimum number of players that need to be online (on TTT) for RTV to work.
-* "MapLimit" is the number of maps shown on the vote screen.
-* "TimeLimit" is how long the vote is shown for.
-* "AllowCurrentMap" true/false to allow the current map in the map vote list.
-* "RTVWait" time in seconds how long players have to wait rtv after a mapvote.
-* "MapPrefixes" are the prefixes of the maps that should be used in the vote.
-* "MapsBeforeRevote" is the number of maps that must be played before a map is in the vote menu again (if EnableCooldown is true)
-* "EnableCooldown" is a true/false variable on whether to remove a map from voting for a while after it's played.
-* "MapsBeforeRevote" is how many maps before the map is taken off the cooldown list after it's played.
-* "RTVPercentPlayersRequired" percent of players 0 - 1 required to trigger an rtv
-* "MinimumPlayersBeforeReset" When the server drops bellow this number reset the map to default map
-* "DefaultMap" Default map to reset to
-* "TimeToReset" Time until map resets when players are bellow MinimumPlayersBeforReset
-Adding more Map prefixes
-
-```JSON
-{"RTVPlayerCount":3,"MapLimit":24,"TimeLimit":28,"AllowCurrentMap":false,"MapPrefixes":{"1":"ttt_","2":"zm_","3":"de_"},"MapsBeforeRevote":3,"EnableCooldown":true}
-```
-
-Screenshot
-=======================
-![Screenshot](https://i.imgur.com/LpJOR9x.png)
-
-Modifications
-=======================
-* Replaced Text List with image grid
-* Added Play Count to maps
-* Some other visual tweaks
-
-
-Hooks
-======================
-- **MapVote_IsMapAllowed** Runs to check if a map is allowed in the map rotation, return true/false to modify the result
-- **MapVote_ConfigLoaded"** Runs when the mapvote config finnishes loading
-- **MapVote_VoteFinished** Runs when a vote finnishes is passed a table with `state`, `results`, and `winner`
-- **MapVoteChange** Runs right before the map changes, return false to stop the change. (This will be renamed in the future)
-
-Commands
-===================
+# Usage
+## Commands
 - **startmpvote** starts a mapvote
 - **stopmapvote** stops a mapvote
 - **mapvote_migrate_playcounts** migrates adds mapvote/playcount.txt data to playcounts in database, this will add to existing play counts not overwrite them.
 
+# Configuration
+## Using the in game configuration menu
+Type `mapvote_config` in console, you can edit most config settings in this menu. **Note:** MapPrefixes can currently not be edited in the settings menu
 
-History of the addon
-===========
-The backend is completely rewritten but the clientside code is is still mostly code from [Lumiens-Map-Vote](https://github.com/lumien231/Lumiens-Map-Vote) 
+Pressing the Open Map Config button will allow you to set overrides for enabling/disabling maps. Pressing clear will delete the override so inclusion of the map can be decided by MapPrefixe or other methods.
+
+## Styling
+- Create a file at `lua/mapvote/client/plugins/mystyle.lua`
+- You can update colors and other style configuration by merging new values into the existing style table
+Example:
+```lua
+table.Merge(MapVote.style, {
+    colorPrimaryBG = Color( 30, 30, 46 ),
+    colorSecondaryBG = Color( 49, 50, 68 ),
+})
+```
+# Integrating other addons with MapVote
+## Plugins directory
+You can create file in lua/mapvote/client/plugins and lua/mapvote/server/plugins these files will be loaded after the main mapvote modules have been loaded
+
+## Hooks
+| Name                    | description                                                                        | args    | realm  |
+| ----------------------- | ---------------------------------------------------------------------------------- | ------- | ------ |
+| MapVote_IsMapAllowed    | Called to determine if a map is allowed, return true/false to allow/disallow a map | map     | server |
+| MapVote_VoteFinished    | called when a vote is finished serverside                                          | results | server |
+| MapVote_ChangeMap       | Called just before mapvote changes the map, return false to skip                   | map     | server |
+| MapVote_RTVStart        | Called when the vote has been rocked, return false to prevent map vote starting    |         | server |
+| MapVote_Loaded          | Called when all lua files for mapvote have been loaded                             |         | shared |
+- hook.Run( "MapVote_MapListRecieved", mapList )
+# History of the addon
+The addon is mostly rewritten but the original code base was forked from Lumiens mapvote
 
 Originally made by Willox
 Improved by Tyrantelf ([Github](https://github.com/tyrantelf/gmod-mapvote))

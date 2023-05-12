@@ -103,3 +103,15 @@ function MapVote.Net.SendConfigRequest( cb )
         end
     end )
 end
+
+function MapVote.Net.changeVote( index )
+    net.Start( "MapVote_ChangeVote" )
+    net.WriteUInt( index, 32 )
+    net.SendToServer()
+end
+
+function MapVote.Net.requestWorskhopIDs( maps )
+    net.Start( "MapVote_RequestWorkshopIDTable" )
+    net.WriteTable( maps )
+    net.SendToServer()
+end

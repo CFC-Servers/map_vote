@@ -6,6 +6,7 @@ MapVote.ThumbDownloader = MapVote.ThumbDownloader or {
 
 local ThumbDownloader = MapVote.ThumbDownloader
 
+-- TODO all net receivers should be in net.lua
 net.Receive( "MapVote_WorkshopIDTable", function()
     ThumbDownloader.workshopIDLookup = net.ReadTable()
     print( string.format( "MapVote: Received %s workshop IDs", table.Count( ThumbDownloader.workshopIDLookup ) ) )
@@ -21,9 +22,7 @@ end
 function ThumbDownloader:RequestWorkshopIDs()
     if #self.mapsToDownload == 0 then return end
 
-    net.Start( "MapVote_RequestWorkshopIDTable" )
-    net.WriteTable( self.mapsToDownload )
-    net.SendToServer()
+    MapVote.Net.requestWorskhopIDs( self.mapsToDownload )
 end
 
 function ThumbDownloader:DownloadAll()
