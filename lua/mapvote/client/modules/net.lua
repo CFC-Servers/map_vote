@@ -18,49 +18,33 @@ net.Receive( "MapVote_Config", function()
 end )
 
 net.Receive( "MapVote_VoteStarted", function()
-    MapVote.currentMaps = {}
-    MapVote.isInProgress = true
-    MapVote.votes = {}
+    local maps = net.ReadTable()
 
     local amt = net.ReadUInt( 32 )
     for _ = 1, amt do
         local map = net.ReadString()
         net.ReadUInt( 32 ) -- this is playcount, TODO
-        table.insert( MapVote.currentMaps, map )
+        table.insert( maps, map )
     end
 
-    MapVote.EndTime = CurTime() + net.ReadUInt( 32 )
+    local endTime = CurTime() + net.ReadUInt( 32 )
 
-    if IsValid( MapVote.Panel ) then MapVote.Panel:Remove() end
-
-    MapVote.OpenPanel( MapVote.currentMaps, MapVote.EndTime )
-
-    hook.Run( "MapVote_VoteStarted" )
+    MapVote.StartVote( maps, endTime )
 end )
 
 net.Receive( "MapVote_PlayerChangedVote", function()
     local ply = net.ReadEntity() --[[@as Player]]
-    local mapID = net.ReadUInt( 32 )
+    local mapIndex = net.ReadUInt( 32 )
 
-    if not IsValid( ply ) then return end
-    if not IsValid( MapVote.Panel ) then return end
-
-    local mapData = MapVote.Panel.voteArea:GetMapDataByIndex( mapID )
-
-    MapVote.Panel.voteArea:SetVote( ply, mapData.map )
+    MapVote.ChangeVote( ply, mapIndex )
 end )
 
 net.Receive( "MapVote_VoteFinished", function()
-    if IsValid( MapVote.Panel ) then
-        -- TODO flash
-        MapVote.Panel.voteArea:Flash( net.ReadUInt( 32 ) )
-    end
+    MapVote.FinishVote( net.ReadUInt( 32 ) )
 end )
 
 net.Receive( "MapVote_VoteCancelled", function()
-    if IsValid( MapVote.Panel ) then MapVote.Panel:Remove() end
-
-    hook.Run( "MapVote_VoteCancelled" )
+    MapVote.CancelVote()
 end )
 
 net.Receive( "RTV_Delay", function()

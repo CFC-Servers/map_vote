@@ -1,8 +1,23 @@
-function MapVote.SetMaps( maps )
-    MapVote.Panel.voteArea:SetMaps( maps )
+function MapVote.FinishVote( mapIndex )
+    if not IsValid( MapVote.Panel ) then return end
+    MapVote.Panel.voteArea:Flash( mapIndex )
 end
 
-function MapVote.OpenPanel( maps, endTime )
+function MapVote.CancelVote()
+    if IsValid( MapVote.Panel ) then MapVote.Panel:Remove() end
+    hook.Run( "MapVote_VoteCancelled" )
+end
+
+function MapVote.ChangeVote( ply, mapIndex )
+    if not IsValid( ply ) then return end
+    if not IsValid( MapVote.Panel ) then return end
+
+    local mapData = MapVote.Panel.voteArea:GetMapDataByIndex( mapIndex )
+    MapVote.Panel.voteArea:SetVote( ply, mapData.map )
+end
+
+function MapVote.StartVote( maps, endTime )
+    MapVote.EndTime = endTime
     if IsValid( MapVote.Panel ) then MapVote.Panel:Remove() end
 
     local frame = vgui.Create( "MapVote_Frame" ) --[[@as MapVote_Frame]]
@@ -63,4 +78,6 @@ function MapVote.OpenPanel( maps, endTime )
     MapVote.ThumbDownloader:RequestWorkshopIDs()
 
     MapVote.Panel = frame
+
+    hook.Run( "MapVote_VoteStarted" )
 end
