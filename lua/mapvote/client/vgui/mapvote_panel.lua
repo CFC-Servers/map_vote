@@ -1,3 +1,4 @@
+local avatarSize = 30
 local function maxIconSize( w, h, n, iconAspectRatio )
     local aspectRatio = w / h
     local rows, columns
@@ -60,8 +61,9 @@ function PANEL:SetMaps( maps )
         self.mapIndexes[map] = i
         table.insert( self.maps, {
             map = map,
-            voterCount = 0,
             panel = nil,
+            voterCount = 0,
+            hiddenCount = 0,
         } )
     end
     self:InvalidateLayout( true )
@@ -74,66 +76,83 @@ function PANEL:SetVote( ply, mapName )
     if not mapData then return end
 
     local iconContainer
+    local oldMapData
 
     if self.votes[ply] then
         local oldMapName = self.votes[ply].mapName
-        local oldMapData = self:GetMapData( oldMapName )
+        if oldMapName == mapName then return end
+        oldMapData = self:GetMapData( oldMapName )
 
         oldMapData.voterCount = oldMapData.voterCount - 1
 
         iconContainer = self.votes[ply].panel
     else
-        iconContainer = self:CreateVoterPanel( ply, mapName )
+        iconContainer = self:CreateVoterPanel( ply )
     end
 
-    local x, y = self:calculateDesiredAvatarIconPosition( mapData )
+    local x, y, show = self:calculateDesiredAvatarIconPosition( mapData )
+    iconContainer.Paint = nil
+    iconContainer:MoveTo( x, y, 0.2, nil, nil, function( _, pnl )
+        if not show then
+            pnl.Paint = function()
 
-    -- the docs are wrong this is fine
-    ---@diagnostic disable-next-line: missing-parameter
-    iconContainer:MoveTo( x, y, 0.2 )
+            end
+            pnl:SetVisible( false )
+        end
+    end )
 
     mapData.voterCount = mapData.voterCount + 1
-
     self.votes[ply] = {
         mapName = mapName,
         ply = ply,
-        panel = iconContainer
+        panel = iconContainer,
     }
+    if not oldMapData then return end
+    oldMapData.voterCount = 0
+
+    for ply, voteData in pairs( self.votes ) do
+        if voteData.mapName == oldMapData.map then
+            local x, y, show = self:calculateDesiredAvatarIconPosition( oldMapData )
+            voteData.panel.Paint = nil
+            voteData.panel:MoveTo( x, y, 0.2, nil, nil, function( _, pnl )
+                if not show then
+                    pnl.Paint = function()
+
+                    end
+                    pnl:SetVisible( false )
+                end
+            end )
+            oldMapData.voterCount = oldMapData.voterCount + 1
+        end
+    end
+    -- TODO icon container to show number of hidden votes
 end
 
-function PANEL:CreateVoterPanel( ply, map )
+function PANEL:CreateVoterPanel( ply )
     local iconContainer = vgui.Create( "Panel", self )
     local icon = vgui.Create( "AvatarImage", iconContainer ) --[[@as AvatarImage]]
-    icon:SetSize( 30, 30 )
+    icon:SetSize( avatarSize, avatarSize )
     icon:SetZPos( 1000 )
 
     iconContainer.ply = ply
-    icon:SetPlayer( ply, 32 )
+    icon:SetPlayer( ply, avatarSize )
 
-    iconContainer:SetSize( 30, 30 )
-    icon:SetPos( 4, 4 )
-
-    iconContainer.Paint = function()
-        if iconContainer.img then
-            surface.SetMaterial( iconContainer.img )
-            surface.SetDrawColor( Color( 255, 255, 255 ) )
-            surface.DrawTexturedRect( 2, 2, 16, 16 )
-        end
-    end
+    iconContainer:SetSize( avatarSize + 2, avatarSize + 2 )
+    icon:SetPos( 2, 2 )
 
     iconContainer:SetMouseInputEnabled( false )
-    iconContainer:SetAlpha( 255 )
+    icon:SetAlpha( 200 )
 
     return iconContainer
 end
 
 function PANEL:calculateDesiredAvatarIconPosition( mapData )
-    local avatarIconSize = 50
     local avatarIconPadding = 1
-    local avatarTotalSize = avatarIconSize + avatarIconPadding * 2
+    local avatarTotalSize = avatarSize + avatarIconPadding * 2
 
     local mapIcon = mapData.panel
     local maxColumnCount = math.floor( mapIcon:GetWide() / avatarTotalSize )
+    local maxRowCount = math.floor( (mapIcon:GetTall() - 10) / avatarTotalSize )
 
     -- calulate position of mapIcon relative to main vote area panel
     local rowX, rowY = mapIcon.row:GetPos()
@@ -141,8 +160,13 @@ function PANEL:calculateDesiredAvatarIconPosition( mapData )
     local x, y = rowX + iconX, rowY + iconY
 
     local nextRowNumber = math.floor( mapData.voterCount / maxColumnCount )
-
-    return x + avatarTotalSize * (mapData.voterCount % maxColumnCount), y + nextRowNumber * avatarTotalSize
+    if nextRowNumber >= (maxRowCount - 1) then
+        print( maxRowCount * maxColumnCount )
+        if mapData.voterCount >= maxRowCount * maxColumnCount - 1 then
+            return x + avatarTotalSize * (maxColumnCount - 1), y + (maxRowCount - 1) * avatarTotalSize, false
+        end
+    end
+    return x + avatarTotalSize * (mapData.voterCount % maxColumnCount), y + nextRowNumber * avatarTotalSize, true
 end
 
 function PANEL:setup()

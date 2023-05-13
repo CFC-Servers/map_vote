@@ -18,8 +18,7 @@ net.Receive( "MapVote_Config", function()
 end )
 
 net.Receive( "MapVote_VoteStarted", function()
-    local maps = net.ReadTable()
-
+    local maps = {}
     local amt = net.ReadUInt( 32 )
     for _ = 1, amt do
         local map = net.ReadString()
