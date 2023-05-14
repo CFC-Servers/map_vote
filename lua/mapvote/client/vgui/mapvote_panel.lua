@@ -109,11 +109,11 @@ end
 
 function PANEL:ResetAvatarPositions( mapData )
     mapData.voterCount = 0
-    for ply, voteData in pairs( self.votes ) do
+    for _, voteData in pairs( self.votes ) do
         if voteData.mapName == mapData.map then
             local x, y, show = self:calculateDesiredAvatarIconPosition( mapData )
             voteData.panel:SetVisible( show )
-            voteData.panel:MoveTo( x, y, 0.2, nil, nil, function( _, pnl )
+            voteData.panel:MoveTo( x, y, 0.2, nil, nil, function( _, _ )
             end )
             mapData.voterCount = mapData.voterCount + 1
         end
