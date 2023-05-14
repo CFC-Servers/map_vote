@@ -91,14 +91,9 @@ function PANEL:SetVote( ply, mapName )
     end
 
     local x, y, show = self:calculateDesiredAvatarIconPosition( mapData )
-    iconContainer.Paint = nil
+    iconContainer:SetVisible( true )
     iconContainer:MoveTo( x, y, 0.2, nil, nil, function( _, pnl )
-        if not show then
-            pnl.Paint = function()
-
-            end
-            pnl:SetVisible( false )
-        end
+        pnl:SetVisible( show )
     end )
 
     mapData.voterCount = mapData.voterCount + 1
@@ -108,24 +103,21 @@ function PANEL:SetVote( ply, mapName )
         panel = iconContainer,
     }
     if not oldMapData then return end
-    oldMapData.voterCount = 0
+    self:ResetAvatarPositions( oldMapData )
+    -- TODO icon container to show number of hidden votes
+end
 
+function PANEL:ResetAvatarPositions( mapData )
+    mapData.voterCount = 0
     for ply, voteData in pairs( self.votes ) do
-        if voteData.mapName == oldMapData.map then
-            local x, y, show = self:calculateDesiredAvatarIconPosition( oldMapData )
-            voteData.panel.Paint = nil
+        if voteData.mapName == mapData.map then
+            local x, y, show = self:calculateDesiredAvatarIconPosition( mapData )
+            voteData.panel:SetVisible( show )
             voteData.panel:MoveTo( x, y, 0.2, nil, nil, function( _, pnl )
-                if not show then
-                    pnl.Paint = function()
-
-                    end
-                    pnl:SetVisible( false )
-                end
             end )
-            oldMapData.voterCount = oldMapData.voterCount + 1
+            mapData.voterCount = mapData.voterCount + 1
         end
     end
-    -- TODO icon container to show number of hidden votes
 end
 
 function PANEL:CreateVoterPanel( ply )
@@ -161,8 +153,7 @@ function PANEL:calculateDesiredAvatarIconPosition( mapData )
 
     local nextRowNumber = math.floor( mapData.voterCount / maxColumnCount )
     if nextRowNumber >= (maxRowCount - 1) then
-        print( maxRowCount * maxColumnCount )
-        if mapData.voterCount >= maxRowCount * maxColumnCount - 1 then
+        if mapData.voterCount >= maxRowCount * maxColumnCount then
             return x + avatarTotalSize * (maxColumnCount - 1), y + (maxRowCount - 1) * avatarTotalSize, false
         end
     end
