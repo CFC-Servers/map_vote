@@ -152,10 +152,8 @@ function PANEL:calculateDesiredAvatarIconPosition( mapData )
     local x, y = rowX + iconX, rowY + iconY
 
     local nextRowNumber = math.floor( mapData.voterCount / maxColumnCount )
-    if nextRowNumber >= (maxRowCount - 1) then
-        if mapData.voterCount >= maxRowCount * maxColumnCount then
-            return x + avatarTotalSize * (maxColumnCount - 1), y + (maxRowCount - 1) * avatarTotalSize, false
-        end
+    if nextRowNumber >= (maxRowCount - 1) and mapData.voterCount >= maxRowCount * maxColumnCount then
+        return x + avatarTotalSize * (maxColumnCount - 1), y + (maxRowCount - 1) * avatarTotalSize, false
     end
     return x + avatarTotalSize * (mapData.voterCount % maxColumnCount), y + nextRowNumber * avatarTotalSize, true
 end
