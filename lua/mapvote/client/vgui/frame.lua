@@ -42,13 +42,14 @@ function PANEL:SetHideOnClose( hide )
 end
 
 function PANEL:Init()
+    local circleSegments = 30
     self.btnClose:SetSize( 25, 25 )
     ---@diagnostic disable-next-line: duplicate-set-field
     self.btnClose.Paint = function( _, w, h )
         local r = (w - 13) / 2
         surface.SetDrawColor( MapVote.style.colorCloseButton )
         draw.NoTexture()
-        drawCircle( w / 2, h / 2 + 2, r, 365 )
+        drawCircle( w / 2, h / 2 + 2, r, circleSegments )
         surface.SetDrawColor( MapVote.style.colorTextPrimary )
         surface.DrawTexturedRectRotatedPoint( w / 2, h / 2 + 2, r * 1.5, 2, 45, 0, 0 )
         surface.DrawTexturedRectRotatedPoint( w / 2, h / 2 + 2, r * 1.5, 2, 315, 0, 0 )
@@ -60,7 +61,7 @@ function PANEL:Init()
         local r = (w - 13) / 2
         surface.SetDrawColor( disableColor( MapVote.style.colorGreen ) )
         draw.NoTexture()
-        drawCircle( w / 2, h / 2 + 2, r, 365 )
+        drawCircle( w / 2, h / 2 + 2, r, circleSegments )
     end
 
     self.btnMinim:SetSize( 25, 25 )
@@ -69,7 +70,7 @@ function PANEL:Init()
         local r = (w - 13) / 2
         surface.SetDrawColor( disableColor( MapVote.style.colorYellow ) )
         draw.NoTexture()
-        drawCircle( w / 2, h / 2 + 2, r, 365 )
+        drawCircle( w / 2, h / 2 + 2, r, circleSegments )
     end
     self.btnClose.DoClick = function()
         if self.hideOnClose then
