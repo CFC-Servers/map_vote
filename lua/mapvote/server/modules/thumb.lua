@@ -18,6 +18,8 @@ net.Receive( "MapVote_RequestWorkshopIDTable", function( _, ply )
     for _, map in ipairs( requestedMaps ) do
         if MapVote.addonWorkshopIDs[map] then
             addonWorkshopIDs[map] = MapVote.addonWorkshopIDs[map]
+        else
+            print( "MapVote: No workshop ID found for map", map )
         end
     end
     net.Start( "MapVote_WorkshopIDTable" )

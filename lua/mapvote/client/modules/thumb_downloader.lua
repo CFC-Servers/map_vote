@@ -6,6 +6,7 @@ MapVote.ThumbDownloader = MapVote.ThumbDownloader or {
 
 local ThumbDownloader = MapVote.ThumbDownloader
 
+-- TODO all net receivers should be in net.lua
 net.Receive( "MapVote_WorkshopIDTable", function()
     ThumbDownloader.workshopIDLookup = net.ReadTable()
     print( string.format( "MapVote: Received %s workshop IDs", table.Count( ThumbDownloader.workshopIDLookup ) ) )
@@ -21,9 +22,7 @@ end
 function ThumbDownloader:RequestWorkshopIDs()
     if #self.mapsToDownload == 0 then return end
 
-    net.Start( "MapVote_RequestWorkshopIDTable" )
-    net.WriteTable( self.mapsToDownload )
-    net.SendToServer()
+    MapVote.Net.requestWorskhopIDs( self.mapsToDownload )
 end
 
 function ThumbDownloader:DownloadAll()
@@ -46,7 +45,11 @@ function ThumbDownloader:DownloadAll()
     end
 
     http.Post( "https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/", requestBody,
-        function( body )
+        function( body, _, _, code )
+            if code ~= 200 then
+                print( "Non 200 response received from steam", code )
+                return
+            end
             local data = util.JSONToTable( body )
             if not data then return end
             if not data.response then return end

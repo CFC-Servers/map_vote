@@ -22,4 +22,3 @@ hook.Add( "Initialize", "MapVote_UpdateDB", function()
         MapVote.PlayCounts[v.map] = tonumber( v.play_count )
     end
 end )
-

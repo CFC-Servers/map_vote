@@ -2,8 +2,8 @@ local PANEL = {}
 
 function PANEL:Init()
     self.numberWang = vgui.Create( "DNumberWang", self ) --[[@as DNumberWang]]
-    self.numberWang:SetTextColor( MapVote.style.textEntryTextColor )
-    self.numberWang:SetCursorColor( MapVote.style.textEntryTextColor )
+    self.numberWang:SetTextColor( MapVote.style.colorTextPrimary )
+    self.numberWang:SetCursorColor( MapVote.style.colorTextPrimary )
     self.numberWang:Dock( FILL )
     self.numberWang.m_bBackground = false
 
@@ -14,7 +14,7 @@ function PANEL:Init()
 end
 
 function PANEL:Paint( w, h )
-    draw.RoundedBox( 2, 0, 0, w, h, MapVote.style.secondaryBG )
+    draw.RoundedBox( 2, 0, 0, w, h, MapVote.style.colorSecondaryBG )
 end
 
 function PANEL:SetMin( val )

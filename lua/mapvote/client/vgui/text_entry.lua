@@ -4,8 +4,8 @@ function PANEL:Init()
     self.textEntry = vgui.Create( "DTextEntry", self ) --[[@as DTextEntry]]
     self.textEntry:Dock( FILL )
     self.textEntry.m_bBackground = false
-    self.textEntry:SetTextColor( MapVote.style.textEntryTextColor )
-    self.textEntry:SetCursorColor( MapVote.style.textEntryTextColor )
+    self.textEntry:SetTextColor( MapVote.style.colorTextPrimary )
+    self.textEntry:SetCursorColor( MapVote.style.colorTextPrimary )
     ---@diagnostic disable-next-line: duplicate-set-field
     self.textEntry.OnChange = function()
         self:OnValueChanged( self.textEntry:GetValue() )
@@ -17,7 +17,7 @@ function PANEL:SetPlaceholderText( text )
 end
 
 function PANEL:Paint( w, h )
-    draw.RoundedBox( 2, 0, 0, w, h, MapVote.style.secondaryBG )
+    draw.RoundedBox( 2, 0, 0, w, h, MapVote.style.colorSecondaryBG )
 end
 
 function PANEL:SetEnabled( enabled )

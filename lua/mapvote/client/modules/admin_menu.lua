@@ -48,10 +48,10 @@ function MapVote.openconfig()
         if IsValid( MapVote._mapconfigFrame ) then
             MapVote._mapconfigFrame:Remove()
         end
-        MapVote.Net.SendConfig()
+        MapVote.Net.sendConfig()
     end
 
-    MapVote.Net.SendConfigRequest( function()
+    MapVote.Net.sendConfigRequest( function()
         configMenu:Clear()
         for _, option in pairs( configMenuOptions ) do
             if IsValid( configMenu ) and configMenu.AddConfigItem then
@@ -100,7 +100,7 @@ function MapVote.openMapconfig()
 
     MapVote._mapconfigFramescrollPanel = scrollPanel
 
-    MapVote.Net.SendMapListRequest( function( _ )
+    MapVote.Net.sendMapListRequest( function( _ )
         MapVote.populateScrollPanel()
     end )
 end
