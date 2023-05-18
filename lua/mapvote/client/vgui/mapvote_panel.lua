@@ -237,8 +237,9 @@ end
 function PANEL:Flash( id )
     local data = self:GetMapDataByIndex( id )
     local panel = data.panel
-    timer.Simple( 0.0, function()
-        panel:SetBGColor( MapVote.style.colorPurple )
+    panel:SetBGColor( MapVote.style.colorPurple )
+
+    timer.Simple( 0, function()
         panel:SetPaintBackgroundEnabled( true )
         surface.PlaySound( "hl1/fvox/blip.wav" )
     end )
@@ -251,9 +252,6 @@ function PANEL:Flash( id )
     timer.Simple( 0.8, function()
         panel:SetPaintBackgroundEnabled( true )
         surface.PlaySound( "hl1/fvox/blip.wav" )
-    end )
-    timer.Simple( 1.0, function()
-        panel:SetPaintBackgroundEnabled( true )
     end )
     timer.Simple( 1.5, function() panel:SetPaintBackgroundEnabled( false ) end )
 end
