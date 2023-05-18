@@ -6,6 +6,7 @@ local function disableColor( c )
 end
 
 local function drawCircle( x, y, radius, seg )
+    draw.NoTexture()
     local cir = {}
 
     table.insert( cir, { x = x, y = y, u = 0.5, v = 0.5 } )
@@ -48,7 +49,6 @@ function PANEL:Init()
     self.btnClose.Paint = function( _, w, h )
         local r = (w - 13) / 2
         surface.SetDrawColor( MapVote.style.colorCloseButton )
-        draw.NoTexture()
         drawCircle( w / 2, h / 2 + 2, r, circleSegments )
         surface.SetDrawColor( MapVote.style.colorTextPrimary )
         surface.DrawTexturedRectRotatedPoint( w / 2, h / 2 + 2, r * 1.5, 2, 45, 0, 0 )
@@ -60,7 +60,6 @@ function PANEL:Init()
     self.btnMaxim.Paint = function( _, w, h )
         local r = (w - 13) / 2
         surface.SetDrawColor( disableColor( MapVote.style.colorGreen ) )
-        draw.NoTexture()
         drawCircle( w / 2, h / 2 + 2, r, circleSegments )
     end
 
@@ -69,7 +68,6 @@ function PANEL:Init()
     self.btnMinim.Paint = function( _, w, h )
         local r = (w - 13) / 2
         surface.SetDrawColor( disableColor( MapVote.style.colorYellow ) )
-        draw.NoTexture()
         drawCircle( w / 2, h / 2 + 2, r, circleSegments )
     end
     self.btnClose.DoClick = function()
