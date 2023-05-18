@@ -23,7 +23,7 @@ MapVote.Net.receiveWithMiddleware( "MapVote_RequestConfig", function( _, ply )
     net.Send( ply )
 end, MapVote.Net.requirePermission( MapVote.PermCanConfigure ) )
 
-MapVote.Net.receiveWithMiddleware( "MapVote_Config", function( _, ply )
+MapVote.Net.receiveWithMiddleware( "MapVote_Config", function()
     local err = MapVote.SetConfig( net.ReadTable() )
     if err ~= nil then
         print( "MapVote: Config is invalid: " .. err )

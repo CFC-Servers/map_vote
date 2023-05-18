@@ -11,7 +11,8 @@ end
 function MapVote.Net.requirePermission( perm )
     return function( cb )
         return function( n, ply )
-            if not CAMI and ply:IsSuperAdmin() then
+            if not CAMI then
+                if not ply:IsSuperAdmin() then return end
                 return cb( n, ply )
             end
 
