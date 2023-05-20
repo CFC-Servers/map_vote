@@ -1,34 +1,25 @@
 local avatarSize = 30
-local function maxIconSize( w, h, n, iconAspectRatio )
-    local aspectRatio = w / h
-    local rows, columns
 
-    if aspectRatio > 1 then
-        columns = math.ceil( math.sqrt( n * aspectRatio ) )
-        rows = math.ceil( math.sqrt( n / aspectRatio ) )
+local function maxIconSize( w, h, n, _ )
+    local px = math.ceil( math.sqrt( n * w / h ) )
+    local sx, sy
+    if math.floor( px * h / w ) * px < n then
+        sx = h / math.ceil( px * h / w )
     else
-        rows = math.ceil( math.sqrt( n * aspectRatio ) )
-        columns = math.ceil( math.sqrt( n / aspectRatio ) )
+        sx = w / px
     end
 
-    while rows * columns < n do
-        if rows < columns then
-            rows = rows + 1
-        else
-            columns = columns + 1
-        end
-    end
-
-    local iconWidth = w / columns
-    local iconHeight = h / rows
-
-    if iconAspectRatio > 1 then
-        iconHeight = iconWidth / iconAspectRatio
+    local py = math.ceil( math.sqrt( n * h / w ) )
+    if math.floor( py * w / h ) * py < n then
+        sy = w / math.ceil( py * w / h )
     else
-        iconWidth = iconHeight * iconAspectRatio
+        sy = h / py
     end
 
-    return iconWidth, iconHeight
+    if sx < sy then
+        return sy, sy
+    end
+    return sx, sx
 end
 
 ---@class VoteArea : Panel
