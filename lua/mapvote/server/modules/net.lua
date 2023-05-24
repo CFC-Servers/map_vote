@@ -10,6 +10,8 @@ util.AddNetworkString( "MapVote_VoteStarted" )
 util.AddNetworkString( "MapVote_VoteCancelled" )
 util.AddNetworkString( "MapVote_VoteFinished" )
 
+util.AddNetworkString( "MapVote_RequestVoteState" )
+
 util.AddNetworkString( "MapVote_ChangeVote" )
 util.AddNetworkString( "MapVote_PlayerChangedVote" )
 
@@ -33,7 +35,7 @@ MapVote.Net.receiveWithMiddleware( "MapVote_Config", function()
     MapVote.SaveConfigToFile( MapVote.defaultConfigFilename )
 end, MapVote.Net.requirePermission( MapVote.PermCanConfigure ) )
 
-net.Receive( "MapVote_ChangeVote", function( _, ply )
+MapVote.Net.receiveWithMiddleware( "MapVote_ChangeVote", function( _, ply )
     if not MapVote.state.isInProgress then return end
     if not IsValid( ply ) then return end
 
@@ -46,7 +48,7 @@ net.Receive( "MapVote_ChangeVote", function( _, ply )
     net.WriteEntity( ply )
     net.WriteUInt( mapID, 32 )
     net.Broadcast()
-end )
+end, MapVote.Net.rateLimit( "MapVote_ChangeVote", 15, 1 ) )
 
 MapVote.Net.receiveWithMiddleware( "MapVote_RequestMapList", function( _, ply )
     local maps = MapVote.getMapList()
@@ -58,15 +60,27 @@ MapVote.Net.receiveWithMiddleware( "MapVote_RequestMapList", function( _, ply )
     net.Send( ply )
 end, MapVote.Net.requirePermission( MapVote.PermCanConfigure ) )
 
+MapVote.Net.receiveWithMiddleware( "MapVote_RequestVoteState", function()
+    MapVote.Net.sendVoteStart( MapVote.state.endTime, MapVote.state.currentMaps )
+    timer.Simple( 0.1, function()
+        for steamID, mapID in pairs( MapVote.state.votes ) do
+            net.Start( "MapVote_PlayerChangedVote" )
+            net.WriteEntity( player.GetBySteamID( steamID ) )
+            net.WriteUInt( mapID, 32 )
+            net.Broadcast()
+        end
+    end )
+end, MapVote.Net.rateLimit( "MapVote_RequestVoteState", 2, 0.1 ) )
+
 -- to client
 
-function MapVote.Net.sendVoteStart( length, mapsInVote )
+function MapVote.Net.sendVoteStart( endTime, mapsInVote )
     net.Start( "MapVote_VoteStarted" )
     net.WriteUInt( #mapsInVote, 32 )
     for _, map in ipairs( mapsInVote ) do
         net.WriteString( map )
         net.WriteUInt( MapVote.PlayCounts[map] or 0, 32 )
     end
-    net.WriteUInt( length, 32 )
+    net.WriteUInt( endTime, 32 )
     net.Broadcast()
 end

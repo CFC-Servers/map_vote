@@ -50,8 +50,9 @@ function MapVote.Start( length )
     MapVote.state.isInProgress = true
     MapVote.state.currentMaps = mapsInVote
     MapVote.state.votes = {}
+    MapVote.state.endTime = CurTime() + length
 
-    MapVote.Net.sendVoteStart( length, mapsInVote )
+    MapVote.Net.sendVoteStart( MapVote.state.endTime, mapsInVote )
 
     timer.Create( "MapVote_EndVote", length, 1, MapVote.mapVoteOver )
 end
