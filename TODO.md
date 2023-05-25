@@ -1,6 +1,5 @@
-- [ ] simplify map panel system, sometimes we referenec by name, sometimes by index, should be the same most of the time
+- [ ] rework net messages
 - [ ] settings descriptions
 - [ ] better settings names, this will be a breaking change so it should all be done at once
 - [ ] settings categories
 - [ ] error message for no perms mapvote config
-- should work if player rejoins or when new player joins
