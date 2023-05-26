@@ -70,16 +70,12 @@ function MapVote.StartVote( maps, endTime )
     voteArea:UpdateRowPositions()
 
     local lastClicked = CurTime()
-    local mapAfterCooldown = nil
     ---@diagnostic disable-next-line: duplicate-set-field
     voteArea.OnMapClicked = function( _, index, _ )
         -- TODO this could use the leaky bucket rate limiting the server does
-        if CurTime() - lastClicked < 0.4 then
-            if mapAfterCooldown then
-                mapAfterCooldown = index
-            end
+        if CurTime() - lastClicked > 0.4 then
+            MapVote.Net.changeVote( index )
         end
-        MapVote.Net.changeVote( index )
     end
 
     frame.voteArea = voteArea
