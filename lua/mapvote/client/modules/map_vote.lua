@@ -1,5 +1,6 @@
 function MapVote.FinishVote( mapIndex )
     if not IsValid( MapVote.Panel ) then return end
+    MapVote.Panel:SetVisible( true )
     MapVote.Panel.voteArea:Flash( mapIndex )
 end
 
@@ -69,9 +70,13 @@ function MapVote.StartVote( maps, endTime )
     frame:Center()
     voteArea:UpdateRowPositions()
 
+    local lastClicked = CurTime()
     ---@diagnostic disable-next-line: duplicate-set-field
     voteArea.OnMapClicked = function( _, index, _ )
-        MapVote.Net.changeVote( index )
+        -- TODO this could use the leaky bucket rate limiting the server does
+        if CurTime() - lastClicked > 0.4 then
+            MapVote.Net.changeVote( index )
+        end
     end
 
     frame.voteArea = voteArea
@@ -81,3 +86,10 @@ function MapVote.StartVote( maps, endTime )
 
     hook.Run( "MapVote_VoteStarted" )
 end
+
+hook.Add( "Tick", "MapVote_RequestState", function()
+    hook.Remove( "Tick", "MapVote_RequestState" )
+    timer.Simple( 5, function()
+        MapVote.Net.requestState()
+    end )
+end )

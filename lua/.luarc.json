@@ -1,5 +1,7 @@
 {
     "diagnostics.globals": [
-        "CAMI"
+        "CAMI",
+        "expect",
+        "done"
     ]
 }

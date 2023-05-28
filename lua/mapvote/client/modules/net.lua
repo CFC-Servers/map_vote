@@ -26,7 +26,7 @@ net.Receive( "MapVote_VoteStarted", function()
         table.insert( maps, map )
     end
 
-    local endTime = CurTime() + net.ReadUInt( 32 )
+    local endTime = net.ReadUInt( 32 )
 
     MapVote.StartVote( maps, endTime )
 end )
@@ -96,5 +96,10 @@ end
 function MapVote.Net.requestWorskhopIDs( maps )
     net.Start( "MapVote_RequestWorkshopIDTable" )
     net.WriteTable( maps )
+    net.SendToServer()
+end
+
+function MapVote.Net.requestState()
+    net.Start( "MapVote_RequestVoteState" )
     net.SendToServer()
 end
