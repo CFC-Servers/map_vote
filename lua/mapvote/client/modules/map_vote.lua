@@ -1,5 +1,6 @@
 function MapVote.FinishVote( mapIndex )
     if not IsValid( MapVote.Panel ) then return end
+    MapVote.Panel:SetVisible( true )
     MapVote.Panel.voteArea:Flash( mapIndex )
 end
 
