@@ -73,7 +73,6 @@ function MapVote.LoadConfig()
     end
 
     print( "MapVote config loaded" )
-    hook.Run( "MapVote_ConfigLoaded" )
 end
 
 if not file.Exists( "mapvote", "DATA" ) then file.CreateDir( "mapvote" ) end

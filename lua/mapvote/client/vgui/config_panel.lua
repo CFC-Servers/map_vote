@@ -5,7 +5,7 @@ function PANEL:Init()
 end
 
 function PANEL:Paint( w, h )
-    draw.RoundedBox( 10, 0, 0, w, h, MapVote.style.primaryBG )
+    draw.RoundedBox( 10, 0, 0, w, h, MapVote.style.colorPrimaryBG )
 end
 
 function PANEL:AddConfigPanel( displayName, panel )
@@ -119,7 +119,7 @@ function PANEL:AddConfigItem( displayName, itemType, action, startingValue )
     errLabel:SetText( "" )
     errLabel:Dock( LEFT )
     errLabel:SetSize( 500, 25 )
-    errLabel:SetColor( MapVote.style.errorColor )
+    errLabel:SetColor( MapVote.style.colorRed )
 
     if not entryPanel then
         error( "Unknown type " .. itemType.name )
