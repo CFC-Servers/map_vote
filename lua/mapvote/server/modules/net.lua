@@ -60,22 +60,22 @@ MapVote.Net.receiveWithMiddleware( "MapVote_RequestMapList", function( _, ply )
     net.Send( ply )
 end, MapVote.Net.requirePermission( MapVote.PermCanConfigure ) )
 
-MapVote.Net.receiveWithMiddleware( "MapVote_RequestVoteState", function()
+MapVote.Net.receiveWithMiddleware( "MapVote_RequestVoteState", function( _, ply )
     if not MapVote.state.isInProgress then return end
-    MapVote.Net.sendVoteStart( MapVote.state.endTime, MapVote.state.currentMaps )
+    MapVote.Net.sendVoteStart( MapVote.state.endTime, MapVote.state.currentMaps, ply )
     timer.Simple( 0.1, function()
         for steamID, mapID in pairs( MapVote.state.votes ) do
             net.Start( "MapVote_PlayerChangedVote" )
             net.WriteEntity( player.GetBySteamID( steamID ) )
             net.WriteUInt( mapID, 32 )
-            net.Broadcast()
+            net.Send( ply )
         end
     end )
 end, MapVote.Net.rateLimit( "MapVote_RequestVoteState", 2, 0.1 ) )
 
 -- to client
 
-function MapVote.Net.sendVoteStart( endTime, mapsInVote )
+function MapVote.Net.sendVoteStart( endTime, mapsInVote, ply )
     net.Start( "MapVote_VoteStarted" )
     net.WriteUInt( #mapsInVote, 32 )
     for _, map in ipairs( mapsInVote ) do
@@ -83,5 +83,9 @@ function MapVote.Net.sendVoteStart( endTime, mapsInVote )
         net.WriteUInt( MapVote.PlayCounts[map] or 0, 32 )
     end
     net.WriteUInt( endTime, 32 )
-    net.Broadcast()
+    if not ply then
+        net.Broadcast()
+    else
+        net.Send( ply )
+    end
 end
