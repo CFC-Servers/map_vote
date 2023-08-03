@@ -43,6 +43,13 @@ function PANEL:SetHideOnClose( hide )
 end
 
 function PANEL:Init()
+    local blur = MapVote.style.frameBlur or 0
+    if blur > 0 then
+        self.blurMat = Material( "pp/blurscreen" )
+        self.blurMat:SetFloat( "$blur", blur )
+        self.blurMat:Recompute()
+    end
+
     local circleSegments = 30
     self.btnClose:SetSize( 25, 25 )
     ---@diagnostic disable-next-line: duplicate-set-field
@@ -81,10 +88,23 @@ function PANEL:Init()
 end
 
 function PANEL:Paint( w, h )
-    for _ = 1, MapVote.style.frameBlurLevel do
+    for _ = 1, MapVote.style.frameBackgroundBlur do
         Derma_DrawBackgroundBlur( self, self.m_fCreateTime )
     end
-    draw.RoundedBox( 10, 0, 0, w, h, MapVote.style.colorPrimaryBG )
+    self:ApplyBlur()
+    draw.RoundedBox( MapVote.style.frameCornerRadius, 0, 0, w, h, MapVote.style.colorPrimaryBG )
+end
+
+function PANEL:ApplyBlur()
+    if not self.blurMat then return end
+
+    surface.SetDrawColor( 255, 255, 255, 255 )
+    surface.SetMaterial( self.blurMat )
+
+    render.UpdateScreenEffectTexture()
+
+    local x, y = self:LocalToScreen( 0, 0 )
+    surface.DrawTexturedRect( -x, -y, ScrW(), ScrH())
 end
 
 vgui.Register( "MapVote_Frame", PANEL, "DFrame" )
