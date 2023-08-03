@@ -85,6 +85,7 @@ function MapVote.StartVote( maps, endTime )
     MapVote.Panel = frame
 
     hook.Run( "MapVote_VoteStarted" )
+    hook.Run( "MapVote_PanelOpened" )
 end
 
 hook.Add( "Tick", "MapVote_RequestState", function()
