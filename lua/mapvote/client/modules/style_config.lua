@@ -12,7 +12,9 @@ MapVote.style = {
     colorGreen = Color( 166, 227, 161 ),
     colorPurple = Color( 203, 166, 247 ),
     colorCloseButton = Color( 240, 62, 92 ),
-    frameBlurLevel = 0,
+    frameBackgroundBlur = 0,
+    frameBlur = 0, -- if using a non transparent color this should always be 0
+    frameCornerRadius = 5,
     configLabelFont = "MapVote_ConfigNameLabel",
     mapVoteTitleFont = "MapVote_Title",
 
