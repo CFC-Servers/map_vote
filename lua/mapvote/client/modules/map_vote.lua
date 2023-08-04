@@ -28,11 +28,7 @@ function MapVote.StartVote( maps, endTime )
     frame:SetTitle( "" )
     frame:SetHideOnClose( true )
 
-    frame._OriginalSetVisible = frame.SetVisible
-
-    frame.SetVisible = function( self, visible )
-        self._OriginalSetVisible( self, visible )
-
+    frame.OnVisibilityChanged = function( _, visible )
         if visible then
             hook.Run( "MapVote_VotePanelOpened" )
         else
