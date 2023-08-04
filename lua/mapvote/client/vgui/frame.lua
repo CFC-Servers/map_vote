@@ -78,8 +78,6 @@ function PANEL:Init()
         drawCircle( w / 2, h / 2 + 2, r, circleSegments )
     end
     self.btnClose.DoClick = function()
-        hook.Run( "MapVote_PanelClosed" )
-
         if self.hideOnClose then
             self:SetVisible( false )
             return
