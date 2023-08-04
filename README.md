@@ -32,3 +32,5 @@ You can create file in lua/mapvote/client/plugins and lua/mapvote/server/plugins
 | MapVote_ChangeMap       | Called just before mapvote changes the map, return false to skip                   | map     | server |
 | MapVote_RTVStart        | Called when the vote has been rocked, return false to prevent map vote starting    |         | server |
 | MapVote_Loaded          | Called when all lua files for mapvote have been loaded                             |         | shared |
+| MapVote_VotePanelOpened | Called when the vote panel is shown                                                |         | client |
+| MapVote_VotePanelClosed | Called when the vote panel is hidden                                               |         | client |
