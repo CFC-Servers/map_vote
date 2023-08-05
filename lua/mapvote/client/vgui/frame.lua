@@ -107,4 +107,13 @@ function PANEL:ApplyBlur()
     surface.DrawTexturedRect( -x, -y, ScrW(), ScrH())
 end
 
+local basePanel = baseclass.Get( "Panel" )
+
+function PANEL:SetVisible( v )
+    self:OnVisibilityChanged( v )
+    return basePanel.SetVisible( self, v )
+end
+
+function PANEL:OnVisibilityChanged( _ ) end
+
 vgui.Register( "MapVote_Frame", PANEL, "DFrame" )
