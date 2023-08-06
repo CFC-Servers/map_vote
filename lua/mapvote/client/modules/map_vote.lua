@@ -28,6 +28,14 @@ function MapVote.StartVote( maps, endTime )
     frame:SetTitle( "" )
     frame:SetHideOnClose( true )
 
+    frame.OnVisibilityChanged = function( _, visible )
+        if visible then
+            hook.Run( "MapVote_VotePanelOpened" )
+        else
+            hook.Run( "MapVote_VotePanelClosed" )
+        end
+    end
+
     local infoRow = vgui.Create( "Panel", frame ) --[[@as DPanel]]
     infoRow:Dock( TOP )
     infoRow:SetTall( 40 )
@@ -85,6 +93,7 @@ function MapVote.StartVote( maps, endTime )
     MapVote.Panel = frame
 
     hook.Run( "MapVote_VoteStarted" )
+    hook.Run( "MapVote_VotePanelOpened" )
 end
 
 hook.Add( "Tick", "MapVote_RequestState", function()
