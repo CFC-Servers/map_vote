@@ -61,6 +61,7 @@ function MapVote.StartVote( maps, endTime )
     titleLabel:DockMargin( 10, 5, 5, 5 )
     titleLabel:SetFont( MapVote.style.mapVoteTitleFont )
     frame.titleLabel = titleLabel
+
     local countdownLabel = vgui.Create( "DLabel", infoRow ) --[[@as DLabel]]
     countdownLabel:SetColor( MapVote.style.colorTextPrimary )
     countdownLabel:SetText( "00:45" )

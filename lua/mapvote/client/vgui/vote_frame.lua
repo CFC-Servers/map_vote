@@ -41,6 +41,10 @@ function PANEL:disableTopBar()
     self:DockPadding( 5, 5, 5, 5 )
 end
 
+-- We need to hardcode a minimum width for people with tiny resolutions
+local minMinimizedWidth = 600
+local minimizedHeight = 50
+
 function PANEL:SetMinimized( m )
     print( m, self._isMinimized )
     if not m and self._isMinimized then
@@ -61,7 +65,7 @@ function PANEL:SetMinimized( m )
     elseif m and not self._isMinimized then
         self:OnMinimizedChangeStart( m )
         self._isMinimized = true
-        local targetSize = Vector( ScrW() * 0.4, ScrH() * 0.05 )
+        local targetSize = Vector( math.max( minMinimizedWidth, ScrW() * 0.4 ), minimizedHeight )
         local targetPos = Vector( ScrW() / 2 - targetSize.x / 2, 20 )
         local data = MapVote.DoPanelMove( self, targetPos, targetSize, 0.3, function()
             if not self._isMinimized then return end
