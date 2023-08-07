@@ -3,8 +3,5 @@
         "CAMI",
         "expect",
         "done"
-    ],
-    "diagnostics.disable": [
-        "duplicate-set-field"
     ]
 }
