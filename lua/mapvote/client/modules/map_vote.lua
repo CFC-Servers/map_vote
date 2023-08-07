@@ -44,12 +44,12 @@ function MapVote.StartVote( maps, endTime )
     frame:SetTitle( "" )
     frame:SetHideOnClose( true )
 
-    frame._isVisible = true
+    frame._isMinimized = false
     ---@diagnostic disable-next-line: duplicate-set-field
     frame.SetVisible = function( self, v )
         self:OnVisibilityChanged( v )
-        if v and not self._isVisible then
-            self._isVisible = v
+        if v and self._isMinimized then
+            self._isMinimized = false
             apply( { self.btnClose, self.btnMaxim, self.btnMinim }, showButton )
             self:DockPadding( 5, 24 + 5, 5, 5 )
             self:MakePopup()
@@ -59,13 +59,13 @@ function MapVote.StartVote( maps, endTime )
             local targetSize = self._originalSize or Vector( ScrW() * 0.8, ScrH() * 0.85 )
             local targetPos = Vector( ScrW() / 2 - targetSize.x / 2, ScrH() / 2 - targetSize.y / 2 )
             MapVote.DoPanelMove( self, targetPos, targetSize, 0.3 )
-        elseif not v and self._isVisible then
-            self._isVisible = v
+        elseif not v and not self._isMinimized then
+            self._isMinimized = true
             local targetSize = Vector( ScrW() * 0.4, ScrH() * 0.05 )
             local targetPos = Vector( ScrW() / 2 - targetSize.x / 2, 20 )
             self._originalSize = Vector( self:GetSize() )
             MapVote.DoPanelMove( self, targetPos, targetSize, 0.3, function()
-                if self._isVisible then return end
+                if not self._isMinimized then return end
                 apply( { self.btnClose, self.btnMaxim, self.btnMinim }, hideButton )
                 self:DockPadding( 5, 5, 5, 5 )
                 self.voteArea:SetVisible( false )
