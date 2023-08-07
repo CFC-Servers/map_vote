@@ -17,6 +17,21 @@ function MapVote.ChangeVote( ply, mapIndex )
     MapVote.Panel.voteArea:SetVote( ply, mapData.map )
 end
 
+local function apply( items, func )
+    for _, item in pairs( items ) do
+        func( item )
+    end
+end
+local function hideButton( btn )
+    btn:SetVisible( false )
+    btn:SetHeight( 0 )
+end
+
+local function showButton( btn )
+    btn:SetVisible( true )
+    btn:SetHeight( 24 )
+end
+
 function MapVote.StartVote( maps, endTime )
     MapVote.EndTime = endTime
     if IsValid( MapVote.Panel ) then MapVote.Panel:Remove() end
@@ -25,11 +40,46 @@ function MapVote.StartVote( maps, endTime )
     frame:SetSize( ScrW() * 0.8, ScrH() * 0.85 )
     frame:Center()
     frame:MakePopup()
+    frame:SetKeyboardInputEnabled( false )
     frame:SetTitle( "" )
     frame:SetHideOnClose( true )
 
-    frame.OnVisibilityChanged = function( _, visible )
-        if visible then
+    frame._isVisible = true
+    ---@diagnostic disable-next-line: duplicate-set-field
+    frame.SetVisible = function( self, v )
+        self:OnVisibilityChanged( v )
+        if v and not self._isVisible then
+            self._isVisible = v
+            apply( { self.btnClose, self.btnMaxim, self.btnMinim }, showButton )
+            self:DockPadding( 5, 24 + 5, 5, 5 )
+            self:MakePopup()
+            self:SetKeyboardInputEnabled( false )
+            self.voteArea:SetVisible( true )
+            self.titleLabel:SetText( "Vote for a new map!" )
+            local targetSize = self._originalSize or Vector( ScrW() * 0.8, ScrH() * 0.85 )
+            local targetPos = Vector( ScrW() / 2 - targetSize.x / 2, ScrH() / 2 - targetSize.y / 2 )
+            MapVote.DoPanelMove( self, targetPos, targetSize, 0.3 )
+        elseif not v and self._isVisible then
+            self._isVisible = v
+            local targetSize = Vector( ScrW() * 0.4, ScrH() * 0.05 )
+            local targetPos = Vector( ScrW() / 2 - targetSize.x / 2, 20 )
+            self._originalSize = Vector( self:GetSize() )
+            MapVote.DoPanelMove( self, targetPos, targetSize, 0.3, function()
+                if self._isVisible then return end
+                apply( { self.btnClose, self.btnMaxim, self.btnMinim }, hideButton )
+                self:DockPadding( 5, 5, 5, 5 )
+                self.voteArea:SetVisible( false )
+                self:KillFocus()
+                self:SetMouseInputEnabled( false )
+                self:SetKeyboardInputEnabled( false )
+                self.titleLabel:SetText( "Vote for a new map! (F3 to vote)" )
+                self.titleLabel:SetWide( 700 )
+            end )
+        end
+    end
+
+    frame.OnVisibilityChanged = function( _, v )
+        if v then
             hook.Run( "MapVote_VotePanelOpened" )
         else
             hook.Run( "MapVote_VotePanelClosed" )
@@ -47,7 +97,7 @@ function MapVote.StartVote( maps, endTime )
     titleLabel:SetWide( 500 )
     titleLabel:DockMargin( 10, 5, 5, 5 )
     titleLabel:SetFont( MapVote.style.mapVoteTitleFont )
-
+    frame.titleLabel = titleLabel
     local countdownLabel = vgui.Create( "DLabel", infoRow ) --[[@as DLabel]]
     countdownLabel:SetColor( MapVote.style.colorTextPrimary )
     countdownLabel:SetText( "00:45" )

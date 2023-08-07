@@ -35,6 +35,7 @@ local PANEL = {}
 function PANEL:Init()
     self.button = vgui.Create( "DImageButton", self ) --[[@as DImageButton]]
     self.button:Dock( FILL )
+    self.button:DockMargin( 2, 2, 2, 0 )
     self.button.DoClick = function()
         self:DoClick()
     end
