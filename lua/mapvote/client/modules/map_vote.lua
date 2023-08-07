@@ -1,5 +1,6 @@
 function MapVote.FinishVote( mapIndex )
     if not IsValid( MapVote.Panel ) then return end
+    MapVote.Panel:SetMinimized( false )
     MapVote.Panel:SetVisible( true )
     MapVote.Panel.voteArea:Flash( mapIndex )
 end
@@ -17,26 +18,11 @@ function MapVote.ChangeVote( ply, mapIndex )
     MapVote.Panel.voteArea:SetVote( ply, mapData.map )
 end
 
-local function apply( items, func )
-    for _, item in pairs( items ) do
-        func( item )
-    end
-end
-local function hideButton( btn )
-    btn:SetVisible( false )
-    btn:SetHeight( 0 )
-end
-
-local function showButton( btn )
-    btn:SetVisible( true )
-    btn:SetHeight( 24 )
-end
-
 function MapVote.StartVote( maps, endTime )
     MapVote.EndTime = endTime
     if IsValid( MapVote.Panel ) then MapVote.Panel:Remove() end
 
-    local frame = vgui.Create( "MapVote_Frame" ) --[[@as MapVote_Frame]]
+    local frame = vgui.Create( "MapVote_VoteFrame" )
     frame:SetSize( ScrW() * 0.8, ScrH() * 0.85 )
     frame:Center()
     frame:MakePopup()
@@ -44,46 +30,23 @@ function MapVote.StartVote( maps, endTime )
     frame:SetTitle( "" )
     frame:SetHideOnClose( true )
 
-    frame._isMinimized = false
     ---@diagnostic disable-next-line: duplicate-set-field
-    frame.SetVisible = function( self, v )
-        self:OnVisibilityChanged( v )
-        if v and self._isMinimized then
-            self._isMinimized = false
-            apply( { self.btnClose, self.btnMaxim, self.btnMinim }, showButton )
-            self:DockPadding( 5, 24 + 5, 5, 5 )
-            self:MakePopup()
-            self:SetKeyboardInputEnabled( false )
-            self.voteArea:SetVisible( true )
-            self.titleLabel:SetText( "Vote for a new map!" )
-            local targetSize = self._originalSize or Vector( ScrW() * 0.8, ScrH() * 0.85 )
-            local targetPos = Vector( ScrW() / 2 - targetSize.x / 2, ScrH() / 2 - targetSize.y / 2 )
-            MapVote.DoPanelMove( self, targetPos, targetSize, 0.3 )
-        elseif not v and not self._isMinimized then
-            self._isMinimized = true
-            local targetSize = Vector( ScrW() * 0.4, ScrH() * 0.05 )
-            local targetPos = Vector( ScrW() / 2 - targetSize.x / 2, 20 )
-            self._originalSize = Vector( self:GetSize() )
-            MapVote.DoPanelMove( self, targetPos, targetSize, 0.3, function()
-                if not self._isMinimized then return end
-                apply( { self.btnClose, self.btnMaxim, self.btnMinim }, hideButton )
-                self:DockPadding( 5, 5, 5, 5 )
-                self.voteArea:SetVisible( false )
-                self:KillFocus()
-                self:SetMouseInputEnabled( false )
-                self:SetKeyboardInputEnabled( false )
-                self.titleLabel:SetText( "Vote for a new map! (F3 to vote)" )
-                self.titleLabel:SetWide( 700 )
-            end )
-        end
+    frame.OnMinimizedChangeStart = function( self, v )
+        if v then return end
+        self.voteArea:SetVisible( true )
+        self.titleLabel:SetText( "Vote for a new map!" )
+
+        hook.Run( "MapVote_VotePanelOpened" )
     end
 
-    frame.OnVisibilityChanged = function( _, v )
-        if v then
-            hook.Run( "MapVote_VotePanelOpened" )
-        else
-            hook.Run( "MapVote_VotePanelClosed" )
-        end
+    ---@diagnostic disable-next-line: duplicate-set-field
+    frame.OnMinimizedChangeFinish = function( self, v )
+        if not v then return end
+        self.voteArea:SetVisible( false )
+        self.titleLabel:SetText( "Vote for a new map! (F3 to vote)" )
+        self.titleLabel:SetWide( 700 )
+
+        hook.Run( "MapVote_VotePanelClosed" )
     end
 
     local infoRow = vgui.Create( "Panel", frame ) --[[@as DPanel]]
