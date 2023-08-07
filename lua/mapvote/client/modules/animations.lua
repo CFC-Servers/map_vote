@@ -5,7 +5,7 @@ function MapVote.DoPanelMove( panel, newPos, newSize, duration, callback )
     local startSize = Vector( panel:GetSize() )
     local startPos = Vector( panel:GetPos() )
 
-    anim.Think = function( anim, pnl, fraction )
+    anim.Think = function( _, pnl, fraction )
         local n = fraction
 
         local size = LerpVector( n, startSize, newSize )
