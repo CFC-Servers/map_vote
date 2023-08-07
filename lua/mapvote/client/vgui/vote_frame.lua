@@ -63,8 +63,7 @@ function PANEL:SetMinimized( m )
         self._isMinimized = true
         local targetSize = Vector( ScrW() * 0.4, ScrH() * 0.05 )
         local targetPos = Vector( ScrW() / 2 - targetSize.x / 2, 20 )
-        self._originalSize = Vector( self:GetSize() )
-        MapVote.DoPanelMove( self, targetPos, targetSize, 0.3, function()
+        local data = MapVote.DoPanelMove( self, targetPos, targetSize, 0.3, function()
             if not self._isMinimized then return end
             self:OnMinimizedChangeFinish( m )
 
@@ -73,6 +72,7 @@ function PANEL:SetMinimized( m )
             self:SetMouseInputEnabled( false )
             self:SetKeyboardInputEnabled( false )
         end )
+        self._originalSize = data.startSize
     end
 end
 
