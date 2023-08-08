@@ -1,4 +1,8 @@
 ---@param panel Panel
+---@param newPos Vector
+---@param newSize Vector
+---@param duration number
+---@param callback fun(tbl: AnimationData, pnl: Panel)
 function MapVote.DoPanelMove( panel, newPos, newSize, duration, callback )
     local anim = panel:NewAnimation( duration, 0, 1, callback )
 
