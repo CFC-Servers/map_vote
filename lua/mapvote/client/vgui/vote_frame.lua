@@ -46,7 +46,6 @@ local minMinimizedWidth = 600
 local minimizedHeight = 50
 
 function PANEL:SetMinimized( m )
-    print( m, self._isMinimized )
     if not m and self._isMinimized then
         self:OnMinimizedChangeStart( m )
         self._isMinimized = false
