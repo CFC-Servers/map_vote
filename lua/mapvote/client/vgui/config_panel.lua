@@ -74,9 +74,9 @@ function PANEL:AddConfigItem( displayName, itemType, action, startingValue )
         itemType = itemType --[[@as SchemaTypeNumber]]
 
         entryPanel = vgui.Create( "MapVote_NumberWang", optionPanel ) --[[@as DNumberWang]]
-        entryPanel:SetValue( startingValue or 0 )
         entryPanel:SetMax( itemType.max or 1e10 )
         entryPanel:SetMin( itemType.min or -1e10 )
+        entryPanel:SetValue( startingValue or 0 )
         ---@diagnostic disable-next-line: duplicate-set-field
         entryPanel.OnValueChanged = function( _, val )
             local ok, err = itemType:Validate( val )
