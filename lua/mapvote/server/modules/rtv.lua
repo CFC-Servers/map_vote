@@ -1,5 +1,5 @@
-MapVote.RTV = MapVote.RTV or {}
-local RTV = MapVote.RTV
+local RTV = MapVote.RTV or {}
+MapVote.RTV = RTV
 
 -- Removes the ulx votemap command.
 hook.Add( "InitPostEntity", "RemoveULXVotemap", function()
@@ -80,6 +80,12 @@ function RTV.Start()
 
     PrintMessage( HUD_PRINTTALK, "The vote has been rocked, map vote imminent" )
     MapVote.Start()
+end
+
+function RTV.ResetVotes()
+    for _, ply in pairs( player.GetAll() ) do
+        ply.RTVVoted = nil
+    end
 end
 
 function RTV.AddVote( ply )
