@@ -106,7 +106,7 @@ function RTV.CanVote( ply )
         return false, "You must wait a bit before voting!"
     end
 
-    if ply.RTVVotedTime + conf.PlyRTVCooldownSeconds >= CurTime() then
+    if ply.RTVVotedTime and ply.RTVVotedTime + conf.PlyRTVCooldownSeconds >= CurTime() then
         return false, "You must wait a bit before voting again!"
     end
 

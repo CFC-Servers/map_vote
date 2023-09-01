@@ -22,6 +22,7 @@ local configMenuOptions = {
     { "Minimum Players Before Reset",     schema.fields.MinimumPlayersBeforeReset, "MinimumPlayersBeforeReset" },
     { "Time To Reset",                    schema.fields.TimeToReset,               "TimeToReset" },
     { "Map Prefixes",                     schema.fields.MapPrefixes,               "MapPrefixes" },
+    { "Player RTV Cooldown",              schema.fields.PlyRTVCooldownSeconds,     "PlyRTVCooldownSeconds" },
 }
 
 MapVote._mapconfigFrame = nil
