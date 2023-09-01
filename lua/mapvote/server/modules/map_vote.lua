@@ -71,7 +71,7 @@ function MapVote.Cancel()
     if not MapVote.state.isInProgress then return end
 
     MapVote.resetState()
-
+    MapVote.RTV.ResetVotes()
 
     net.Start( "MapVote_VoteCancelled" )
     net.Broadcast()
