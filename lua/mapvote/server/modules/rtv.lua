@@ -83,7 +83,7 @@ function RTV.Start()
 end
 
 function RTV.ResetVotes()
-    for _, ply in pairs( player.GetAll() ) do
+    for _, ply in ipairs( player.GetHumans() ) do
         ply.RTVVoted = nil
     end
 end
