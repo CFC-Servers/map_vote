@@ -34,6 +34,7 @@ local default = {
     DefaultMap = "gm_construct",
     RTVPercentPlayersRequired = 0.66,
     SortMaps = false,
+    PlyRTVCooldownSeconds = 120,
 }
 
 MapVote.configSchema = schema
