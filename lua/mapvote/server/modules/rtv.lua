@@ -85,6 +85,8 @@ end
 function RTV.AddVote( ply )
     local conf = MapVote.GetConfig()
     ply.RTVVoted = true
+    ply.RTVVotedTime = CurTime()
+
     MsgN( ply:Nick() .. " has voted to change the map." )
     local percentage = math.Round( RTV.GetPlayerCount() * conf.RTVPercentPlayersRequired )
     PrintMessage( HUD_PRINTTALK,
@@ -102,6 +104,10 @@ function RTV.CanVote( ply )
 
     if conf.RTVWait >= CurTime() then
         return false, "You must wait a bit before voting!"
+    end
+
+    if ply.RTVVotedTime and ply.RTVVotedTime + conf.PlyRTVCooldownSeconds >= CurTime() then
+        return false, "You must wait a bit before voting again!"
     end
 
     if GetGlobalBool( "In_Voting" ) then

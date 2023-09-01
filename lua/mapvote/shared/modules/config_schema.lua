@@ -16,7 +16,8 @@ local schema = SV.Object {
     ExcludedMaps = SV.Map( SV.String(), SV.Bool() ),
     IncludedMaps = SV.Map( SV.String(), SV.Bool() ),
     MinimumPlayersBeforeReset = SV.Int {},
-    TimeToReset = SV.Int { min = 1 }
+    TimeToReset = SV.Int { min = 1 },
+    PlyRTVCooldownSeconds = SV.Int { min = 1 }
 }
 
 local default = {
@@ -34,6 +35,7 @@ local default = {
     DefaultMap = "gm_construct",
     RTVPercentPlayersRequired = 0.66,
     SortMaps = false,
+    PlyRTVCooldownSeconds = 120,
 }
 
 MapVote.configSchema = schema
