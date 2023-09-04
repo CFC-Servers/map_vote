@@ -1,4 +1,5 @@
 local searchPaths = {
+    "materials/mapvote/thumb_overrides/",
     "maps/thumb",
     "maps/thumb/",
     "maps/",
