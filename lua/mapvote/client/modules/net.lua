@@ -23,11 +23,15 @@ net.Receive( "MapVote_VoteStarted", function()
     for _ = 1, amt do
         local map = net.ReadString()
         net.ReadUInt( 32 ) -- this is playcount, TODO
+        local url = net.ReadString()
+        if url and url ~= "" then
+            MapVote.ThumbDownloader:SetURLOverride( map, url )
+        end
+
         table.insert( maps, map )
     end
 
     local endTime = net.ReadUInt( 32 )
-
     MapVote.StartVote( maps, endTime )
 end )
 

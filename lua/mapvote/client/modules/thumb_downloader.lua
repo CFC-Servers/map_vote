@@ -1,10 +1,22 @@
-MapVote.ThumbDownloader = MapVote.ThumbDownloader or {
+local ThumbDownloader = MapVote.ThumbDownloader or {
     workshopIDLookup = {},
     mapsToDownload = {},
+    ---@type table<string, fun( filepath: string )>
     mapDownloadCallbacks = {},
+    urlOverrides = {},
+    searchPaths = {
+        "materials/mapvote/thumb_overrides/",
+        "maps/thumb",
+        "maps/thumb/",
+        "maps/",
+        "data/mapvote/thumb_cache/",
+    },
+    noIcon = "maps/thumb/noicon.png",
+    thumbFilePathCache = {},
 }
 
-local ThumbDownloader = MapVote.ThumbDownloader
+
+MapVote.ThumbDownloader = ThumbDownloader
 
 -- TODO all net receivers should be in net.lua
 net.Receive( "MapVote_WorkshopIDTable", function()
@@ -13,10 +25,44 @@ net.Receive( "MapVote_WorkshopIDTable", function()
     ThumbDownloader:DownloadAll()
 end )
 
+function ThumbDownloader:getMapThumbnailFilePath( name )
+    if self.thumbFilePathCache[name] then
+        return self.thumbFilePathCache[name]
+    end
+
+    for _, path in ipairs( self.searchPaths ) do
+        -- finding all the paths in bulk this way is faster than using file.Exists
+        local thumbs = file.Find( path .. "*", "GAME" )
+        for _, thumb in ipairs( thumbs ) do
+            local extensionName = string.sub( thumb, -3, -1 )
+            if extensionName == "png" or extensionName == "jpg" then
+                local mapName = string.sub( thumb, 1, -5 )
+                self.thumbFilePathCache[mapName] = path .. thumb
+            end
+        end
+    end
+
+    return self.thumbFilePathCache[name]
+end
+
+---@param map string
+---@param callback fun( filepath: string )
 function ThumbDownloader:QueueDownload( map, callback )
+    local filePath = self:getMapThumbnailFilePath( map )
+    if filePath then
+        callback( filePath )
+        return
+    end
+
     print( "MapVote: Queued map thumb for download", map )
     self.mapDownloadCallbacks[map] = callback
     table.insert( self.mapsToDownload, map )
+end
+
+---@param map string
+---@param url string
+function ThumbDownloader:SetURLOverride( map, url )
+    self.urlOverrides[map] = url
 end
 
 function ThumbDownloader:RequestWorkshopIDs()
@@ -31,7 +77,9 @@ function ThumbDownloader:DownloadAll()
     local mapsToDownload = {}
     for _, map in pairs( self.mapsToDownload ) do
         local wsid = self.workshopIDLookup[map]
-        if wsid then
+        if self.urlOverrides[map] then
+            self:DownloadThumbnail( map, self.urlOverrides[map] )
+        elseif wsid then
             mapNamesByWorkshopID[wsid] = mapNamesByWorkshopID[wsid] or {}
             table.insert( mapNamesByWorkshopID[wsid], map )
             table.insert( mapsToDownload, map )
@@ -68,18 +116,39 @@ end
 
 function ThumbDownloader:DownloadThumbnail( name, url )
     file.CreateDir( "mapvote/thumb_cache" )
-    http.Fetch( url, function( body, _, headers, _ )
-        local ext = ".png"
-        if headers["Content-Type"] == "image/jpeg" then
-            ext = ".jpg"
-        end
-        local filepath = "mapvote/thumb_cache/" .. name .. ext
-        print( "MapVote: Downloaded map thumb", name, filepath )
-        file.Write( filepath, body )
-        local callback = self.mapDownloadCallbacks[name]
-        if callback then
-            self.mapDownloadCallbacks[name] = nil
-            callback( "data/" .. filepath )
-        end
-    end )
+    local request = {
+        failed = function( err )
+            print( "MapVote: Failed to download map thumb", err )
+            local callback = self.mapDownloadCallbacks[name]
+            if callback then
+                self.mapDownloadCallbacks[name] = nil
+                callback( self.noIcon )
+            end
+        end,
+        success = function( code, body, headers )
+            if code < 200 or code > 299 then
+                print( "MapVote: Failed to download map thumb, status code: ", code )
+                return
+            end
+            local ext = ".png"
+            if headers["Content-Type"] == "image/jpeg" then
+                ext = ".jpg"
+            end
+
+            local filepath = "mapvote/thumb_cache/" .. name .. ext
+            print( "MapVote: Downloaded map thumb", name, filepath )
+            file.Write( filepath, body )
+
+            local callback = self.mapDownloadCallbacks[name]
+            if callback then
+                self.mapDownloadCallbacks[name] = nil
+                callback( "data/" .. filepath )
+            end
+        end,
+        method = "GET",
+        url = url,
+        headers = {},
+        timeout = 5,
+    }
+    HTTP( request )
 end

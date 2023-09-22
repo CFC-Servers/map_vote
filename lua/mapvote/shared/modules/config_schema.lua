@@ -17,7 +17,8 @@ local schema = SV.Object {
     IncludedMaps = SV.Map( SV.String(), SV.Bool() ),
     MinimumPlayersBeforeReset = SV.Int {},
     TimeToReset = SV.Int { min = 1 },
-    PlyRTVCooldownSeconds = SV.Int { min = 1 }
+    PlyRTVCooldownSeconds = SV.Int { min = 1 },
+    MapIconURLs = SV.Map( SV.String(), SV.String() ):Optional(),
 }
 
 local default = {
@@ -36,6 +37,7 @@ local default = {
     RTVPercentPlayersRequired = 0.66,
     SortMaps = false,
     PlyRTVCooldownSeconds = 120,
+    MapIconURLs = {},
 }
 
 MapVote.configSchema = schema
