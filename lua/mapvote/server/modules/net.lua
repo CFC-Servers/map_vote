@@ -63,7 +63,6 @@ end, MapVote.Net.requirePermission( MapVote.PermCanConfigure ) )
 MapVote.Net.receiveWithMiddleware( "MapVote_RequestVoteState", function( _, ply )
     if not MapVote.state.isInProgress then return end
     MapVote.Net.sendVoteStart( MapVote.state.endTime, MapVote.state.currentMaps, ply )
-    local conf = MapVote.GetConfig()
     timer.Simple( 0.1, function()
         for steamID, mapID in pairs( MapVote.state.votes ) do
             net.Start( "MapVote_PlayerChangedVote" )
