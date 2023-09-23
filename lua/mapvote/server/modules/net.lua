@@ -81,6 +81,7 @@ function MapVote.Net.sendVoteStart( endTime, mapsInVote, ply )
     for _, map in ipairs( mapsInVote ) do
         net.WriteString( map )
         net.WriteUInt( MapVote.PlayCounts[map] or 0, 32 )
+        net.WriteString( MapVote.GetConfig().MapIconURLs[map] or "" )
     end
     net.WriteUInt( endTime, 32 )
     if not ply then

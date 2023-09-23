@@ -3,5 +3,8 @@
         "CAMI",
         "expect",
         "done"
+    ],
+    "diagnostics.disable": [
+        "inject-field"
     ]
 }

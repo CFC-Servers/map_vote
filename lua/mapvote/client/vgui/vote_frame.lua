@@ -12,11 +12,11 @@ function PANEL:Init()
 end
 
 ---@diagnostic disable-next-line: unused-local
-function PANEL:OnMinimizedChangeStart( minimized )
+function PANEL:OnMinimizedChangeStart( _minimized )
 end
 
 ---@diagnostic disable-next-line: unused-local
-function PANEL:OnMinimizedChangeFinish( minimized )
+function PANEL:OnMinimizedChangeFinish( _minimized )
 end
 
 local function apply( items, func )
