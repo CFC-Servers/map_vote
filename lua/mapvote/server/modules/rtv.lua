@@ -66,6 +66,7 @@ function RTV.ShouldChange()
     if plyCount < conf.RTVPlayerCount then return end
     local totalVotes = RTV.GetVoteCount()
     local totalPlayers = RTV.GetPlayerCount()
+    if totalPlayers == 0 then return end
     return totalVotes >= math.Round( totalPlayers * conf.RTVPercentPlayersRequired )
 end
 
