@@ -241,6 +241,7 @@ function PANEL:Flash( id )
     end )
     timer.Simple( 0.6, function() panel:SetPaintBackgroundEnabled( false ) end )
     timer.Simple( 0.8, function()
+        if not IsValid( panel ) then return end
         panel:SetPaintBackgroundEnabled( true )
         surface.PlaySound( "hl1/fvox/blip.wav" )
     end )
