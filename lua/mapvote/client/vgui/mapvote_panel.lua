@@ -231,21 +231,32 @@ function PANEL:Flash( id )
     panel:SetBGColor( MapVote.style.colorPurple )
 
     timer.Simple( 0, function()
+        if not IsValid( panel ) then return end
         panel:SetPaintBackgroundEnabled( true )
         surface.PlaySound( "hl1/fvox/blip.wav" )
     end )
-    timer.Simple( 0.2, function() panel:SetPaintBackgroundEnabled( false ) end )
+    timer.Simple( 0.2, function()
+        if not IsValid( panel ) then return end
+        panel:SetPaintBackgroundEnabled( false )
+    end )
     timer.Simple( 0.4, function()
+        if not IsValid( panel ) then return end
         panel:SetPaintBackgroundEnabled( true )
         surface.PlaySound( "hl1/fvox/blip.wav" )
     end )
-    timer.Simple( 0.6, function() panel:SetPaintBackgroundEnabled( false ) end )
+    timer.Simple( 0.6, function()
+        if not IsValid( panel ) then return end
+        panel:SetPaintBackgroundEnabled( false )
+    end )
     timer.Simple( 0.8, function()
         if not IsValid( panel ) then return end
         panel:SetPaintBackgroundEnabled( true )
         surface.PlaySound( "hl1/fvox/blip.wav" )
     end )
-    timer.Simple( 1.5, function() panel:SetPaintBackgroundEnabled( false ) end )
+    timer.Simple( 1.5, function()
+        if not IsValid( panel ) then return end
+        panel:SetPaintBackgroundEnabled( false )
+    end )
 end
 
 vgui.Register( "MapVote_Vote", PANEL, "Panel" )
