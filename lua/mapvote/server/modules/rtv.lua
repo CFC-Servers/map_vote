@@ -65,7 +65,7 @@ function RTV.ShouldChange()
     local totalVotes = RTV.GetVoteCount()
     local totalPlayers = RTV.GetPlayerCount()
 
-    if totalPlayers < conf.RTVPlayerCount then return end
+    if totalPlayers < conf.RTVMinimumPlayerCount then return end
 
     if totalPlayers == 0 then return end
 
@@ -111,12 +111,13 @@ function RTV.CanVote( ply )
 
     local plyCount = #player.GetHumans()
 
-    if conf.RTVWait >= CurTime() then
+    if conf.RTVMinimumMapPlaytime >= CurTime() then
         return false, "You must wait a bit before voting!"
     end
 
     if ply.RTVVotedTime and ply.RTVVotedTime + conf.PlyRTVCooldownSeconds >= CurTime() then
-        return false, "You must wait a bit before voting again!"
+        return false, string.format( "You must wait a bit before voting again! (%s/%s)", RTV.GetVoteCount(),
+            math.Round( RTV.GetPlayerCount() * conf.RTVPercentPlayersRequired ) )
     end
 
     if GetGlobalBool( "In_Voting" ) then
@@ -133,7 +134,7 @@ function RTV.CanVote( ply )
         return false,
             "There is already a vote in progress"
     end
-    if plyCount < conf.RTVPlayerCount then
+    if plyCount < conf.RTVMinimumPlayerCount then
         return false, "You need more players before you can mapvote!"
     end
 

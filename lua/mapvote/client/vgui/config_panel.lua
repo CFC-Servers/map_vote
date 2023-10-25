@@ -14,14 +14,14 @@ function PANEL:AddConfigPanel( displayName, panel )
     self:AddItem( row )
 end
 
-function PANEL:configRow( displayName )
+function PANEL:configRow( displayName, description )
     local w = self:GetWide()
     local optionPanel = vgui.Create( "Panel", self ) --[[@as Panel]]
     optionPanel:SetSize( w, 35 )
     optionPanel:Dock( TOP )
 
     local label = vgui.Create( "DLabel", optionPanel ) --[[@as DLabel]]
-    label:SetText( displayName .. ": " )
+    label:SetText( displayName .. ": " .. description )
     label:Dock( LEFT )
     label:SetSize( 200, 35 )
     label:SetFont( MapVote.style.configLabelFont )
@@ -29,9 +29,10 @@ function PANEL:configRow( displayName )
 end
 
 ---@param displayName string
+---@param description string
 ---@param itemType SchemaType
-function PANEL:AddConfigItem( displayName, itemType, action, startingValue )
-    local optionPanel = self:configRow( displayName )
+function PANEL:AddConfigItem( displayName, description, itemType, action, startingValue )
+    local optionPanel = self:configRow( displayName, description )
     if itemType.name == "optional" then
         -- TODO handle this
         ---@cast itemType SchemaTypeWithSubType

@@ -37,6 +37,12 @@ function MapVote.LoadConfigFromFile( filename )
         print( "MapVote config is invalid: " .. filename .. " is not a valid JSON file" )
         return
     end
+    for _, m in pairs(MapVote.migrators) do
+        local new = m( cfg )
+        if new then
+            cfg = new
+        end
+    end
     return MapVote.MergeConfig( cfg )
 end
 

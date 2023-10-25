@@ -8,23 +8,6 @@ local function updateconfigKey( key )
     end
 end
 
-local configMenuOptions = {
-    { "Map Limit",                        schema.fields.MapLimit,                  "MapLimit" },
-    { "Time Limit",                       schema.fields.TimeLimit,                 "TimeLimit" },
-    { "Allow Current Map",                schema.fields.AllowCurrentMap,           "AllowCurrentMap" },
-    { "RTV Percent Players Required 0-1", schema.fields.RTVPercentPlayersRequired, "RTVPercentPlayersRequired" },
-    { "RTV Wait",                         schema.fields.RTVWait,                   "RTVWait" },
-    { "Sort Maps",                        schema.fields.SortMaps,                  "SortMaps" },
-    { "Default Map",                      schema.fields.DefaultMap,                "DefaultMap" },
-    { "Enable Cooldown",                  schema.fields.EnableCooldown,            "EnableCooldown" },
-    { "Maps Before Revote",               schema.fields.MapsBeforeRevote,          "MapsBeforeRevote" },
-    { "RTV Player Count",                 schema.fields.RTVPlayerCount,            "RTVPlayerCount" },
-    { "Minimum Players Before Reset",     schema.fields.MinimumPlayersBeforeReset, "MinimumPlayersBeforeReset" },
-    { "Time To Reset",                    schema.fields.TimeToReset,               "TimeToReset" },
-    { "Map Prefixes",                     schema.fields.MapPrefixes,               "MapPrefixes" },
-    { "Player RTV Cooldown",              schema.fields.PlyRTVCooldownSeconds,     "PlyRTVCooldownSeconds" },
-}
-
 MapVote._mapconfigFrame = nil
 MapVote._mapconfigFramescrollPanel = nil
 
@@ -48,15 +31,20 @@ function MapVote.openconfig()
     frame.OnClose = function( _ )
         if IsValid( MapVote._mapconfigFrame ) then
             MapVote._mapconfigFrame:Remove()
+            MapVote._mapconfigFrame = nil
         end
         MapVote.Net.sendConfig()
     end
 
     MapVote.Net.sendConfigRequest( function()
         configMenu:Clear()
-        for _, option in pairs( configMenuOptions ) do
-            if IsValid( configMenu ) and configMenu.AddConfigItem then
-                configMenu:AddConfigItem( option[1], option[2], updateconfigKey( option[3] ), MapVote.config[option[3]] )
+        for k, option in pairs( MapVote.configSchema.fields ) do
+            local displayName = k
+            local optionType = option
+            local description = option.metadata.description or ""
+
+            if IsValid( configMenu ) and configMenu.AddConfigItem and not option.metadata.internal then
+                configMenu:AddConfigItem( displayName, description, optionType, updateconfigKey(k), MapVote.config[k] )
             end
         end
 

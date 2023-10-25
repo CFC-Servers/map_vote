@@ -2,6 +2,8 @@
 ---@field name string
 ---@field Validate fun(self: SchemaType, value: any): (boolean, string)
 ---@field Optional fun(self: SchemaType): SchemaType
+---@field Metadata fun(self: SchemaType, data: table): SchemaType
+---@field metadata table
 
 ---@class SchemaTypeWithSubType : SchemaType
 ---@field type SchemaType
@@ -31,6 +33,10 @@ function SchemaValidator.Bool()
         Optional = function( self )
             return SchemaValidator.Optional( self )
         end,
+        Metadata = function( self, data )
+            self.metadata = data
+            return self
+        end,
         Validate = function( _, value )
             if type( value ) ~= "boolean" then
                 return false, "value must be a boolean but was " .. type( value )
@@ -54,6 +60,10 @@ function SchemaValidator.Int( opts )
         max = opts.max,
         Optional = function( self )
             return SchemaValidator.Optional( self )
+        end,
+        Metadata = function( self, data )
+            self.metadata = data
+            return self
         end,
         Validate = function( self, value )
             if type( value ) ~= "number" then
@@ -89,6 +99,10 @@ function SchemaValidator.Object( tbl )
         name = "table",
         Optional = function( self )
             return SchemaValidator.Optional( self )
+        end,
+        Metadata = function( self, data )
+            self.metadata = data
+            return self
         end,
         ValidateField = function( self, key, value )
             local fieldType = self.fields[key]
@@ -129,6 +143,10 @@ function SchemaValidator.List( t )
         Optional = function( self )
             return SchemaValidator.Optional( self )
         end,
+        Metadata = function( self, data )
+            self.metadata = data
+            return self
+        end,
         Validate = function( self, value )
             if type( value ) ~= "table" then
                 return false, "value must be a table but was " .. type( value )
@@ -156,6 +174,10 @@ function SchemaValidator.Map( keyType, valueType )
         name = "map",
         Optional = function( self )
             return SchemaValidator.Optional( self )
+        end,
+        Metadata = function( self, data )
+            self.metadata = data
+            return self
         end,
         Validate = function( self, value )
             if type( value ) ~= "table" then
@@ -190,6 +212,10 @@ function SchemaValidator.Number( opts )
         Optional = function( self )
             return SchemaValidator.Optional( self )
         end,
+        Metadata = function( self, data )
+            self.metadata = data
+            return self
+        end,
         Validate = function( self, value )
             if type( value ) ~= "number" then
                 return false, "value must be a number but was " .. type( value )
@@ -214,6 +240,10 @@ function SchemaValidator.String()
         name = "string",
         Optional = function( self )
             return SchemaValidator.Optional( self )
+        end,
+        Metadata = function( self, data )
+            self.metadata = data
+            return self
         end,
         Validate = function( _, value )
             if type( value ) ~= "string" then

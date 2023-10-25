@@ -31,7 +31,7 @@ function MapVote.getMapList()
 end
 
 function MapVote.Start( length )
-    length = length or MapVote.config.TimeLimit or 30
+    length = length or MapVote.config.Duration or 30
 
     local maps = MapVote.getMapList()
 
