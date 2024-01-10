@@ -160,7 +160,6 @@ hook.Add( "PlayerSay", "RTV Chat Commands", function( ply, text )
     local f = RTV.ChatCommands[text]
     if f then
         f( ply )
-        return ""
     end
 end )
 
