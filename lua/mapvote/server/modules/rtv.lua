@@ -96,10 +96,10 @@ function RTV.AddVote( ply )
     ply.RTVVoted = true
     ply.RTVVotedTime = CurTime()
 
-    MsgN( ply:Nick() .. " has voted to change the map." )
+    MsgN( ply:Nick() .. " typed rtv, voting to change the map." )
     local percentage = math.Round( RTV.GetPlayerCount() * conf.RTVPercentPlayersRequired )
     PrintMessage( HUD_PRINTTALK,
-        ply:Nick() .. " has voted to change the map. (" .. RTV.GetVoteCount() .. "/" .. percentage .. ")" )
+        ply:Nick() .. " typed rtv, voting to change the map. (" .. RTV.GetVoteCount() .. "/" .. percentage .. ")" )
 end
 
 hook.Add( "PlayerDisconnected", "Remove RTV", function()
