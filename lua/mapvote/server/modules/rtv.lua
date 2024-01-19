@@ -144,6 +144,7 @@ function RTV.CanVote( ply )
 end
 
 function RTV.StartVote( ply )
+    if not IsValid( ply ) then return end
     local can, err = RTV.CanVote( ply )
 
     if not can then
