@@ -1,4 +1,4 @@
----@class MapIcon : Panel
+---@class MapVote_MapIcon : Panel
 local PANEL = {}
 
 function PANEL:Init()
@@ -30,7 +30,7 @@ function PANEL:SetMap( map )
     MapVote.ThumbDownloader:QueueDownload( map, function( filepath )
         MapVote.TaskManager.AddFunc( function()
             ---@diagnostic disable-next-line: missing-parameter
-            self.button:SetImage( filepath or noIcon )
+            self.button:SetImage( filepath )
         end )
     end )
 end

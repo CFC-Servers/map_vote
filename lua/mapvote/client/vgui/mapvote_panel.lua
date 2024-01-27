@@ -1,6 +1,176 @@
-local avatarSize = 30
+---@class MapVote_VoteArea : Panel
+local PANEL = {}
 
-local function maxIconSize( w, h, n, _ )
+---@alias VoteAreaMap {name: string, panel: Panel, voters: Panel[]}
+---@alias VoteAreaVoter {identifier: string|Player, mapIndex: number, panel: Panel}
+
+function PANEL:Init()
+    self.avatarSize = 50
+
+    ---@type VoteAreaMap[]
+    self.maps = {}
+
+    ---@type (Panel|{mapContainer: Panel})[]
+    self.rows = {}
+
+    ---@type table<string, VoteAreaVoter>
+    self.votes = {}
+end
+
+function PANEL:GetMapByIndex( index )
+    return self.maps[index]
+end
+
+function PANEL:CenterAllRows()
+    for _, row in ipairs( self.rows ) do
+        row.mapContainer:CenterHorizontal()
+    end
+end
+
+function PANEL:GetTotalRowWidth()
+    if #self.rows == 0 then return 0 end
+    return self.rows[1].mapContainer:GetWide()
+end
+
+function PANEL:GetTotalRowHeight()
+    if #self.rows == 0 then return 0 end
+    return #self.rows * self.rows[1]:GetTall()
+end
+
+---@param identifier any
+---@param mapIndex number
+function PANEL:SetVote( identifier, mapIndex )
+    local mapData = self.maps[mapIndex]
+    if not mapData then
+        error( "Invalid map index " .. mapIndex )
+        return
+    end
+
+    local oldVote = self.votes[identifier]
+    local panel
+    if oldVote then
+        if oldVote.mapIndex == mapIndex then
+            return
+        end
+        local oldMapData = self.maps[oldVote.mapIndex]
+
+        -- Find index in votes for the old map, then reposition all icons after it
+        local indexToRemove = nil
+        for i, voter in ipairs( oldMapData.voters ) do
+            if voter == oldVote.panel then
+                indexToRemove = i
+                break
+            end
+        end
+        if indexToRemove then
+            table.remove( oldMapData.voters, indexToRemove )
+        end
+
+        for i = indexToRemove, #oldMapData.voters do
+            local voter = oldMapData.voters[i]
+            local newX, newY, willOverflow = self:CalculateDesiredAvatarIconPosition( oldMapData, i )
+            voter:SetVisible( true )
+            voter:MoveTo( newX, newY, 0.2, nil, nil, function( _, pnl )
+                pnl:SetVisible( not willOverflow )
+            end )
+        end
+
+        panel = oldVote.panel
+    else
+        panel = self:CreateVoterPanel( identifier )
+    end
+
+    table.insert( mapData.voters, panel )
+
+    self.votes[identifier] = {
+        identifier = identifier,
+        mapIndex = mapIndex,
+        panel = panel,
+    }
+
+    local newX, newY, willOverflow = self:CalculateDesiredAvatarIconPosition( mapData )
+    panel:SetVisible( true )
+    panel:MoveTo( newX, newY, 0.2, nil, nil, function()
+        if willOverflow then
+            panel:SetVisible( not willOverflow )
+        end
+    end )
+end
+
+function PANEL:CalculateDesiredAvatarIconPosition( mapData, index )
+    if not index then
+        index = #mapData.voters
+    end
+    index = index - 1
+
+    local avatarIconPadding = 1
+    local avatarTotalSize = self.avatarSize + avatarIconPadding * 2
+
+    local mapIcon = mapData.panel
+    local maxColumnCount = math.floor( mapIcon:GetWide() / avatarTotalSize )
+    local maxRowCount = math.floor( (mapIcon:GetTall() - 10) / avatarTotalSize )
+
+    local column = index % maxColumnCount
+    local row = math.floor( index / maxColumnCount )
+
+    local x = column * avatarTotalSize + avatarIconPadding
+    local y = row * avatarTotalSize + avatarIconPadding
+
+    local rootPosX, rootPosY = self:GetPositionRelativeToSelf( mapIcon )
+
+    return rootPosX + x, rootPosY + y, row >= maxRowCount
+end
+
+---@param mapPanel Panel
+---@return number, number
+---@private
+function PANEL:GetPositionRelativeToSelf( mapPanel )
+    local screenX, screenY = mapPanel:LocalToScreen( 0, 0 )
+    local x, y = self:ScreenToLocal( screenX, screenY )
+    return x, y
+end
+
+---@param identifier string|Player
+---@return Player
+---@private
+function PANEL:GetPlayerFromIdentifier( identifier )
+    if type( identifier ) == "string" then
+        return player.GetBySteamID64( identifier )
+    elseif type( identifier ) == "Player" then
+        return identifier
+    end
+    return identifier
+end
+
+---@param identifier string|Player
+---@return Panel
+---@private
+function PANEL:CreateVoterPanel( identifier )
+    local ply = self:GetPlayerFromIdentifier( identifier )
+
+    local iconContainer = vgui.Create( "Panel", self )
+    local icon = vgui.Create( "AvatarImage", iconContainer ) --[[@as AvatarImage]]
+    icon:SetSize( self.avatarSize, self.avatarSize )
+    icon:SetZPos( 1000 )
+
+    iconContainer.ply = ply
+    icon:SetPlayer( ply, self.avatarSize )
+
+    iconContainer:SetSize( self.avatarSize + 2, self.avatarSize + 2 )
+    icon:SetPos( 2, 2 )
+
+    iconContainer:SetMouseInputEnabled( false )
+    icon:SetAlpha( 200 )
+
+    return iconContainer
+end
+
+---@param w number
+---@param h number
+---@param n number
+---@return number, number
+---@private
+function PANEL:maxIconSize( w, h, n )
     local px = math.ceil( math.sqrt( n * w / h ) )
     local sx, sy
     if math.floor( px * h / w ) * px < n then
@@ -22,211 +192,98 @@ local function maxIconSize( w, h, n, _ )
     return sx, sx
 end
 
----@class VoteArea : Panel
-local PANEL = {}
-
-function PANEL:Init()
-    self.maps = {}
-    self.mapIndexes = {}
-    self.rows = {}
-    self.votes = {}
-
-    self.voteTally = {}
-end
-
-function PANEL:Paint()
-end
-
-function PANEL:GetMapData( map )
-    local index = self.mapIndexes[map]
-    return self.maps[index]
-end
-
-function PANEL:GetMapDataByIndex( index )
-    return self.maps[index]
-end
-
+---@param maps string[]
 function PANEL:SetMaps( maps )
     self.maps = {}
-    for i, map in pairs( maps ) do
-        self.mapIndexes[map] = i
-        table.insert( self.maps, {
-            map = map,
-            panel = nil,
-            voterCount = 0,
-            hiddenCount = 0,
-        } )
-    end
-    self:InvalidateLayout( true )
-    self:InvalidateParent( true )
-    self:setup()
-end
-
-function PANEL:SetVote( ply, mapName )
-    local mapData = self:GetMapData( mapName )
-    if not mapData then return end
-
-    local iconContainer
-    local oldMapData
-
-    if self.votes[ply] then
-        local oldMapName = self.votes[ply].mapName
-        if oldMapName == mapName then return end
-        oldMapData = self:GetMapData( oldMapName )
-
-        oldMapData.voterCount = oldMapData.voterCount - 1
-
-        iconContainer = self.votes[ply].panel
-    else
-        iconContainer = self:CreateVoterPanel( ply )
+    for i, map in ipairs( maps ) do
+        self.maps[i] = {
+            name = map,
+            voters = {},
+        }
     end
 
-    local x, y, show = self:calculateDesiredAvatarIconPosition( mapData )
-    iconContainer:SetVisible( true )
-    iconContainer:MoveTo( x, y, 0.2, nil, nil, function( _, pnl )
-        pnl:SetVisible( show )
-    end )
-
-    mapData.voterCount = mapData.voterCount + 1
-    self.votes[ply] = {
-        mapName = mapName,
-        ply = ply,
-        panel = iconContainer,
-    }
-    if not oldMapData then return end
-    self:ResetAvatarPositions( oldMapData )
-    -- TODO icon container to show number of hidden votes
-end
-
-function PANEL:ResetAvatarPositions( mapData )
-    mapData.voterCount = 0
-    for _, voteData in pairs( self.votes ) do
-        if voteData.mapName == mapData.map then
-            local x, y, show = self:calculateDesiredAvatarIconPosition( mapData )
-            voteData.panel:SetVisible( show )
-            voteData.panel:MoveTo( x, y, 0.2, nil, nil, function( _, _ )
-            end )
-            mapData.voterCount = mapData.voterCount + 1
-        end
-    end
-end
-
-function PANEL:CreateVoterPanel( ply )
-    local iconContainer = vgui.Create( "Panel", self )
-    local icon = vgui.Create( "AvatarImage", iconContainer ) --[[@as AvatarImage]]
-    icon:SetSize( avatarSize, avatarSize )
-    icon:SetZPos( 1000 )
-
-    iconContainer.ply = ply
-    icon:SetPlayer( ply, avatarSize )
-
-    iconContainer:SetSize( avatarSize + 2, avatarSize + 2 )
-    icon:SetPos( 2, 2 )
-
-    iconContainer:SetMouseInputEnabled( false )
-    icon:SetAlpha( 200 )
-
-    return iconContainer
-end
-
-function PANEL:calculateDesiredAvatarIconPosition( mapData )
-    local avatarIconPadding = 1
-    local avatarTotalSize = avatarSize + avatarIconPadding * 2
-
-    local mapIcon = mapData.panel
-    local maxColumnCount = math.floor( mapIcon:GetWide() / avatarTotalSize )
-    local maxRowCount = math.floor( (mapIcon:GetTall() - 10) / avatarTotalSize )
-
-    -- calulate position of mapIcon relative to main vote area panel
-    local rowX, rowY = mapIcon.row:GetPos()
-    local iconX, iconY = mapIcon:GetPos()
-    local x, y = rowX + iconX, rowY + iconY
-
-    local nextRowNumber = math.floor( mapData.voterCount / maxColumnCount )
-    if nextRowNumber >= (maxRowCount - 1) and mapData.voterCount >= maxRowCount * maxColumnCount then
-        return x + avatarTotalSize * (maxColumnCount - 1), y + (maxRowCount - 1) * avatarTotalSize, false
-    end
-    return x + avatarTotalSize * (mapData.voterCount % maxColumnCount), y + nextRowNumber * avatarTotalSize, true
-end
-
-function PANEL:setup()
-    for _, row in pairs( self.rows ) do
+    -- Remove all rows
+    for _, row in ipairs( self.rows ) do
         row:Remove()
     end
-    self.rows = {}
-    local count = #self.maps
-    local margin = 2
-    local iconWidth, iconHeight = maxIconSize( self:GetWide(), self:GetTall(), count, 1 )
-    iconWidth = iconWidth - margin * 2
 
-    local maxItemsPerRow = math.floor( self:GetWide() / iconWidth )
+    -- Remove all voters
+    for _, voter in pairs( self.votes ) do
+        voter.panel:Remove()
+    end
+    self.votes = {}
 
-    local requiredRows = math.ceil( count / maxItemsPerRow )
-    for rowNumber = 1, requiredRows do
-        local itemsLeft = count - (rowNumber - 1) * maxItemsPerRow
-        local itemsInRow = math.min( maxItemsPerRow, itemsLeft )
-        local rowWidth = (iconWidth + margin * 2) * itemsInRow
+    local maxW, maxH = self:maxIconSize( self:GetWide(), self:GetTall(), #self.maps )
+    local rowCount = math.floor( self:GetTall() / maxH )
+    local columnCount = math.floor( self:GetWide() / maxW )
+    self:CalculateAvatarSize( maxW, maxH )
 
-        local row = vgui.Create( "Panel", self )
-        table.insert( self.rows, row )
-        row:SetSize( rowWidth, iconHeight )
-        local extraSpace = math.max( 0, self:GetWide() - rowWidth )
+    local mapIndex = 1
+    for i = 1, rowCount do
+        local row = self:CreateRow( maxH )
+        self.rows[i] = row
 
-        row:SetPos( extraSpace / 2, iconHeight * (rowNumber - 1) )
-        for i = 1, itemsInRow do
-            local index = (rowNumber - 1) * maxItemsPerRow + i
-            local map = self.maps[index]
-            local mapIcon = vgui.Create( "MapVote_MapIcon", row ) --[[@as MapIcon]]
+        -- create maps in row
+        local rowWidth = 0
+        for _ = 1, columnCount do
+            local currentMapIndex = mapIndex
+            local mapName = self.maps[currentMapIndex].name
+
+            local icon = vgui.Create( "MapVote_MapIcon", row.mapContainer )
+            icon:SetSize( maxW, maxH )
+            icon:Dock( LEFT )
+            icon:SetMap( mapName )
             ---@diagnostic disable-next-line: duplicate-set-field
-            mapIcon.DoClick = function()
-                self:OnMapClicked( index, map )
+            icon.DoClick = function()
+                self:OnMapClicked( currentMapIndex, mapName )
             end
-            mapIcon:SetMap( map.map )
-            mapIcon:SetSize( iconWidth, iconHeight )
-            mapIcon:Dock( LEFT )
-            mapIcon:DockMargin( margin, margin, margin, margin )
-            mapIcon.row = row
-            mapIcon.voterCount = 0
-            map.panel = mapIcon
+
+            self.maps[mapIndex].panel = icon
+            rowWidth = rowWidth + maxW
+            mapIndex = mapIndex + 1
+            if mapIndex > #self.maps then
+                break
+            end
+        end
+
+        row:Dock( TOP )
+        row:InvalidateParent( true )
+        row.mapContainer:SetWide( rowWidth )
+        row.mapContainer:CenterHorizontal()
+        if mapIndex > #self.maps then
+            break
         end
     end
 end
 
-function PANEL:UpdateRowPositions()
-    local count = #self.maps
-    local margin = 2
-    local iconWidth, iconHeight = maxIconSize( self:GetWide(), self:GetTall(), count, 1 )
-    iconWidth = iconWidth - margin * 2
-
-    local maxItemsPerRow = math.floor( self:GetWide() / iconWidth )
-    for i, row in ipairs( self.rows ) do
-        local rowNumber = i
-        local itemsLeft = count - (rowNumber - 1) * maxItemsPerRow
-        local itemsInRow = math.min( maxItemsPerRow, itemsLeft )
-        local rowWidth = (iconWidth + margin * 2) * itemsInRow
-
-        local extraSpace = math.max( 0, self:GetWide() - rowWidth )
-
-        row:SetPos( extraSpace / 2, iconHeight * (rowNumber - 1) )
-    end
+function PANEL:CalculateAvatarSize( maxW, maxH )
+    local extraSlots = 5
+    local plyCount = player.GetCount() + extraSlots
+    local newAvatarSize = math.min( maxW, maxH ) / math.ceil( math.sqrt( plyCount ) )
+    self.avatarSize = math.max( 20, newAvatarSize )
 end
 
-function PANEL:OnMapClicked( _, _ )
-    -- implement
+function PANEL:OnMapClicked( index, map )
 end
 
-function PANEL:GetTotalRowWidth()
-    if #self.rows == 0 then return 0 end
-    return self.rows[1]:GetWide()
-end
+---@return Panel|{mapContainer: Panel}
+---@private
+function PANEL:CreateRow( iconHeight )
+    local row = vgui.Create( "Panel", self )
+    row:DockMargin( 0, 0, 0, 2 )
+    row:SetTall( iconHeight )
+    row:InvalidateParent( true )
 
-function PANEL:GetTotalRowHeight()
-    if #self.rows == 0 then return 0 end
-    return #self.rows * self.rows[1]:GetTall()
+    -- we use an inner container so we can center the maps
+    local mapContainer = vgui.Create( "Panel", row )
+    mapContainer:SetTall( iconHeight )
+    row.mapContainer = mapContainer
+
+    return row
 end
 
 function PANEL:Flash( id )
-    local data = self:GetMapDataByIndex( id )
+    local data = self:GetMapByIndex( id )
     local panel = data.panel
     panel:SetBGColor( MapVote.style.colorPurple )
 
@@ -259,4 +316,4 @@ function PANEL:Flash( id )
     end )
 end
 
-vgui.Register( "MapVote_Vote", PANEL, "Panel" )
+vgui.Register( "MapVote_VoteArea", PANEL, "Panel" )
