@@ -84,7 +84,7 @@ function MapVote.StartVote( maps, endTime )
     voteArea:InvalidateParent( true )
     voteArea:SetMaps( maps )
 
-    frame:SetTall( voteArea:GetTotalRowHeight() + infoRow:GetTall() + margin * 2 + 50 )
+    frame:SetTall( voteArea:GetTotalRowHeight() + infoRow:GetTall() + margin * 3 + 20 )
     frame:SetWide( voteArea:GetTotalRowWidth() + margin * 2 + 10 )
     voteArea:InvalidateLayout( true )
     frame:Center()

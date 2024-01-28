@@ -15,6 +15,8 @@ function PANEL:Init()
 
     ---@type table<string, VoteAreaVoter>
     self.votes = {}
+
+    self.avatarIconPadding = 1
 end
 
 function PANEL:GetMapByIndex( index )
@@ -27,11 +29,13 @@ function PANEL:PerformLayout()
     end
 end
 
+---@return number
 function PANEL:GetTotalRowWidth()
     if #self.rows == 0 then return 0 end
     return self.rows[1].mapContainer:GetWide()
 end
 
+---@return number
 function PANEL:GetTotalRowHeight()
     if #self.rows == 0 then return 0 end
     return #self.rows * self.rows[1]:GetTall()
@@ -97,18 +101,21 @@ function PANEL:SetVote( identifier, mapIndex )
     end )
 end
 
+---@param mapData VoteAreaMap
+---@param index number|nil
+---@return number, number, boolean
 function PANEL:CalculateDesiredAvatarIconPosition( mapData, index )
     if not index then
         index = #mapData.voters
     end
     index = index - 1
 
-    local avatarIconPadding = 1
+    local avatarIconPadding = self.avatarIconPadding
     local avatarTotalSize = self.avatarSize + avatarIconPadding * 2
 
     local mapIcon = mapData.panel
     local maxColumnCount = math.floor( mapIcon:GetWide() / avatarTotalSize )
-    local maxRowCount = math.floor( (mapIcon:GetTall() - 10) / avatarTotalSize )
+    local maxRowCount = math.floor( (mapIcon:GetTall() - 20) / avatarTotalSize )
 
     local column = index % maxColumnCount
     local row = math.floor( index / maxColumnCount )
@@ -233,13 +240,14 @@ function PANEL:SetMaps( maps )
             icon:SetSize( maxW, maxH )
             icon:Dock( LEFT )
             icon:SetMap( mapName )
+            icon:DockMargin( 2, 2, 2, 2 )
             ---@diagnostic disable-next-line: duplicate-set-field
             icon.DoClick = function()
                 self:OnMapClicked( currentMapIndex, mapName )
             end
 
             self.maps[mapIndex].panel = icon
-            rowWidth = rowWidth + maxW
+            rowWidth = rowWidth + maxW + 4
             mapIndex = mapIndex + 1
             if mapIndex > #self.maps then
                 break
@@ -257,10 +265,17 @@ function PANEL:SetMaps( maps )
 end
 
 function PANEL:CalculateAvatarSize( maxW, maxH )
-    local extraSlots = 5
-    local plyCount = player.GetCount() + extraSlots
-    local newAvatarSize = math.min( maxW, maxH ) / math.ceil( math.sqrt( plyCount ) )
-    self.avatarSize = math.max( 20, newAvatarSize )
+    -- leave space for 0 joins mid map vote
+    local extraSlots = 0
+    local avatarIconPadding = self.avatarIconPadding
+    local plyCount = math.max( player.GetCount() + extraSlots, 2 )
+
+    -- add an extra row for title area
+    local rowCount = math.ceil( math.sqrt( plyCount ) )
+
+    local availableSpace = maxW - avatarIconPadding * 2
+    local newAvatarSize = math.floor( availableSpace / rowCount ) - avatarIconPadding * 2
+    self.avatarSize = newAvatarSize
 end
 
 ---@diagnostic disable-next-line: unused-local
@@ -271,7 +286,7 @@ end
 ---@private
 function PANEL:CreateRow( iconHeight )
     local row = vgui.Create( "Panel", self )
-    row:DockMargin( 0, 0, 0, 2 )
+    row:DockMargin( 0, 0, 0, 0 )
     row:SetTall( iconHeight )
     row:InvalidateParent( true )
 
