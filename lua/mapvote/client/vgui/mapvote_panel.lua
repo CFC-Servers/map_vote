@@ -21,7 +21,7 @@ function PANEL:GetMapByIndex( index )
     return self.maps[index]
 end
 
-function PANEL:CenterAllRows()
+function PANEL:PerformLayout()
     for _, row in ipairs( self.rows ) do
         row.mapContainer:CenterHorizontal()
     end

@@ -86,10 +86,8 @@ function MapVote.StartVote( maps, endTime )
 
     frame:SetTall( voteArea:GetTotalRowHeight() + infoRow:GetTall() + margin * 2 + 50 )
     frame:SetWide( voteArea:GetTotalRowWidth() + margin * 2 + 10 )
-    voteArea:InvalidateParent( true )
     voteArea:InvalidateLayout( true )
     frame:Center()
-    voteArea:CenterAllRows()
 
     local lastClicked = CurTime()
     ---@diagnostic disable-next-line: duplicate-set-field
