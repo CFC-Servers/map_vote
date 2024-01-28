@@ -263,7 +263,8 @@ function PANEL:CalculateAvatarSize( maxW, maxH )
     self.avatarSize = math.max( 20, newAvatarSize )
 end
 
-function PANEL:OnMapClicked( index, map )
+---@diagnostic disable-next-line: unused-local
+function PANEL:OnMapClicked( _index, _map )
 end
 
 ---@return Panel|{mapContainer: Panel}
