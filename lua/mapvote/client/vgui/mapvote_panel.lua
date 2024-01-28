@@ -266,15 +266,14 @@ end
 
 function PANEL:CalculateAvatarSize( maxW, maxH )
     -- leave space for 0 joins mid map vote
-    local extraSlots = 0
     local avatarIconPadding = self.avatarIconPadding
-    local plyCount = math.max( player.GetCount() + extraSlots, 2 )
+    local plyCount = math.max( player.GetCount(), 2 )
 
     -- add an extra row for title area
-    local rowCount = math.ceil( math.sqrt( plyCount ) )
+    local rowCount = math.ceil( math.sqrt( plyCount ) ) + 1
 
-    local availableSpace = maxW - avatarIconPadding * 2
-    local newAvatarSize = math.floor( availableSpace / rowCount ) - avatarIconPadding * 2
+    local availableSpace = maxW - (avatarIconPadding * 2) * rowCount
+    local newAvatarSize = math.ceil( availableSpace / rowCount ) - avatarIconPadding * 2
     self.avatarSize = newAvatarSize
 end
 
