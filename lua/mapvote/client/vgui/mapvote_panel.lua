@@ -273,7 +273,7 @@ function PANEL:SetMaps( maps )
     end
 end
 
-function PANEL:CalculateAvatarSize( maxW, maxH )
+function PANEL:CalculateAvatarSize( maxW, _maxH )
     -- leave space for 0 joins mid map vote
     local avatarIconPadding = self.avatarIconPadding
     local plyCount = math.max( player.GetCount(), 2 )
