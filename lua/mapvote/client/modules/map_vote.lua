@@ -94,7 +94,6 @@ function MapVote.StartVote( maps, endTime )
     voteArea.OnMapClicked = function( _, index, _ )
         -- TODO this could use the leaky bucket rate limiting the server does
         if CurTime() - lastClicked > 0.4 then
-            print( "MapVote.Net.changeVote", index )
             MapVote.Net.changeVote( index )
         end
     end
