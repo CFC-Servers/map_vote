@@ -27,6 +27,15 @@ function PANEL:PerformLayout()
     for _, row in ipairs( self.rows ) do
         row.mapContainer:CenterHorizontal()
     end
+
+    -- This is expensive, but must be done so avatar positions dont get misaligned when parent panel is being minimized and resized
+    for _, map in ipairs( self.maps ) do
+        for i, voter in ipairs( map.voters ) do
+            local newX, newY, willOverflow = self:CalculateDesiredAvatarIconPosition( map, i )
+            voter:SetPos( newX, newY )
+            voter:SetVisible( not willOverflow )
+        end
+    end
 end
 
 ---@return number
