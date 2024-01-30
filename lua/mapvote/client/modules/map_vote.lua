@@ -13,9 +13,7 @@ end
 function MapVote.ChangeVote( ply, mapIndex )
     if not IsValid( ply ) then return end
     if not IsValid( MapVote.Panel ) then return end
-
-    local mapData = MapVote.Panel.voteArea:GetMapDataByIndex( mapIndex )
-    MapVote.Panel.voteArea:SetVote( ply, mapData.map )
+    MapVote.Panel.voteArea:SetVote( ply, mapIndex )
 end
 
 function MapVote.StartVote( maps, endTime )
@@ -78,19 +76,18 @@ function MapVote.StartVote( maps, endTime )
 
         countdownLabel:SetText( string.FormattedTime( timeLeft or 0, "%02i:%02i" ) )
     end )
-    local voteArea = vgui.Create( "MapVote_Vote", frame ) --[[@as VoteArea]]
+    local voteArea = vgui.Create( "MapVote_VoteArea", frame )
     local margin = 10
     voteArea:Dock( FILL )
     voteArea:DockMargin( margin, margin, margin, margin )
-    voteArea:SetMaps( maps )
     voteArea:InvalidateLayout( true )
     voteArea:InvalidateParent( true )
+    voteArea:SetMaps( maps )
 
-    frame:SetTall( voteArea:GetTotalRowHeight() + infoRow:GetTall() + margin * 2 + 34 )
+    frame:SetTall( voteArea:GetTotalRowHeight() + infoRow:GetTall() + margin * 3 + 20 )
     frame:SetWide( voteArea:GetTotalRowWidth() + margin * 2 + 10 )
-    voteArea:InvalidateParent( true )
+    voteArea:InvalidateLayout( true )
     frame:Center()
-    voteArea:UpdateRowPositions()
 
     local lastClicked = CurTime()
     ---@diagnostic disable-next-line: duplicate-set-field

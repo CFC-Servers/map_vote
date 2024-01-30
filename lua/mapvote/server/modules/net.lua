@@ -40,7 +40,10 @@ MapVote.Net.receiveWithMiddleware( "MapVote_ChangeVote", function( _, ply )
     if not IsValid( ply ) then return end
 
     local mapID = net.ReadUInt( 32 )
-    if not MapVote.state.currentMaps[mapID] then return end
+    if not MapVote.state.currentMaps[mapID] then
+        print( "MapVote: Player " .. ply:Nick() .. " tried to vote for invalid map " .. mapID )
+        return
+    end
 
     MapVote.state.votes[ply:SteamID()] = mapID
 
