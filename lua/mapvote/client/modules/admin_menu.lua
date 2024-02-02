@@ -34,7 +34,7 @@ function MapVote.openconfig()
         return
     end
     local frame = vgui.Create( "MapVote_Frame" ) --[[@as DFrame]]
-    frame:SetSize( ScrW() * 0.5, ScrH() * 0.9 )
+    frame:SetSize( 1000, ScrH() * 0.9 )
     frame:Center()
     frame:MakePopup()
     frame:SetTitle( "MapVote Config" )
