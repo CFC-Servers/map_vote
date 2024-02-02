@@ -9,20 +9,20 @@ local function updateconfigKey( key )
 end
 
 local configMenuOptions = {
-    { "Map Limit",                        schema.fields.MapLimit,                  "MapLimit" },
-    { "Time Limit",                       schema.fields.TimeLimit,                 "TimeLimit" },
-    { "Allow Current Map",                schema.fields.AllowCurrentMap,           "AllowCurrentMap" },
-    { "RTV Percent Players Required 0-1", schema.fields.RTVPercentPlayersRequired, "RTVPercentPlayersRequired" },
-    { "RTV Wait",                         schema.fields.RTVWait,                   "RTVWait" },
-    { "Sort Maps",                        schema.fields.SortMaps,                  "SortMaps" },
-    { "Default Map",                      schema.fields.DefaultMap,                "DefaultMap" },
-    { "Enable Cooldown",                  schema.fields.EnableCooldown,            "EnableCooldown" },
-    { "Maps Before Revote",               schema.fields.MapsBeforeRevote,          "MapsBeforeRevote" },
-    { "RTV Player Count",                 schema.fields.RTVPlayerCount,            "RTVPlayerCount" },
-    { "Minimum Players Before Reset",     schema.fields.MinimumPlayersBeforeReset, "MinimumPlayersBeforeReset" },
-    { "Time To Reset",                    schema.fields.TimeToReset,               "TimeToReset" },
-    { "Map Prefixes",                     schema.fields.MapPrefixes,               "MapPrefixes" },
-    { "Player RTV Cooldown",              schema.fields.PlyRTVCooldownSeconds,     "PlyRTVCooldownSeconds" },
+    { seperator = true,                                                          text = "Voting" },
+    { "The amount of maps in a vote",                                            schema.fields.MapLimit,                  "MapLimit" },
+    { "The length of a vote in seconds",                                         schema.fields.TimeLimit,                 "TimeLimit" },
+    { "Will the current map appears in votes",                                   schema.fields.AllowCurrentMap,           "AllowCurrentMap" },
+    { "Should the maps in a vote be sorted",                                     schema.fields.SortMaps,                  "SortMaps" },
+    { seperator = true,                                                          text = "RTV" },
+    { "Percentage of players who need to RTV between 0 and 1",                   schema.fields.RTVPercentPlayersRequired, "RTVPercentPlayersRequired" },
+    { "The time RTV is disabled after a map change in seonds",                   schema.fields.RTVWait,                   "RTVWait" },
+    { "How long should a player wait between RTV commands",                      schema.fields.PlyRTVCooldownSeconds,     "PlyRTVCooldownSeconds" },
+    { "Minimum players required to enable RTVing",                               schema.fields.RTVPlayerCount,            "RTVPlayerCount" },
+    { seperator = true,                                                          text = "Maps" },
+    { "Map prefixes automatically enabled, comma seperated list",                schema.fields.MapPrefixes,               "MapPrefixes" },
+    { "Disable a map after its played",                                          schema.fields.EnableCooldown,            "EnableCooldown" },
+    { "The amount of maps that need to be played before a map is enabled again", schema.fields.MapsBeforeRevote,          "MapsBeforeRevote" },
 }
 
 MapVote._mapconfigFrame = nil
@@ -34,7 +34,7 @@ function MapVote.openconfig()
         return
     end
     local frame = vgui.Create( "MapVote_Frame" ) --[[@as DFrame]]
-    frame:SetSize( 800, 600 )
+    frame:SetSize( ScrW() * 0.5, ScrH() * 0.9 )
     frame:Center()
     frame:MakePopup()
     frame:SetTitle( "MapVote Config" )
@@ -43,6 +43,7 @@ function MapVote.openconfig()
     local configMenu = vgui.Create( "MapVote_ConfigPanel", frame ) --[[@as ConfigPanel]]
     configMenu:SetSize( 800, 600 )
     configMenu:Dock( FILL )
+    configMenu:DockMargin( 10, 10, 10, 10 )
 
     ---@diagnostic disable-next-line: duplicate-set-field
     frame.OnClose = function( _ )
@@ -55,7 +56,9 @@ function MapVote.openconfig()
     MapVote.Net.sendConfigRequest( function()
         configMenu:Clear()
         for _, option in pairs( configMenuOptions ) do
-            if IsValid( configMenu ) and configMenu.AddConfigItem then
+            if option.seperator then
+                configMenu:AddSeperator( option.text )
+            elseif IsValid( configMenu ) and configMenu.AddConfigItem then
                 configMenu:AddConfigItem( option[1], option[2], updateconfigKey( option[3] ), MapVote.config[option[3]] )
             end
         end

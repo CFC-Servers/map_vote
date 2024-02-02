@@ -42,6 +42,14 @@ function PANEL:SetHideOnClose( hide )
     self.hideOnClose = hide
 end
 
+surface.CreateFont( "MapVote_CloseButton", {
+    font = "Marlett",
+    size = 20,
+    weight = 1,
+    extended = true,
+    symbol = true
+} )
+
 function PANEL:Init()
     local blur = MapVote.style.frameBlur or 0
     if blur > 0 then
@@ -50,32 +58,27 @@ function PANEL:Init()
         self.blurMat:Recompute()
     end
 
-    local circleSegments = 30
     self.btnClose:SetSize( 25, 25 )
     ---@diagnostic disable-next-line: duplicate-set-field
-    self.btnClose.Paint = function( _, w, h )
-        local r = (w - 13) / 2
-        surface.SetDrawColor( MapVote.style.colorCloseButton )
-        drawCircle( w / 2, h / 2 + 2, r, circleSegments )
-        surface.SetDrawColor( MapVote.style.colorTextPrimary )
-        surface.DrawTexturedRectRotatedPoint( w / 2, h / 2 + 2, r * 1.5, 2, 45, 0, 0 )
-        surface.DrawTexturedRectRotatedPoint( w / 2, h / 2 + 2, r * 1.5, 2, 315, 0, 0 )
+    self.btnClose.Paint = function( self, w, h )
+        if self.Hovered then
+            draw.RoundedBox( 0, 0, 0, w, h, MapVote.style.colorCloseButton )
+        end
+        surface.SetTextColor( Color( 255, 255, 255, 200 ) )
+        surface.SetFont( "MapVote_CloseButton" )
+        local tw, th = surface.GetTextSize( "r" )
+        surface.SetTextPos( w / 2 - tw / 2, h / 2 - th / 2 )
+        surface.DrawText( "r" )
     end
 
     self.btnMaxim:SetSize( 25, 25 )
     ---@diagnostic disable-next-line: duplicate-set-field
     self.btnMaxim.Paint = function( _, w, h )
-        local r = (w - 13) / 2
-        surface.SetDrawColor( disableColor( MapVote.style.colorGreen ) )
-        drawCircle( w / 2, h / 2 + 2, r, circleSegments )
     end
 
     self.btnMinim:SetSize( 25, 25 )
     ---@diagnostic disable-next-line: duplicate-set-field
     self.btnMinim.Paint = function( _, w, h )
-        local r = (w - 13) / 2
-        surface.SetDrawColor( disableColor( MapVote.style.colorYellow ) )
-        drawCircle( w / 2, h / 2 + 2, r, circleSegments )
     end
     self.btnClose.DoClick = function()
         if self.hideOnClose then
@@ -104,7 +107,7 @@ function PANEL:ApplyBlur()
     render.UpdateScreenEffectTexture()
 
     local x, y = self:LocalToScreen( 0, 0 )
-    surface.DrawTexturedRect( -x, -y, ScrW(), ScrH())
+    surface.DrawTexturedRect( -x, -y, ScrW(), ScrH() )
 end
 
 local basePanel = baseclass.Get( "Panel" )
