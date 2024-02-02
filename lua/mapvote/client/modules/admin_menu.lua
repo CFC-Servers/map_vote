@@ -12,7 +12,7 @@ local configMenuOptions = {
     { seperator = true,                                                          text = "Voting" },
     { "The amount of maps in a vote",                                            schema.fields.MapLimit,                  "MapLimit" },
     { "The length of a vote in seconds",                                         schema.fields.TimeLimit,                 "TimeLimit" },
-    { "Will the current map appear in votes",                                    schema.fields.AllowCurrentMap,           "AllowCurrentMap" },
+    { "Should the current map have a chance to appear in votes",                 schema.fields.AllowCurrentMap,           "AllowCurrentMap" },
     { "Should the maps in a vote be sorted",                                     schema.fields.SortMaps,                  "SortMaps" },
     { seperator = true,                                                          text = "RTV" },
     { "Percentage of players who need to RTV between 0 and 1",                   schema.fields.RTVPercentPlayersRequired, "RTVPercentPlayersRequired" },
