@@ -12,7 +12,7 @@ local configMenuOptions = {
     { seperator = true,                                                          text = "Voting" },
     { "The amount of maps in a vote",                                            schema.fields.MapLimit,                  "MapLimit" },
     { "The length of a vote in seconds",                                         schema.fields.TimeLimit,                 "TimeLimit" },
-    { "Will the current map appears in votes",                                   schema.fields.AllowCurrentMap,           "AllowCurrentMap" },
+    { "Will the current map appear in votes",                                    schema.fields.AllowCurrentMap,           "AllowCurrentMap" },
     { "Should the maps in a vote be sorted",                                     schema.fields.SortMaps,                  "SortMaps" },
     { seperator = true,                                                          text = "RTV" },
     { "Percentage of players who need to RTV between 0 and 1",                   schema.fields.RTVPercentPlayersRequired, "RTVPercentPlayersRequired" },
@@ -21,7 +21,7 @@ local configMenuOptions = {
     { "Minimum players required to enable RTVing",                               schema.fields.RTVPlayerCount,            "RTVPlayerCount" },
     { seperator = true,                                                          text = "Maps" },
     { "Map prefixes automatically enabled, comma seperated list",                schema.fields.MapPrefixes,               "MapPrefixes" },
-    { "Use gamemode map prefixes",                                               schema.fields.UseGamemodeMapPrefixes,    "UseGamemodeMapPrefixes" },
+    { "Use map prefixes from gamemode.txt",                                      schema.fields.UseGamemodeMapPrefixes,    "UseGamemodeMapPrefixes" },
     { "Disable a map after its played",                                          schema.fields.EnableCooldown,            "EnableCooldown" },
     { "The amount of maps that need to be played before a map is enabled again", schema.fields.MapsBeforeRevote,          "MapsBeforeRevote" },
 }
