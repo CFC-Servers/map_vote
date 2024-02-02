@@ -140,10 +140,12 @@ function PANEL:AddConfigItem( displayName, itemType, action, startingValue )
         entryPanel:SetEnabled( true )
         entryPanel.OnValueChanged = function( _, val )
             val = string.Split( val, "," )
-            for i = 1, #val do
+            for i = #val, 1, -1 do
                 val[i] = string.Trim( val[i] )
+                if val[i] == "" then
+                    table.remove( val, i )
+                end
             end
-            PrintTable( val )
             local ok, err = itemType:Validate( val )
             errLabel:SetText( err or "" )
             errLabel:Dock( LEFT )

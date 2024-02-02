@@ -1,6 +1,12 @@
 function MapVote.isMapAllowed( m )
     local conf = MapVote.config
-    local prefixes = conf.MapPrefixes or MapVote.gamemodeMapPrefixes or {}
+
+    local prefixes = {}
+    table.Add( prefixes, conf.MapPrefixes or {} )
+    if conf.UseGamemodeMapPrefixes then
+        prefixes = table.Add( prefixes, MapVote.gamemodeMapPrefixes or {} )
+    end
+
     local hookResult = hook.Run( "MapVote_IsMapAllowed", m )
     if hookResult ~= nil then return hookResult end
 

@@ -21,6 +21,7 @@ local configMenuOptions = {
     { "Minimum players required to enable RTVing",                               schema.fields.RTVPlayerCount,            "RTVPlayerCount" },
     { seperator = true,                                                          text = "Maps" },
     { "Map prefixes automatically enabled, comma seperated list",                schema.fields.MapPrefixes,               "MapPrefixes" },
+    { "Use gamemode map prefixes",                                               schema.fields.UseGamemodeMapPrefixes,    "UseGamemodeMapPrefixes" },
     { "Disable a map after its played",                                          schema.fields.EnableCooldown,            "EnableCooldown" },
     { "The amount of maps that need to be played before a map is enabled again", schema.fields.MapsBeforeRevote,          "MapsBeforeRevote" },
 }
@@ -113,7 +114,7 @@ function MapVote.addMapRow( map )
     local row = vgui.Create( "Panel" ) --[[@as Panel]]
     row:SetSize( 800, 128 )
 
-    local mapIcon = vgui.Create( "MapVote_MapIcon", row ) --[[@as MapIcon]]
+    local mapIcon = vgui.Create( "MapVote_MapIcon", row )
     mapIcon:SetSize( 128, 128 )
     mapIcon:SetMap( map )
     mapIcon:Dock( LEFT )
