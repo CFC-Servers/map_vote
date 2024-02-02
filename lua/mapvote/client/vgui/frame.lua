@@ -33,8 +33,8 @@ function PANEL:Init()
 
     self.btnClose:SetSize( 25, 25 )
     ---@diagnostic disable-next-line: duplicate-set-field
-    self.btnClose.Paint = function( self, w, h )
-        if self.Hovered then
+    self.btnClose.Paint = function( selfClose, w, h )
+        if selfClose.Hovered then
             draw.RoundedBox( 0, 0, 0, w, h, MapVote.style.colorCloseButton )
         end
         surface.SetTextColor( Color( 255, 255, 255, 200 ) )
