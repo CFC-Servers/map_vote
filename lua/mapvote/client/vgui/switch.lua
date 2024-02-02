@@ -25,7 +25,7 @@ function PANEL:SetOn( on )
     self:OnChange( self.On )
 end
 
-function PANEL:OnChange( on )
+function PANEL:OnChange( _on )
 end
 
 function PANEL:Paint( w, h )
@@ -38,10 +38,10 @@ function PANEL:Paint( w, h )
     local timeSince = SysTime() - self.LastClicked
     local fraction = math.min( timeSince / 0.2, 1 )
     if self.On then
-        local x = Lerp( fraction, 0, (w - h) )
+        local x = Lerp( fraction, 0, w - h )
         draw.RoundedBox( 180, x + 2, 2, h - 4, h - 4, self.ColorSwitch )
     else
-        local x = Lerp( fraction, (w - h), 0 )
+        local x = Lerp( fraction, w - h, 0 )
         draw.RoundedBox( 180, x + 2, 2, h - 4, h - 4, self.ColorSwitch )
     end
 end

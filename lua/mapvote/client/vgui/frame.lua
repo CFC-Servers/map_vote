@@ -1,33 +1,6 @@
 ---@class MapVote_Frame : DFrame
 local PANEL = {}
 
-local function disableColor( c )
-    return Color( c.r / 2, c.g / 2, c.b / 2 )
-end
-
-local function drawCircle( x, y, radius, seg )
-    draw.NoTexture()
-    local cir = {}
-
-    table.insert( cir, { x = x, y = y, u = 0.5, v = 0.5 } )
-    for i = 0, seg do
-        local a = math.rad( (i / seg) * -360 )
-        table.insert( cir,
-            {
-                x = x + math.sin( a ) * radius,
-                y = y + math.cos( a ) * radius,
-            } )
-    end
-
-    local a = math.rad( 0 ) -- This is needed for non absolute segment counts
-    table.insert( cir,
-        {
-            x = x + math.sin( a ) * radius,
-            y = y + math.cos( a ) * radius,
-        } )
-
-    surface.DrawPoly( cir )
-end
 function surface.DrawTexturedRectRotatedPoint( x, y, w, h, rot, x0, y0 )
     local c = math.cos( math.rad( rot ) )
     local s = math.sin( math.rad( rot ) )
@@ -73,12 +46,12 @@ function PANEL:Init()
 
     self.btnMaxim:SetSize( 25, 25 )
     ---@diagnostic disable-next-line: duplicate-set-field
-    self.btnMaxim.Paint = function( _, w, h )
+    self.btnMaxim.Paint = function()
     end
 
     self.btnMinim:SetSize( 25, 25 )
     ---@diagnostic disable-next-line: duplicate-set-field
-    self.btnMinim.Paint = function( _, w, h )
+    self.btnMinim.Paint = function()
     end
     self.btnClose.DoClick = function()
         if self.hideOnClose then
