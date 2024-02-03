@@ -77,7 +77,8 @@ MapVote.Net.receiveWithMiddleware( "MapVote_RequestVoteState", function( _, ply 
 end, MapVote.Net.rateLimit( "MapVote_RequestVoteState", 2, 0.1 ) )
 
 MapVote.Net.receiveWithMiddleware( "MapVote_RequestWorkshopIDTable", function( _, ply )
-    local addonWorkshopIDs = MapVote.getWorkshopIDs( MapVote.maps )
+    local requestedMaps = net.ReadTable()
+    local addonWorkshopIDs = MapVote.getWorkshopIDs( requestedMaps )
     net.Start( "MapVote_WorkshopIDTable" )
     net.WriteTable( addonWorkshopIDs )
     net.Send( ply )
