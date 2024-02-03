@@ -8,7 +8,7 @@ local schema = SV.Object {
     RTVPercentPlayersRequired = SV.Number { min = 0, max = 1 },
     RTVWait = SV.Number(),
     SortMaps = SV.Bool(),
-    UseGamemodeMapPrefixes = SV.Bool(),
+    UseGamemodeMapPrefixes = SV.Bool():Optional(),
     MapPrefixes = SV.List( SV.String() ):Optional(),
     EnableCooldown = SV.Bool(),
     MapsBeforeRevote = SV.Int { min = 1 },
