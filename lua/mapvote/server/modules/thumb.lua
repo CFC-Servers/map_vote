@@ -5,25 +5,23 @@ function MapVote.getAllWorkshopIDs()
     local addonWorkshopIDs = {}
     for _, addon in ipairs( engine.GetAddons() ) do
         local files = file.Find( "maps/*.bsp", addon.title )
-        for _, f in ipairs(files) do
+        for _, f in ipairs( files ) do
             addonWorkshopIDs[string.Replace( f, ".bsp", "" )] = addon.wsid
         end
     end
     MapVote.addonWorkshopIDs = addonWorkshopIDs
 end
 
-net.Receive( "MapVote_RequestWorkshopIDTable", function( _, ply )
-    local requestedMaps = net.ReadTable()
+function MapVote.getWorkshopIDs( maps )
     local addonWorkshopIDs = {}
-    for _, map in ipairs( requestedMaps ) do
+    for _, map in ipairs( maps ) do
         if MapVote.addonWorkshopIDs[map] then
             addonWorkshopIDs[map] = MapVote.addonWorkshopIDs[map]
         else
             print( "MapVote: No workshop ID found for map", map )
         end
     end
-    net.Start( "MapVote_WorkshopIDTable" )
-    net.WriteTable( addonWorkshopIDs )
-    net.Send( ply )
-end )
+    return addonWorkshopIDs
+end
+
 hook.Add( "Initialize", "MapVote_GetWorkshopIDs", MapVote.getAllWorkshopIDs )
