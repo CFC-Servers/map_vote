@@ -6,13 +6,17 @@ end
 
 function MapVote.MergeConfig( conf )
     for k, v in pairs( conf ) do
+        local hasField = MapVote.configSchema:HasField( k )
         local valid, reason = MapVote.configSchema:ValidateField( k, v )
-        if not valid then
+        if not hasField then
+            print( "MapVote MergeConfig config has extra field: " .. k )
+        elseif not valid then
             MapVote.configIssues = {}
             print( "MapVote MergeConfig config is invalid: " .. reason )
             return reason
+        else
+            MapVote.config[k] = v
         end
-        MapVote.config[k] = v
     end
 end
 

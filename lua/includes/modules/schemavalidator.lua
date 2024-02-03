@@ -79,6 +79,7 @@ end
 
 ---@class SchemaTypeObject: SchemaType
 ---@field ValidateField fun(self: SchemaTypeObject, key: any, value: any): (boolean, string)
+---@field HasField fun(self: SchemaTypeObject, key: any): boolean
 ---@field fields { [string]: SchemaType }
 
 ---@param tbl { [string]: SchemaType }
@@ -89,6 +90,9 @@ function SchemaValidator.Object( tbl )
         name = "table",
         Optional = function( self )
             return SchemaValidator.Optional( self )
+        end,
+        HasField = function( self, key )
+            return self.fields[key] ~= nil
         end,
         ValidateField = function( self, key, value )
             local fieldType = self.fields[key]
