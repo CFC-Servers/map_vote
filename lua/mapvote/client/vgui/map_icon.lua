@@ -12,7 +12,7 @@ function PANEL:Init()
     self.infoRow = vgui.Create( "Panel", self.button ) --[[@as DPanel]]
     self.infoRow:Dock( BOTTOM )
     self.infoRow:SetTall( 20 )
-    self.infoRow.Paint = function( self, w, h )
+    self.infoRow.Paint = function( _, w, h )
         surface.SetDrawColor( Color( MapVote.style.colorSecondaryFG.r, MapVote.style.colorSecondaryFG.g, MapVote.style.colorSecondaryFG.b, 230 ) )
         surface.DrawRect( 0, 0, w, h )
     end
