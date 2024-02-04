@@ -1,6 +1,6 @@
 function MapVote.isMapAllowed( m )
     local conf = MapVote.config
-    local prefixes = conf.MapPrefixes or MapVote.gamemodeMapPrefixes or {}
+
     local hookResult = hook.Run( "MapVote_IsMapAllowed", m )
     if hookResult ~= nil then return hookResult end
 
@@ -9,9 +9,19 @@ function MapVote.isMapAllowed( m )
     if conf.ExcludedMaps[m] then return false end -- dont allow excluded maps in vote
     if conf.IncludedMaps[m] then return true end -- skip prefix check if map is in included maps
 
-    for _, v in pairs( prefixes ) do
-        if string.find( m, "^" .. v ) then
-            return true
+    if conf.MapPrefixes then
+        for _, v in pairs( conf.MapPrefixes ) do
+            if string.find( m, "^" .. v ) then
+                return true
+            end
+        end
+    end
+
+    if conf.UseGamemodeMapPrefixes and MapVote.gamemodeMapPrefixes then
+        for _, v in pairs( MapVote.gamemodeMapPrefixes ) do
+            if string.find( m, "^" .. v ) then
+                return true
+            end
         end
     end
     return false

@@ -51,8 +51,11 @@ net.Receive( "MapVote_VoteCancelled", function()
 end )
 
 net.Receive( "RTV_Delay", function()
-    chat.AddText( Color( 102, 255, 51 ), "[RTV]", Color( 255, 255, 255 ),
-        " The vote has been rocked, map vote will begin on round end" )
+    -- this timer makes sure the message shows up after the RTV message
+    timer.Simple( 0.2, function()
+        chat.AddText( Color( 102, 255, 51 ), "[RTV]", Color( 255, 255, 255 ),
+            " The vote has been rocked, map vote will begin on round end" )
+    end )
 end )
 
 

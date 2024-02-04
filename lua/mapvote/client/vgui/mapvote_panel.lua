@@ -31,9 +31,11 @@ function PANEL:PerformLayout()
     -- This is expensive, but must be done so avatar positions dont get misaligned when parent panel is being minimized and resized
     for _, map in ipairs( self.maps ) do
         for i, voter in ipairs( map.voters ) do
-            local newX, newY, willOverflow = self:CalculateDesiredAvatarIconPosition( map, i )
-            voter:SetPos( newX, newY )
-            voter:SetVisible( not willOverflow )
+            if not voter.inAnimation then
+                local newX, newY, willOverflow = self:CalculateDesiredAvatarIconPosition( map, i )
+                voter:SetPos( newX, newY )
+                voter:SetVisible( not willOverflow )
+            end
         end
     end
 end
@@ -83,8 +85,10 @@ function PANEL:SetVote( identifier, mapIndex )
             local voter = oldMapData.voters[i]
             local newX, newY, willOverflow = self:CalculateDesiredAvatarIconPosition( oldMapData, i )
             voter:SetVisible( true )
-            voter:MoveTo( newX, newY, 0.2, nil, nil, function( _, pnl )
+            voter.inAnimation = true
+            voter:MoveTo( newX, newY, 0.3, nil, 1, function( _, pnl )
                 pnl:SetVisible( not willOverflow )
+                pnl.inAnimation = false
             end )
         end
 
@@ -103,10 +107,10 @@ function PANEL:SetVote( identifier, mapIndex )
 
     local newX, newY, willOverflow = self:CalculateDesiredAvatarIconPosition( mapData )
     panel:SetVisible( true )
-    panel:MoveTo( newX, newY, 0.2, nil, nil, function()
-        if willOverflow then
-            panel:SetVisible( not willOverflow )
-        end
+    panel.inAnimation = true
+    panel:MoveTo( newX, newY, 0.3, nil, 1, function( _, pnl )
+        pnl:SetVisible( not willOverflow )
+        pnl.inAnimation = false
     end )
 end
 

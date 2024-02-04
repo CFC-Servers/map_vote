@@ -76,6 +76,14 @@ MapVote.Net.receiveWithMiddleware( "MapVote_RequestVoteState", function( _, ply 
     end )
 end, MapVote.Net.rateLimit( "MapVote_RequestVoteState", 2, 0.1 ) )
 
+MapVote.Net.receiveWithMiddleware( "MapVote_RequestWorkshopIDTable", function( _, ply )
+    local requestedMaps = net.ReadTable()
+    local addonWorkshopIDs = MapVote.getWorkshopIDs( requestedMaps )
+    net.Start( "MapVote_WorkshopIDTable" )
+    net.WriteTable( addonWorkshopIDs )
+    net.Send( ply )
+end, MapVote.Net.rateLimit( "MapVote_RequestWorkshopIDTable", 5, 0.5 ) )
+
 -- to client
 
 function MapVote.Net.sendVoteStart( endTime, mapsInVote, ply )

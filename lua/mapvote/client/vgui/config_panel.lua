@@ -2,6 +2,7 @@
 local PANEL = {}
 
 function PANEL:Init()
+    self.largestLabelWidth = 0
 end
 
 function PANEL:Paint( w, h )
@@ -21,11 +22,37 @@ function PANEL:configRow( displayName )
     optionPanel:Dock( TOP )
 
     local label = vgui.Create( "DLabel", optionPanel ) --[[@as DLabel]]
-    label:SetText( displayName .. ": " )
+    label:SetText( displayName )
     label:Dock( LEFT )
-    label:SetSize( 200, 35 )
-    label:SetFont( MapVote.style.configLabelFont )
+    label:SetFont( "MapVote_ConfigItem" )
+    label:SizeToContents()
+    self.largestLabelWidth = math.max( self.largestLabelWidth, label:GetWide() )
+    optionPanel.label = label
     return optionPanel
+end
+
+function PANEL:PerformLayout()
+    for _, child in pairs( self:GetCanvas():GetChildren() ) do
+        if child.label then
+            child.label:SetWide( self.largestLabelWidth + 50 )
+        end
+    end
+end
+
+surface.CreateFont( "MapVote_ConfigItem", {
+    font = "Arial",
+    size = 20,
+    weight = 600,
+    antialias = true,
+    shadow = false
+} )
+
+function PANEL:AddSeperator( text )
+    local seperator = vgui.Create( "MapVote_Seperator", self )
+    seperator:SetText( text )
+    seperator:Dock( TOP )
+    seperator:DockMargin( 5, 15, 5, 5 )
+    self:AddItem( seperator )
 end
 
 ---@param displayName string
@@ -58,9 +85,11 @@ function PANEL:AddConfigItem( displayName, itemType, action, startingValue )
             end
         end
     elseif itemType.name == "bool" then
-        entryPanel = vgui.Create( "DCheckBox", optionPanel ) --[[@as DCheckBox]]
-        entryPanel:SetSize( 25, 25 )
-        entryPanel:SetValue( startingValue or false )
+        entryPanel = vgui.Create( "MapVote_Switch", optionPanel )
+        entryPanel:SetOn( startingValue or false )
+        entryPanel.ColorOff = MapVote.style.colorSecondaryFG
+        entryPanel.ColorOn = MapVote.style.colorGreen
+        entryPanel.ColorSwitch = MapVote.style.colorPrimaryBG
         ---@diagnostic disable-next-line: duplicate-set-field
         entryPanel.OnChange = function( _, val )
             local ok, err = itemType:Validate( val )
@@ -89,7 +118,7 @@ function PANEL:AddConfigItem( displayName, itemType, action, startingValue )
         entryPanel:SetSize( 100, 25 )
     elseif itemType.name == "string" then
         entryPanel = vgui.Create( "MapVote_TextEntry", optionPanel ) --[[@as DTextEntry]]
-        entryPanel:SetSize( 100, 25 )
+        entryPanel:SetSize( 300, 25 )
         entryPanel:SetValue( startingValue or "" )
 
         ---@diagnostic disable-next-line: duplicate-set-field
@@ -108,7 +137,22 @@ function PANEL:AddConfigItem( displayName, itemType, action, startingValue )
         entryPanel = vgui.Create( "MapVote_TextEntry", optionPanel ) --[[@as DTextEntry]]
         entryPanel:SetSize( 100, 25 )
         entryPanel:SetValue( startingValue or "" )
-        entryPanel:SetEnabled( false )
+        entryPanel:SetEnabled( true )
+        entryPanel.OnValueChanged = function( _, val )
+            val = string.Split( val, "," )
+            for i = #val, 1, -1 do
+                val[i] = string.Trim( val[i] )
+                if val[i] == "" then
+                    table.remove( val, i )
+                end
+            end
+            local ok, err = itemType:Validate( val )
+            errLabel:SetText( err or "" )
+            errLabel:Dock( LEFT )
+            if ok then
+                action( val )
+            end
+        end
     else
         error( "Unknown type " .. itemType.name )
     end
