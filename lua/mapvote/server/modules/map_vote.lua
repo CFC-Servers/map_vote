@@ -102,7 +102,7 @@ function MapVote.mapVoteOver()
         end
     end
 
-    local winner = table.GetWinningKey( results ) or 1
+    local winner = MapVote.GetWinningKey( results ) or 1
     hook.Run( "MapVote_VoteFinished", {
         state = state,
         results = results,
@@ -120,4 +120,33 @@ function MapVote.mapVoteOver()
         print( "MapVote Changing map to " .. map )
         RunConsoleCommand( "changelevel", map )
     end )
+end
+
+---@param tab table
+---@return any
+function MapVote.GetWinningKey( tab )
+    local highest = -math.huge
+    local count = 0
+
+    for _, v in pairs( tab ) do
+        if v > highest then
+            highest = v
+            count = 1
+        elseif v == highest then
+            count = count + 1
+        end
+    end
+
+    local desired = math.random( 1, count )
+    local i = 0
+    for k, v in pairs( tab ) do
+        if v == highest then
+            i = i + 1
+        end
+        if i == desired then
+            return k
+        end
+    end
+
+    return nil
 end
