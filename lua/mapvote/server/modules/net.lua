@@ -51,7 +51,7 @@ MapVote.Net.receiveWithMiddleware( "MapVote_ChangeVote", function( _, ply )
     net.WriteEntity( ply )
     net.WriteUInt( mapID, 32 )
     net.Broadcast()
-end, MapVote.Net.rateLimit( "MapVote_ChangeVote", 15, 1 ) )
+end, MapVote.Net.rateLimit( "MapVote_ChangeVote", 15, 3 ) )
 
 MapVote.Net.receiveWithMiddleware( "MapVote_RequestMapList", function( _, ply )
     local maps = MapVote.getMapList()
