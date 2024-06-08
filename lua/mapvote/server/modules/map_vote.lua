@@ -45,13 +45,15 @@ function MapVote.Start( length )
 
     local maps = MapVote.getMapList()
 
-    local mapsInVote = {}
+    local mapsInVote = hook.Run( "MapVote_SelectMaps" )
+    if not mapsInVote then
+        mapsInVote = {}
+        for _, map in RandomPairs( maps ) do
+            if MapVote.isMapAllowed( map ) then
+                table.insert( mapsInVote, map )
 
-    for _, map in RandomPairs( maps ) do
-        if MapVote.isMapAllowed( map ) then
-            table.insert( mapsInVote, map )
-
-            if #mapsInVote >= MapVote.config.MapLimit then break end
+                if #mapsInVote >= MapVote.config.MapLimit then break end
+            end
         end
     end
 

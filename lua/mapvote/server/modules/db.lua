@@ -34,7 +34,7 @@ function DB.AddPlayCount( map, count )
 end
 
 ---@param limit number
----@return {map:string, play_count:number, last_played:number}[]
+---@return {map:string, play_count:string, last_played:string}[]
 function DB.GetRecentMaps( limit )
     if not isnumber( limit ) then
         error( "DB.GetRecentMaps: Limit was not a number (" .. tostring( limit ) .. ")" )
@@ -47,7 +47,7 @@ function DB.GetRecentMaps( limit )
     return data
 end
 
----@return {map:string, play_count:number, last_played:number}[]
+---@return {map:string, play_count:string, last_played:string}[]
 function DB.GetAllMaps()
     local data = sql.Query( "SELECT * FROM mapvote_played_maps" )
     if data == false then
