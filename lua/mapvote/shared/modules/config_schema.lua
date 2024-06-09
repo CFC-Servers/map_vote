@@ -15,8 +15,13 @@ local schema = SV.Object {
     RTVPlayerCount = SV.Int { min = 1 },
     ExcludedMaps = SV.Map( SV.String(), SV.Bool() ),
     IncludedMaps = SV.Map( SV.String(), SV.Bool() ),
+    MapConfig = SV.Map( SV.String(), SV.Object( {
+        MinPlayers = SV.Int { min = 0 }:Optional(),
+        MaxPlayers = SV.Int { min = 0 }:Optional(),
+    } ) ):Optional(),
     PlyRTVCooldownSeconds = SV.Int { min = 1 },
     MapIconURLs = SV.Map( SV.String(), SV.String() ):Optional(),
+
 }
 
 local default = {
@@ -35,6 +40,7 @@ local default = {
     SortMaps = false,
     PlyRTVCooldownSeconds = 120,
     MapIconURLs = {},
+    MapConfig = {},
 }
 
 MapVote.configSchema = schema

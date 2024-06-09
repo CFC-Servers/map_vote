@@ -6,6 +6,12 @@ function MapVote.isMapAllowed( m )
 
     if not conf.AllowCurrentMap and m == game.GetMap():lower() then return false end -- dont allow current map in vote
 
+    if conf.MapConfig and conf.MapConfig[m] then
+        local cfg = conf.MapConfig[m]
+        if cfg.MinPlayers and player.GetCount() < cfg.MinPlayers then return false end
+        if cfg.MaxPlayers and cfg.MaxPlayers ~= 0 and player.GetCount() > cfg.MaxPlayers then return false end
+    end
+
     if conf.ExcludedMaps[m] then return false end -- dont allow excluded maps in vote
     if conf.IncludedMaps[m] then return true end -- skip prefix check if map is in included maps
 
