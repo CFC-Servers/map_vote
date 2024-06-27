@@ -16,7 +16,7 @@ local configMenuOptions = {
     { "Should the maps in a vote be sorted",                                     schema.fields.SortMaps,                  "SortMaps" },
     { seperator = true,                                                          text = "RTV" },
     { "Percentage of players who need to RTV between 0 and 1",                   schema.fields.RTVPercentPlayersRequired, "RTVPercentPlayersRequired" },
-    { "The time RTV is disabled after a map change in seonds",                   schema.fields.RTVWait,                   "RTVWait" },
+    { "The time RTV is disabled after a map change in seconds",                   schema.fields.RTVWait,                   "RTVWait" },
     { "How long should a player wait between RTV commands",                      schema.fields.PlyRTVCooldownSeconds,     "PlyRTVCooldownSeconds" },
     { "Minimum players required to enable RTVing",                               schema.fields.RTVPlayerCount,            "RTVPlayerCount" },
     { seperator = true,                                                          text = "Maps" },
