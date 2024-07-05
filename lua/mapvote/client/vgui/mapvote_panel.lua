@@ -185,31 +185,33 @@ function PANEL:CreateVoterPanel( identifier )
     return iconContainer
 end
 
----@param w number
----@param h number
+-- addapted from https://math.stackexchange.com/questions/466198/algorithm-to-get-the-maximum-size-of-n-squares-that-fit-into-a-rectangle-with-a
+---@param x number
+---@param y number
 ---@param n number
 ---@return number, number
 ---@private
-function PANEL:maxIconSize( w, h, n )
-    local px = math.ceil( math.sqrt( n * w / h ) )
+function PANEL:maxIconSize( x, y, n )
+    local px = math.ceil( math.sqrt( n * x / y ) )
     local sx, sy
-    if math.floor( px * h / w ) * px < n then
-        sx = h / math.ceil( px * h / w )
+
+    if math.floor( px * y / x ) * px < n then
+        sx = y / math.ceil( px * y / x )
     else
-        sx = w / px
+        sx = x / px
     end
 
-    local py = math.ceil( math.sqrt( n * h / w ) )
-    if math.floor( py * w / h ) * py < n then
-        sy = w / math.ceil( py * w / h )
+    local py = math.ceil( math.sqrt( n * y / x ) )
+
+    if math.floor( py * x / y ) * py < n then
+        sy = x / math.ceil( x * py / y )
     else
-        sy = h / py
+        sy = y / py
     end
 
-    if sx < sy then
-        return sy, sy
-    end
-    return sx, sx
+    local v = math.max( sx, sy )
+
+    return v, v
 end
 
 ---@param maps string[]
@@ -234,9 +236,13 @@ function PANEL:SetMaps( maps )
     self.votes = {}
 
     local maxW, maxH = self:maxIconSize( self:GetWide(), self:GetTall(), #self.maps )
+
     local rowCount = math.floor( self:GetTall() / maxH )
-    local columnCount = math.floor( self:GetWide() / maxW )
+    local columnCount = math.ceil( #self.maps / rowCount )
+
     self:CalculateAvatarSize( maxW, maxH )
+
+    assert( rowCount * columnCount >= #self.maps, "Not enough space to display all maps" )
 
     local mapIndex = 1
     for i = 1, rowCount do
