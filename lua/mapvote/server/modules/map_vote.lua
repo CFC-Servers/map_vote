@@ -97,7 +97,9 @@ function MapVote.Cancel()
     timer.Remove( "MapVote_EndVote" )
 end
 
-function MapVote.mapVoteOver()
+function MapVote.mapVoteOver( delay )
+    delay = delay or 4
+
     local state = MapVote.state
     MapVote.resetState()
     local results = {}
@@ -122,7 +124,7 @@ function MapVote.mapVoteOver()
     net.Broadcast()
     local map = state.currentMaps[winner]
 
-    timer.Simple( 4, function()
+    timer.Simple( delay, function()
         if hook.Run( "MapVote_ChangeMap", map ) == false then return end
 
         print( "MapVote Changing map to " .. map )
