@@ -29,6 +29,7 @@ hook.Add( "InitPostEntity", "MapVote_TTTIntegration", function()
 end )
 
 hook.Add( "MapVote_RTVStart", "MapVote_TTTStartVoteAfterRound", function()
+    if GetRoundState() ~= ROUND_ACTIVE then return end
     net.Start( "RTV_Delay" )
     net.Broadcast()
 
