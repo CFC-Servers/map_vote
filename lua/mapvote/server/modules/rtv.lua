@@ -112,8 +112,6 @@ end )
 function RTV.CanVote( ply )
     local conf = MapVote.GetConfig()
 
-    local plyCount = #player.GetHumans()
-
     if conf.RTVWait >= CurTime() then
         return false, "You must wait a bit before voting!"
     end
@@ -136,7 +134,7 @@ function RTV.CanVote( ply )
         return false,
             "There is already a vote in progress"
     end
-    if plyCount < conf.RTVPlayerCount then
+    if RTV.GetPlayerCount() < conf.RTVPlayerCount then
         return false, "You need more players before you can mapvote!"
     end
 
