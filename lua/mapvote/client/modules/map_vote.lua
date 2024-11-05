@@ -72,7 +72,7 @@ function MapVote.StartVote( maps, endTime )
             timer.Remove( "MapVoteCountdown" )
             return
         end
-        local timeLeft = math.Round( math.Clamp( endTime - CurTime(), 0, math.huge ) )
+        local timeLeft = math.ceil( math.Clamp( endTime - CurTime(), 0, math.huge ) )
 
         countdownLabel:SetText( string.FormattedTime( timeLeft or 0, "%02i:%02i" ) )
     end )
