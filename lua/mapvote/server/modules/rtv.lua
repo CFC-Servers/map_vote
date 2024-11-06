@@ -69,7 +69,7 @@ function RTV.ShouldChange()
 
     if totalPlayers == 0 then return end
 
-    return totalVotes >= math.Round( totalPlayers * conf.RTVPercentPlayersRequired )
+    return totalVotes >= math.ceil( totalPlayers * conf.RTVPercentPlayersRequired )
 end
 
 function RTV.StartIfShouldChange()
@@ -99,7 +99,7 @@ function RTV.AddVote( ply )
     timer.Simple( 0, function()
         if not ply:IsValid() then return end
         MsgN( ply:Nick() .. " has voted to change the map." )
-        local percentage = math.Round( RTV.GetPlayerCount() * conf.RTVPercentPlayersRequired )
+        local percentage = math.ceil( RTV.GetPlayerCount() * conf.RTVPercentPlayersRequired )
         PrintMessage( HUD_PRINTTALK,
             ply:Nick() .. " has voted to change the map. (" .. RTV.GetVoteCount() .. "/" .. percentage .. ")" )
     end )
@@ -127,7 +127,7 @@ function RTV.CanVote( ply )
     if ply.RTVVoted then
         return false,
             string.format( "You have already voted to change the map! (%s/%s)", RTV.GetVoteCount(),
-                math.Round( RTV.GetPlayerCount() * conf.RTVPercentPlayersRequired ) )
+                math.ceil( RTV.GetPlayerCount() * conf.RTVPercentPlayersRequired ) )
     end
 
     if MapVote.state.isInProgress then
