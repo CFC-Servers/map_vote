@@ -97,6 +97,18 @@ function MapVote.Cancel()
     timer.Remove( "MapVote_EndVote" )
 end
 
+function MapVote.GetVoteMultiplier( ply )
+    local multiplier = MapVote.config.VoteMultipliers[ply:GetUserGroup()] or 1
+
+    local hookMult = hook.Run( "MapVote_VoteMultiplier", ply )
+
+    if isnumber( hookMult ) then
+        multiplier = hookMult
+    end
+
+    return multiplier
+end
+
 function MapVote.mapVoteOver( delay )
     delay = delay or 4
 
@@ -110,8 +122,8 @@ function MapVote.mapVoteOver( delay )
         local ply = player.GetBySteamID( k )
 
         if ply then
-            local voteWeightMult = MapVote.config.VoteWeightMultipliers[ply:GetUserGroup()] or 1
-            results[v] = results[v] + voteWeightMult
+            local voteMult = MapVote.GetVoteMultiplier( ply )
+            results[v] = results[v] + voteMult
         end
     end
 

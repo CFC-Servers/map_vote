@@ -28,8 +28,9 @@ You can create file in lua/mapvote/client/plugins and lua/mapvote/server/plugins
 | Name                    | description                                                                        | args    | realm  |
 | ----------------------- | ---------------------------------------------------------------------------------- | ------- | ------ |
 | MapVote_IsMapAllowed    | Called to determine if a map is allowed, return true/false to allow/disallow a map | map     | server |
-| MapVote_VoteFinished    | called when a vote is finished serverside                                          | results | server |
+| MapVote_VoteFinished    | Called when a vote is finished serverside                                          | results | server |
 | MapVote_ChangeMap       | Called just before mapvote changes the map, return false to skip                   | map     | server |
+| MapVote_VoteMultiplier  | Called when a vote is finished serverside, return vote multiplier                  | ply     | server |
 | MapVote_RTVStart        | Called when the vote has been rocked, return false to prevent map vote starting    |         | server |
 | MapVote_Loaded          | Called when all lua files for mapvote have been loaded                             |         | shared |
 | MapVote_VotePanelOpened | Called when the vote panel is shown                                                |         | client |

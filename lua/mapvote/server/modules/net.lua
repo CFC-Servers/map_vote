@@ -46,11 +46,11 @@ MapVote.Net.receiveWithMiddleware( "MapVote_ChangeVote", function( _, ply )
     end
 
     MapVote.state.votes[ply:SteamID()] = mapID
-    local voteMult = MapVote.config.VoteWeightMultipliers[ply:GetUserGroup()] or 1
+    local voteMult = MapVote.GetVoteMultiplier( ply )
     net.Start( "MapVote_PlayerChangedVote" )
     net.WriteEntity( ply )
     net.WriteUInt( mapID, 32 )
-    net.WriteUInt( voteMult, 32 )
+    net.WriteUInt( voteMult, 7 )
     net.Broadcast()
 end, MapVote.Net.rateLimit( "MapVote_ChangeVote", 15, 3 ) )
 
@@ -70,11 +70,11 @@ MapVote.Net.receiveWithMiddleware( "MapVote_RequestVoteState", function( _, ply 
     timer.Simple( 0.1, function()
         for steamID, mapID in pairs( MapVote.state.votes ) do
             local pl = player.GetBySteamID( steamID )
-            local voteMult = MapVote.config.VoteWeightMultipliers[pl:GetUserGroup()] or 1
+            local voteMult = MapVote.GetVoteMultiplier( ply )
             net.Start( "MapVote_PlayerChangedVote" )
             net.WriteEntity( pl )
             net.WriteUInt( mapID, 32 )
-            net.WriteUInt( voteMult, 32 )
+            net.WriteUInt( voteMult, 7 )
             net.Send( ply )
         end
     end )

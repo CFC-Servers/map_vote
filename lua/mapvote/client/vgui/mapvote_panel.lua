@@ -183,11 +183,9 @@ function PANEL:CreateVoterPanel( identifier, voteMult )
     icon:SetAlpha( 200 )
 
     if voteMult > 1 then
-        local label = vgui.Create( "DLabel", icon )
-        label:SetText( voteMult .. "x" )
-        label:SetPos( 2, 2 )
-        label:SetColor( color_white )
-        label:SetFont( "MapVote_ConfigItem" )
+        icon.PaintOver = function()
+            draw.SimpleTextOutlined(  voteMult .. "x", "MapVote_ConfigItem", 2, 2, MapVote.style.colorTextPrimary, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, MapVote.style.colorPrimaryBG )
+        end
     end
 
     return iconContainer
