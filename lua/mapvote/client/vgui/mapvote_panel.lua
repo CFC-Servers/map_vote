@@ -54,7 +54,7 @@ end
 
 ---@param identifier any
 ---@param mapIndex number
-function PANEL:SetVote( identifier, mapIndex )
+function PANEL:SetVote( identifier, mapIndex, voteMult )
     local mapData = self.maps[mapIndex]
     if not mapData then
         error( "Invalid map index " .. mapIndex )
@@ -94,7 +94,7 @@ function PANEL:SetVote( identifier, mapIndex )
 
         panel = oldVote.panel
     else
-        panel = self:CreateVoterPanel( identifier )
+        panel = self:CreateVoterPanel( identifier, voteMult )
     end
 
     table.insert( mapData.voters, panel )
@@ -128,7 +128,7 @@ function PANEL:CalculateDesiredAvatarIconPosition( mapData, index )
 
     local mapIcon = mapData.panel
     local maxColumnCount = math.floor( mapIcon:GetWide() / avatarTotalSize )
-    local maxRowCount = math.floor( (mapIcon:GetTall() - 20) / avatarTotalSize )
+    local maxRowCount = math.floor( ( mapIcon:GetTall() - 20 ) / avatarTotalSize )
 
     local column = index % maxColumnCount
     local row = math.floor( index / maxColumnCount )
@@ -165,7 +165,7 @@ end
 ---@param identifier string|Player
 ---@return Panel
 ---@private
-function PANEL:CreateVoterPanel( identifier )
+function PANEL:CreateVoterPanel( identifier, voteMult )
     local ply = self:GetPlayerFromIdentifier( identifier )
 
     local iconContainer = vgui.Create( "Panel", self )
@@ -181,6 +181,12 @@ function PANEL:CreateVoterPanel( identifier )
 
     iconContainer:SetMouseInputEnabled( false )
     icon:SetAlpha( 200 )
+
+    local label = vgui.Create( "DLabel", icon )
+    label:SetText( voteMult .. "x" )
+    label:SetPos( 2, 2 )
+    label:SetColor( color_white )
+    label:SetFont( "MapVote_ConfigItem" )
 
     return iconContainer
 end

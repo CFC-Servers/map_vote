@@ -38,8 +38,9 @@ end )
 net.Receive( "MapVote_PlayerChangedVote", function()
     local ply = net.ReadEntity() --[[@as Player]]
     local mapIndex = net.ReadUInt( 32 )
+    local voteMult = net.ReadUInt( 32 )
 
-    MapVote.ChangeVote( ply, mapIndex )
+    MapVote.ChangeVote( ply, mapIndex, voteMult )
 end )
 
 net.Receive( "MapVote_VoteFinished", function()

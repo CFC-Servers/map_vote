@@ -107,8 +107,11 @@ function MapVote.mapVoteOver( delay )
     for k, v in pairs( state.votes ) do
         if not results[v] then results[v] = 0 end
 
-        if player.GetBySteamID( k ) then
-            results[v] = results[v] + 1
+        local ply = player.GetBySteamID( k )
+
+        if ply then
+            local voteWeightMult = MapVote.config.VoteWeightMultipliers[ply:GetUserGroup()] or 1
+            results[v] = results[v] + voteWeightMult
         end
     end
 

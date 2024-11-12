@@ -10,10 +10,10 @@ function MapVote.CancelVote()
     hook.Run( "MapVote_VoteCancelled" )
 end
 
-function MapVote.ChangeVote( ply, mapIndex )
+function MapVote.ChangeVote( ply, mapIndex, voteMult )
     if not IsValid( ply ) then return end
     if not IsValid( MapVote.Panel ) then return end
-    MapVote.Panel.voteArea:SetVote( ply, mapIndex )
+    MapVote.Panel.voteArea:SetVote( ply, mapIndex, voteMult )
 end
 
 function MapVote.StartVote( maps, endTime )
