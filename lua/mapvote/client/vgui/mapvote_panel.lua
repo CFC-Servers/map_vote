@@ -182,11 +182,13 @@ function PANEL:CreateVoterPanel( identifier, voteMult )
     iconContainer:SetMouseInputEnabled( false )
     icon:SetAlpha( 200 )
 
-    local label = vgui.Create( "DLabel", icon )
-    label:SetText( voteMult .. "x" )
-    label:SetPos( 2, 2 )
-    label:SetColor( color_white )
-    label:SetFont( "MapVote_ConfigItem" )
+    if voteMult > 1 then
+        local label = vgui.Create( "DLabel", icon )
+        label:SetText( voteMult .. "x" )
+        label:SetPos( 2, 2 )
+        label:SetColor( color_white )
+        label:SetFont( "MapVote_ConfigItem" )
+    end
 
     return iconContainer
 end
