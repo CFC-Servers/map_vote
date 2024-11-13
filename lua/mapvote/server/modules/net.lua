@@ -72,7 +72,7 @@ MapVote.Net.receiveWithMiddleware( "MapVote_RequestVoteState", function( _, ply 
             local voter = player.GetBySteamID( steamID )
             local voteMult = MapVote.GetVoteMultiplier( voter )
             net.Start( "MapVote_PlayerChangedVote" )
-            net.WriteEntity( pl )
+            net.WriteEntity( voter )
             net.WriteUInt( mapID, 32 )
             net.WriteUInt( voteMult, 7 )
             net.Send( ply )
