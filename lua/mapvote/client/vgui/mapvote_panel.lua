@@ -54,7 +54,7 @@ end
 
 ---@param identifier any
 ---@param mapIndex number
-function PANEL:SetVote( identifier, mapIndex )
+function PANEL:SetVote( identifier, mapIndex, voteMult )
     local mapData = self.maps[mapIndex]
     if not mapData then
         error( "Invalid map index " .. mapIndex )
@@ -94,7 +94,7 @@ function PANEL:SetVote( identifier, mapIndex )
 
         panel = oldVote.panel
     else
-        panel = self:CreateVoterPanel( identifier )
+        panel = self:CreateVoterPanel( identifier, voteMult )
     end
 
     table.insert( mapData.voters, panel )
@@ -128,7 +128,7 @@ function PANEL:CalculateDesiredAvatarIconPosition( mapData, index )
 
     local mapIcon = mapData.panel
     local maxColumnCount = math.floor( mapIcon:GetWide() / avatarTotalSize )
-    local maxRowCount = math.floor( (mapIcon:GetTall() - 20) / avatarTotalSize )
+    local maxRowCount = math.floor( ( mapIcon:GetTall() - 20 ) / avatarTotalSize )
 
     local column = index % maxColumnCount
     local row = math.floor( index / maxColumnCount )
@@ -162,10 +162,32 @@ function PANEL:GetPlayerFromIdentifier( identifier )
     return identifier
 end
 
+local createdFonts = {}
+
+local function CreateMultFont( size )
+    size = math.max( 12, math.ceil( size * 0.4 ) )
+    local name = "MapVote_Multiplier" .. size
+    if createdFonts[size] then
+        return name
+    end
+
+    surface.CreateFont( name, {
+        font = "Arial",
+        size = size,
+        weight = 600,
+        antialias = true,
+        shadow = false
+    } )
+
+    createdFonts[size] = true
+
+    return name
+end
+
 ---@param identifier string|Player
 ---@return Panel
 ---@private
-function PANEL:CreateVoterPanel( identifier )
+function PANEL:CreateVoterPanel( identifier, voteMult )
     local ply = self:GetPlayerFromIdentifier( identifier )
 
     local iconContainer = vgui.Create( "Panel", self )
@@ -181,6 +203,13 @@ function PANEL:CreateVoterPanel( identifier )
 
     iconContainer:SetMouseInputEnabled( false )
     icon:SetAlpha( 200 )
+
+    if voteMult > 1 then
+        local fontName = CreateMultFont( self.avatarSize )
+        icon.PaintOver = function()
+            draw.SimpleTextOutlined(  voteMult .. "x", fontName, 2, 2, MapVote.style.colorTextPrimary, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, MapVote.style.colorPrimaryBG )
+        end
+    end
 
     return iconContainer
 end
