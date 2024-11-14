@@ -162,6 +162,28 @@ function PANEL:GetPlayerFromIdentifier( identifier )
     return identifier
 end
 
+local createdFonts = {}
+
+local function CreateMultFont( size )
+    size = math.max( 12, math.ceil( size * 0.4 ) )
+    local name = "MapVote_Multiplier" .. size
+    if createdFonts[size] then
+        return name
+    end
+
+    surface.CreateFont( name, {
+        font = "Arial",
+        size = size,
+        weight = 600,
+        antialias = true,
+        shadow = false
+    } )
+
+    createdFonts[size] = true
+
+    return name
+end
+
 ---@param identifier string|Player
 ---@return Panel
 ---@private
@@ -183,8 +205,9 @@ function PANEL:CreateVoterPanel( identifier, voteMult )
     icon:SetAlpha( 200 )
 
     if voteMult > 1 then
+        local fontName = CreateMultFont( self.avatarSize )
         icon.PaintOver = function()
-            draw.SimpleTextOutlined(  voteMult .. "x", "MapVote_ConfigItem", 2, 2, MapVote.style.colorTextPrimary, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, MapVote.style.colorPrimaryBG )
+            draw.SimpleTextOutlined(  voteMult .. "x", fontName, 2, 2, MapVote.style.colorTextPrimary, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, MapVote.style.colorPrimaryBG )
         end
     end
 
