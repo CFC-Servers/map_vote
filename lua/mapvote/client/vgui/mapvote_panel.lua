@@ -54,11 +54,20 @@ end
 
 function PANEL:RemoveInvalidVotes()
     for identifier, vote in pairs( self.votes ) do
-        if not identifier or not IsValid( identifier ) then
+        local invalidPlayer = (type( identifier ) == "Player") and not IsValid( identifier )
+        if not identifier or invalidPlayer then
             self:removeVote( vote )
             self.votes[identifier] = nil
         end
     end
+end
+
+function PANEL:RemoveVote( identifier )
+    local vote = self.votes[identifier]
+    if not vote then return end
+
+    self:removeVote( vote )
+    self.votes[identifier] = nil
 end
 
 function PANEL:removeVote( oldVote, removePanel )
@@ -173,7 +182,7 @@ function PANEL:GetPositionRelativeToSelf( mapPanel )
 end
 
 ---@param identifier string|Player
----@return Player
+---@return Player|nil
 ---@private
 function PANEL:GetPlayerFromIdentifier( identifier )
     if type( identifier ) == "string" then
@@ -181,7 +190,7 @@ function PANEL:GetPlayerFromIdentifier( identifier )
     elseif type( identifier ) == "Player" then
         return identifier
     end
-    return identifier
+    return nil
 end
 
 local createdFonts = {}
