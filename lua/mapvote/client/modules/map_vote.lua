@@ -113,3 +113,10 @@ hook.Add( "Tick", "MapVote_RequestState", function()
         MapVote.Net.requestState()
     end )
 end )
+
+gameevent.Listen( "player_disconnect" )
+hook.Add( "player_disconnect", "MapVote_RemoveVote", function( data )
+    if not IsValid( MapVote.Panel ) then return end
+
+    MapVote.Panel.voteArea:RemoveInvalidVotes()
+end )
