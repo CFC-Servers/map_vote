@@ -10,10 +10,21 @@ function MapVote.CancelVote()
     hook.Run( "MapVote_VoteCancelled" )
 end
 
+---@param ply Player
+---@param mapIndex number
+---@param voteMult number
 function MapVote.ChangeVote( ply, mapIndex, voteMult )
     if not IsValid( ply ) then return end
     if not IsValid( MapVote.Panel ) then return end
-    MapVote.Panel.voteArea:SetVote( ply, mapIndex, voteMult )
+
+    ---@type string|Player
+    local identifier = ply:SteamID64()
+    if ply:IsBot() then
+        -- dont use steamid object for bots to allow testing UI locally
+        identifier = ply
+    end
+
+    MapVote.Panel.voteArea:SetVote( identifier, mapIndex, voteMult )
 end
 
 function MapVote.StartVote( maps, endTime )
@@ -115,8 +126,12 @@ hook.Add( "Tick", "MapVote_RequestState", function()
 end )
 
 gameevent.Listen( "player_disconnect" )
-hook.Add( "player_disconnect", "MapVote_RemoveVote", function()
+hook.Add( "player_disconnect", "MapVote_RemoveVote", function( data )
     if not IsValid( MapVote.Panel ) then return end
 
-    MapVote.Panel.voteArea:RemoveInvalidVotes()
+    if data.networkid == "BOT" then
+        MapVote.Panel.voteArea:RemoveInvalidVotes()
+    else
+        MapVote.Panel.voteArea:RemoveVote( data.networkid )
+    end
 end )
