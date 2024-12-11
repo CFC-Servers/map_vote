@@ -52,6 +52,52 @@ function PANEL:GetTotalRowHeight()
     return #self.rows * self.rows[1]:GetTall()
 end
 
+function PANEL:RemoveInvalidVotes()
+    for identifier, vote in pairs( self.votes ) do
+        if not identifier or not IsValid( identifier ) then
+            self:removeVote( vote )
+            self.votes[identifier] = nil
+        end
+    end
+end
+
+function PANEL:removeVote( oldVote, removePanel )
+    if removePanel == nil then
+        removePanel = true
+    end
+    local mapData = self.maps[oldVote.mapIndex]
+
+    -- Find index in votes for the old map, then reposition all icons after it
+    local indexToRemove = nil
+    for i, voter in ipairs( mapData.voters ) do
+        if voter == oldVote.panel then
+            indexToRemove = i
+            break
+        end
+    end
+    if indexToRemove then
+        table.remove( mapData.voters, indexToRemove )
+    else
+        ErrorNoHalt( "No index to remove??" )
+        return
+    end
+
+    for i = indexToRemove, #mapData.voters do
+        local voter = mapData.voters[i]
+        local newX, newY, willOverflow = self:CalculateDesiredAvatarIconPosition( mapData, i )
+        voter:SetVisible( true )
+        voter.inAnimation = true
+        voter:MoveTo( newX, newY, 0.3, nil, 1, function( _, pnl )
+            pnl:SetVisible( not willOverflow )
+            pnl.inAnimation = false
+        end )
+    end
+
+    if removePanel then
+        oldVote.panel:Remove()
+    end
+end
+
 ---@param identifier any
 ---@param mapIndex number
 function PANEL:SetVote( identifier, mapIndex, voteMult )
@@ -67,31 +113,7 @@ function PANEL:SetVote( identifier, mapIndex, voteMult )
         if oldVote.mapIndex == mapIndex then
             return
         end
-        local oldMapData = self.maps[oldVote.mapIndex]
-
-        -- Find index in votes for the old map, then reposition all icons after it
-        local indexToRemove = nil
-        for i, voter in ipairs( oldMapData.voters ) do
-            if voter == oldVote.panel then
-                indexToRemove = i
-                break
-            end
-        end
-        if indexToRemove then
-            table.remove( oldMapData.voters, indexToRemove )
-        end
-
-        for i = indexToRemove, #oldMapData.voters do
-            local voter = oldMapData.voters[i]
-            local newX, newY, willOverflow = self:CalculateDesiredAvatarIconPosition( oldMapData, i )
-            voter:SetVisible( true )
-            voter.inAnimation = true
-            voter:MoveTo( newX, newY, 0.3, nil, 1, function( _, pnl )
-                pnl:SetVisible( not willOverflow )
-                pnl.inAnimation = false
-            end )
-        end
-
+        self:removeVote( oldVote, false )
         panel = oldVote.panel
     else
         panel = self:CreateVoterPanel( identifier, voteMult )
@@ -128,7 +150,7 @@ function PANEL:CalculateDesiredAvatarIconPosition( mapData, index )
 
     local mapIcon = mapData.panel
     local maxColumnCount = math.floor( mapIcon:GetWide() / avatarTotalSize )
-    local maxRowCount = math.floor( ( mapIcon:GetTall() - 20 ) / avatarTotalSize )
+    local maxRowCount = math.floor( (mapIcon:GetTall() - 20) / avatarTotalSize )
 
     local column = index % maxColumnCount
     local row = math.floor( index / maxColumnCount )
@@ -207,7 +229,7 @@ function PANEL:CreateVoterPanel( identifier, voteMult )
     if voteMult > 1 then
         local fontName = CreateMultFont( self.avatarSize )
         icon.PaintOver = function()
-            draw.SimpleTextOutlined(  voteMult .. "x", fontName, 2, 2, MapVote.style.colorTextPrimary, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, MapVote.style.colorPrimaryBG )
+            draw.SimpleTextOutlined( voteMult .. "x", fontName, 2, 2, MapVote.style.colorTextPrimary, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP, 1, MapVote.style.colorPrimaryBG )
         end
     end
 
