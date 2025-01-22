@@ -59,6 +59,20 @@ function RTV.GetVoteCount()
     return count
 end
 
+function RTV.GetThreshold()
+    local conf = MapVote.GetConfig()
+    local totalPlayers = RTV.GetPlayerCount()
+
+    local threshold = totalPlayers * conf.RTVPercentPlayersRequired
+
+    local mapsConfig = conf.MapConfig and conf.MapConfig[game.GetMap()] or nil
+    if mapsConfig and totalPlayers > mapsConfig.MaxPlayers then
+        threshold = threshold * conf.RTVPercentMulWhenOverpopulated
+    end
+
+    return math.ceil( threshold )
+end
+
 function RTV.ShouldChange()
     if MapVote.state.isInProgress then return end
     local conf = MapVote.GetConfig()
@@ -69,7 +83,7 @@ function RTV.ShouldChange()
 
     if totalPlayers == 0 then return end
 
-    return totalVotes >= math.ceil( totalPlayers * conf.RTVPercentPlayersRequired )
+    return totalVotes >= RTV.GetThreshold()
 end
 
 function RTV.StartIfShouldChange()
@@ -92,16 +106,15 @@ function RTV.ResetVotes()
 end
 
 function RTV.AddVote( ply )
-    local conf = MapVote.GetConfig()
     ply.RTVVoted = true
     ply.RTVVotedTime = CurTime()
 
     timer.Simple( 0, function()
         if not ply:IsValid() then return end
         MsgN( ply:Nick() .. " has voted to change the map." )
-        local percentage = math.ceil( RTV.GetPlayerCount() * conf.RTVPercentPlayersRequired )
+        local threshold = RTV.GetThreshold()
         PrintMessage( HUD_PRINTTALK,
-            ply:Nick() .. " has voted to change the map. (" .. RTV.GetVoteCount() .. "/" .. percentage .. ")" )
+            ply:Nick() .. " has voted to change the map. (" .. RTV.GetVoteCount() .. "/" .. threshold .. ")" )
     end )
 end
 
@@ -127,7 +140,7 @@ function RTV.CanVote( ply )
     if ply.RTVVoted then
         return false,
             string.format( "You have already voted to change the map! (%s/%s)", RTV.GetVoteCount(),
-                math.ceil( RTV.GetPlayerCount() * conf.RTVPercentPlayersRequired ) )
+                RTV.GetThreshold() )
     end
 
     if MapVote.state.isInProgress then
