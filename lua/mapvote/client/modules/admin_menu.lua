@@ -16,6 +16,7 @@ local configMenuOptions = {
     { "Should the maps in a vote be sorted",                                     schema.fields.SortMaps,                        "SortMaps" },
     { seperator = true,                                                          text = "RTV" },
     { "Percentage of players who need to RTV between 0 and 1",                   schema.fields.RTVPercentPlayersRequired,       "RTVPercentPlayersRequired" },
+    { "Percentage when playercount exceeds the current map's MaxPlayers",        schema.fields.RTVPercentWhenOverpopulated,     "RTVPercentWhenOverpopulated" },
     { "The time RTV is disabled after a map change in seconds",                  schema.fields.RTVWait,                         "RTVWait" },
     { "How long should a player wait between RTV commands",                      schema.fields.PlyRTVCooldownSeconds,           "PlyRTVCooldownSeconds" },
     { "Minimum players required to enable RTVing",                               schema.fields.RTVPlayerCount,                  "RTVPlayerCount" },
@@ -24,7 +25,6 @@ local configMenuOptions = {
     { "Use map prefixes from gamemode.txt",                                      schema.fields.UseGamemodeMapPrefixes,          "UseGamemodeMapPrefixes" },
     { "Disable a map after its played",                                          schema.fields.EnableCooldown,                  "EnableCooldown" },
     { "The amount of maps that need to be played before a map is enabled again", schema.fields.MapsBeforeRevote,                "MapsBeforeRevote" },
-    { "RTV Percentage multiplier when a map is overpopulated",                   schema.fields.RTVPercentMulWhenOverpopulated,  "RTVPercentMulWhenOverpopulated" },
 }
 
 MapVote._mapconfigFrame = nil
