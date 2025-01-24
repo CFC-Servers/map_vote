@@ -63,13 +63,13 @@ function RTV.GetThreshold()
     local conf = MapVote.GetConfig()
     local totalPlayers = RTV.GetPlayerCount()
 
-    local threshold
+    local threshold = totalPlayers * conf.RTVPercentPlayersRequired
 
-    local mapsConfig = conf.MapConfig and conf.MapConfig[game.GetMap()] or nil
-    if mapsConfig and totalPlayers > mapsConfig.MaxPlayers then -- overpopulated map
-        threshold = totalPlayers * conf.RTVPercentWhenOverpopulated
-    else -- default
-        threshold = totalPlayers * conf.RTVPercentPlayersRequired
+    if conf.RTVPercentWhenOverpopulated > 0 then
+        local mapsConfig = conf.MapConfig and conf.MapConfig[game.GetMap()] or nil
+        if mapsConfig and totalPlayers > mapsConfig.MaxPlayers then -- overpopulated map
+            threshold = totalPlayers * conf.RTVPercentWhenOverpopulated
+        end
     end
 
     return math.ceil( threshold )
