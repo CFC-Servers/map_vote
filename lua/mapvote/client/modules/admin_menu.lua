@@ -10,20 +10,21 @@ end
 
 local configMenuOptions = {
     { seperator = true,                                                          text = "Voting" },
-    { "The amount of maps in a vote",                                            schema.fields.MapLimit,                  "MapLimit" },
-    { "The length of a vote in seconds",                                         schema.fields.TimeLimit,                 "TimeLimit" },
-    { "Should the current map have a chance to appear in votes",                 schema.fields.AllowCurrentMap,           "AllowCurrentMap" },
-    { "Should the maps in a vote be sorted",                                     schema.fields.SortMaps,                  "SortMaps" },
+    { "The amount of maps in a vote",                                            schema.fields.MapLimit,                        "MapLimit" },
+    { "The length of a vote in seconds",                                         schema.fields.TimeLimit,                       "TimeLimit" },
+    { "Should the current map have a chance to appear in votes",                 schema.fields.AllowCurrentMap,                 "AllowCurrentMap" },
+    { "Should the maps in a vote be sorted",                                     schema.fields.SortMaps,                        "SortMaps" },
     { seperator = true,                                                          text = "RTV" },
-    { "Percentage of players who need to RTV between 0 and 1",                   schema.fields.RTVPercentPlayersRequired, "RTVPercentPlayersRequired" },
-    { "The time RTV is disabled after a map change in seconds",                   schema.fields.RTVWait,                   "RTVWait" },
-    { "How long should a player wait between RTV commands",                      schema.fields.PlyRTVCooldownSeconds,     "PlyRTVCooldownSeconds" },
-    { "Minimum players required to enable RTVing",                               schema.fields.RTVPlayerCount,            "RTVPlayerCount" },
+    { "Percentage of players who need to RTV between 0 and 1",                   schema.fields.RTVPercentPlayersRequired,       "RTVPercentPlayersRequired" },
+    { "RTV Percentage when the map's MaxPlayers is exceeded",        schema.fields.RTVPercentWhenOverpopulated,     "RTVPercentWhenOverpopulated" },
+    { "The time RTV is disabled after a map change in seconds",                  schema.fields.RTVWait,                         "RTVWait" },
+    { "How long should a player wait between RTV commands",                      schema.fields.PlyRTVCooldownSeconds,           "PlyRTVCooldownSeconds" },
+    { "Minimum players required to enable RTVing",                               schema.fields.RTVPlayerCount,                  "RTVPlayerCount" },
     { seperator = true,                                                          text = "Maps" },
-    { "Map prefixes automatically enabled, comma seperated list",                schema.fields.MapPrefixes,               "MapPrefixes" },
-    { "Use map prefixes from gamemode.txt",                                      schema.fields.UseGamemodeMapPrefixes,    "UseGamemodeMapPrefixes" },
-    { "Disable a map after its played",                                          schema.fields.EnableCooldown,            "EnableCooldown" },
-    { "The amount of maps that need to be played before a map is enabled again", schema.fields.MapsBeforeRevote,          "MapsBeforeRevote" },
+    { "Map prefixes automatically enabled, comma seperated list",                schema.fields.MapPrefixes,                     "MapPrefixes" },
+    { "Use map prefixes from gamemode.txt",                                      schema.fields.UseGamemodeMapPrefixes,          "UseGamemodeMapPrefixes" },
+    { "Disable a map after its played",                                          schema.fields.EnableCooldown,                  "EnableCooldown" },
+    { "The amount of maps that need to be played before a map is enabled again", schema.fields.MapsBeforeRevote,                "MapsBeforeRevote" },
 }
 
 MapVote._mapconfigFrame = nil
