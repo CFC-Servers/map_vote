@@ -128,11 +128,11 @@ function RTV.CanVote( ply )
     local conf = MapVote.GetConfig()
 
     if conf.RTVWait >= CurTime() then
-        return false, "You must wait a bit before voting!"
+        return false, "You must wait " .. string.NiceTime( conf.RTVWait - CurTime() ) .. " before voting!"
     end
 
     if ply.RTVVotedTime and ply.RTVVotedTime + conf.PlyRTVCooldownSeconds >= CurTime() then
-        return false, "You must wait a bit before voting again!"
+        return false, "You must wait " .. string.NiceTime( ply.RTVVotedTime + conf.PlyRTVCooldownSeconds - CurTime() ) .. " before voting again!"
     end
 
     if GetGlobalBool( "In_Voting" ) then
