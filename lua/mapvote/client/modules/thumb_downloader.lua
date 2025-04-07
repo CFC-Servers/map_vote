@@ -73,48 +73,53 @@ end
 
 function ThumbDownloader:DownloadAll()
     print( "MapVote: Downloading all queued map thumbs" )
-    local mapNamesByWorkshopID = {}
-    local mapsToDownload = {}
+
     for _, map in pairs( self.mapsToDownload ) do
         local wsid = self.workshopIDLookup[map]
         if self.urlOverrides[map] then
-            self:DownloadThumbnail( map, self.urlOverrides[map] )
+            self:DownloadThumbnailURL( map, self.urlOverrides[map] )
         elseif wsid then
-            mapNamesByWorkshopID[wsid] = mapNamesByWorkshopID[wsid] or {}
-            table.insert( mapNamesByWorkshopID[wsid], map )
-            table.insert( mapsToDownload, map )
+            self:DownloadThumbnailSteam( map, wsid )
+        else
+            local callback = self.mapDownloadCallbacks[map]
+            self.mapDownloadCallbacks[map] = nil
+            callback( Material( self.noIcon ) )
         end
     end
     self.mapsToDownload = {}
-
-    local requestBody = { ["itemcount"] = tostring( #mapsToDownload ) }
-    for i, map in pairs( mapsToDownload ) do
-        requestBody["publishedfileids[" .. tostring( i - 1 ) .. "]"] = self.workshopIDLookup[map]
-    end
-
-    http.Post( "https://api.steampowered.com/ISteamRemoteStorage/GetPublishedFileDetails/v1/", requestBody,
-        function( body, _, _, code )
-            if code ~= 200 then
-                print( "Non 200 response received from steam", code )
-                return
-            end
-            local data = util.JSONToTable( body )
-            if not data then return end
-            if not data.response then return end
-            if not data.response.publishedfiledetails then return end
-
-            for _, addon in pairs( data.response.publishedfiledetails ) do
-                if addon and addon.preview_url then
-                    for _, map in pairs( mapNamesByWorkshopID[addon.publishedfileid] ) do
-                        self:DownloadThumbnail( map, addon.preview_url )
-                    end
-                end
-            end
-        end
-    )
 end
 
-function ThumbDownloader:DownloadThumbnail( name, url )
+function ThumbDownloader:DownloadThumbnailSteam( name, wsid )
+    local callback = self.mapDownloadCallbacks[name]
+    self.mapDownloadCallbacks[name] = nil
+
+    local MAT_ERROR = Material( self.noIcon )
+    steamworks.FileInfo( wsid, function( result )
+        if not result then
+            callback( MAT_ERROR )
+            return
+        end
+
+        -- If we already have this icon downloaded, create a material from the file
+        local path = "cache/workshop/" .. result.previewid .. ".cache"
+        if file.Exists( path, "MOD" ) then
+            callback( AddonMaterial( path ) )
+            return
+        end
+
+        -- Download the preview image
+        steamworks.Download( result.previewid, false, function( filePath )
+            if not filePath then
+                callback( MAT_ERROR )
+                return
+            end
+
+            callback( AddonMaterial( filePath ) )
+        end )
+    end )
+end
+
+function ThumbDownloader:DownloadThumbnailURL( name, url )
     file.CreateDir( "mapvote/thumb_cache" )
     local request = {
         failed = function( err )
@@ -122,7 +127,7 @@ function ThumbDownloader:DownloadThumbnail( name, url )
             local callback = self.mapDownloadCallbacks[name]
             if callback then
                 self.mapDownloadCallbacks[name] = nil
-                callback( self.noIcon )
+                callback( Material( self.noIcon ) )
             end
         end,
         success = function( code, body, headers )
@@ -142,7 +147,7 @@ function ThumbDownloader:DownloadThumbnail( name, url )
             local callback = self.mapDownloadCallbacks[name]
             if callback then
                 self.mapDownloadCallbacks[name] = nil
-                callback( "data/" .. filepath )
+                callback( Material( "data/" .. filepath ) )
             end
         end,
         method = "GET",

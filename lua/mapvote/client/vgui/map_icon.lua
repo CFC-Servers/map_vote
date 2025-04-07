@@ -38,10 +38,10 @@ function PANEL:SetMap( map )
     self.label:SizeToContents()
     self.label:SetWide( math.min( self.label:GetWide(), self:GetWide() - 5 ) )
 
-    MapVote.ThumbDownloader:QueueDownload( map, function( filepath )
+    MapVote.ThumbDownloader:QueueDownload( map, function( material )
         MapVote.TaskManager.AddFunc( function()
             ---@diagnostic disable-next-line: missing-parameter
-            self.button:SetImage( filepath )
+            self.button:SetMaterial( material )
         end )
     end )
 end
