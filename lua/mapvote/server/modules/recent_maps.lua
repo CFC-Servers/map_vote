@@ -1,4 +1,4 @@
-hook.Add( "MapVote_IsMapAllowed", "MapVote_CheckRecentMaps", function( map )
+function MapVote.wasMapRecentlyPlayed( map )
     local conf = MapVote.GetConfig()
 
     if MapVote.config.EnableCooldown ~= true then return end
@@ -10,8 +10,8 @@ hook.Add( "MapVote_IsMapAllowed", "MapVote_CheckRecentMaps", function( map )
         end
     end
 
-    if MapVote.recentMaps[map] then return false end
-end )
+    if MapVote.recentMaps[map] then return true end
+end
 
 hook.Add( "Initialize", "MapVote_UpdateDB", function()
     MapVote.DB.MapPlayed( game.GetMap() )
