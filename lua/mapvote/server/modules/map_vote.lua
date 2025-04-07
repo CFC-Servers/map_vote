@@ -4,6 +4,7 @@ function MapVote.isMapAllowed( m )
     local hookResult = hook.Run( "MapVote_IsMapAllowed", m )
     if hookResult ~= nil then return hookResult end
 
+    if MapVote.wasMapRecentlyPlayed( m ) then return false end -- dont allow recently played maps in vote
     if not conf.AllowCurrentMap and m == game.GetMap():lower() then return false end -- dont allow current map in vote
 
     if conf.MapConfig and conf.MapConfig[m] then
