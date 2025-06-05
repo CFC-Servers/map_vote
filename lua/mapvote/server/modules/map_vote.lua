@@ -64,6 +64,11 @@ function MapVote.Start( length )
         end
     end
 
+    if #mapsInVote == 0 then
+        ErrorNoHalt( "Voted aborted, there were zero maps in the vote" )
+        return
+    end
+
     if MapVote.config.SortMaps then table.sort( mapsInVote ) end
 
     MapVote.state.isInProgress = true
