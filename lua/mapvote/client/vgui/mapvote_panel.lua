@@ -302,7 +302,7 @@ function PANEL:SetMaps( maps )
 
     self:CalculateAvatarSize( maxW, maxH )
 
-    assert( rowCount * columnCount >= #self.maps, "Not enough space to display all maps" )
+    assert( rowCount * columnCount >= #self.maps, string.format( "Not enough space to display all maps, rowCount: %d, columnCount: %d, maps: %d", rowCount, columnCount, #self.maps ) )
 
     local mapIndex = 1
     for i = 1, rowCount do
