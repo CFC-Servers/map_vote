@@ -118,8 +118,7 @@ function MapVote.StartVote( maps, endTime )
     hook.Run( "MapVote_VotePanelOpened" )
 end
 
-hook.Add( "Tick", "MapVote_RequestState", function()
-    hook.Remove( "Tick", "MapVote_RequestState" )
+hook.Add( "InitPostEntity", "MapVote_RequestState", function()
     timer.Simple( 5, function()
         MapVote.Net.requestState()
     end )
