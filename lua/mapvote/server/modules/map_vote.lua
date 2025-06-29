@@ -130,7 +130,13 @@ function MapVote.mapVoteOver( delay )
         if ply then
             local voteMult = MapVote.GetVoteMultiplier( ply )
             results[v] = results[v] + voteMult
+        else
+            print( "Discarding vote from invalid player: " .. k )
         end
+    end
+
+    for k, v in pairs( results ) do
+        print( "MapVote: Map " .. k .. " received " .. v .. " votes." )
     end
 
     local winner = MapVote.GetWinningKey( results ) or 1
@@ -148,7 +154,7 @@ function MapVote.mapVoteOver( delay )
     timer.Simple( delay, function()
         if hook.Run( "MapVote_ChangeMap", map ) == false then return end
 
-        print( "MapVote Changing map to " .. map )
+        print( "MapVote Changing map to: " .. map )
         RunConsoleCommand( "changelevel", map )
     end )
 end

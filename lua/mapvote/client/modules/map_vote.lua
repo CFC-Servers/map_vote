@@ -131,6 +131,6 @@ hook.Add( "player_disconnect", "MapVote_RemoveVote", function( data )
     if data.networkid == "BOT" then
         MapVote.Panel.voteArea:RemoveInvalidVotes()
     else
-        MapVote.Panel.voteArea:RemoveVote( data.networkid )
+        MapVote.Panel.voteArea:RemoveVote( util.SteamIDTo64( data.networkid ) )
     end
 end )
