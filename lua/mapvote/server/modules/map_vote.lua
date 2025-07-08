@@ -118,7 +118,7 @@ end
 function MapVote.mapVoteOver( delay )
     delay = delay or 4
 
-    -- copy final votes to prevent votes changing during delay
+    -- copy final state to prevent change during delay
     local state = MapVote.state
     MapVote.resetState()
     MapVote.state.isInProgress = true
