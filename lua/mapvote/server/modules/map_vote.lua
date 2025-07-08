@@ -118,8 +118,16 @@ end
 function MapVote.mapVoteOver( delay )
     delay = delay or 4
 
+    -- copy final votes to prevent votes changing during delay
     local state = MapVote.state
     MapVote.resetState()
+    MapVote.state.isInProgress = true
+
+    -- If this function errors we still want isInProgress set to false
+    timer.Simple( delay + 1, function()
+        MapVote.resetState()
+    end )
+
     local results = {}
 
     for k, v in pairs( state.votes ) do
@@ -136,7 +144,7 @@ function MapVote.mapVoteOver( delay )
     end
 
     for k, v in pairs( results ) do
-        print( "MapVote: Map " .. k .. " received " .. v .. " votes." )
+        print( "MapVote: Map " .. state.currentMaps[k] .. " received " .. v .. " votes." )
     end
 
     local winner = MapVote.GetWinningKey( results ) or 1
