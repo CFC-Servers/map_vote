@@ -41,7 +41,10 @@ MapVote.Net.receiveWithMiddleware( "MapVote_ChangeVote", function( _, ply )
 
     local mapID = net.ReadUInt( 32 )
     if not MapVote.state.currentMaps[mapID] then
-        print( "MapVote: Player " .. ply:Nick() .. " tried to vote for invalid map " .. mapID )
+        -- if the table is empty its likely this is just someones vote arriving during the map vote over period
+        if not table.IsEmpty( MapVote.state.currentMaps ) then
+            print( "MapVote: Player " .. ply:Nick() .. " tried to vote for invalid map " .. mapID )
+        end
         return
     end
 
