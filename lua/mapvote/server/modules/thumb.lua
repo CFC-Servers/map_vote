@@ -4,9 +4,11 @@ util.AddNetworkString( "MapVote_RequestWorkshopIDTable" )
 function MapVote.getAllWorkshopIDs()
     local addonWorkshopIDs = {}
     for _, addon in ipairs( engine.GetAddons() ) do
-        local files = file.Find( "maps/*.bsp", addon.title )
-        for _, f in ipairs( files ) do
-            addonWorkshopIDs[string.Replace( f, ".bsp", "" )] = addon.wsid
+        if addon.title ~= "Cached Addon" then
+            local files = file.Find( "maps/*.bsp", addon.title )
+            for _, f in ipairs( files ) do
+                addonWorkshopIDs[string.Replace( f, ".bsp", "" )] = addon.wsid
+            end
         end
     end
     MapVote.addonWorkshopIDs = addonWorkshopIDs
