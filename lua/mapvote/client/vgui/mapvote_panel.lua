@@ -110,6 +110,7 @@ end
 ---@param identifier any
 ---@param mapIndex number
 function PANEL:SetVote( identifier, mapIndex, voteMult )
+    print( "SetVote", identifier, mapIndex, voteMult )
     local mapData = self.maps[mapIndex]
     if not mapData then
         error( "Invalid map index " .. mapIndex )
@@ -169,6 +170,11 @@ function PANEL:CalculateDesiredAvatarIconPosition( mapData, index )
 
     local rootPosX, rootPosY = self:GetPositionRelativeToSelf( mapIcon )
 
+    if MapVote.style.bottomUpIconFilling then
+        rootPosX = rootPosX + (mapIcon:GetWide() - avatarTotalSize - 2 * avatarIconPadding)
+        rootPosY = rootPosY + (mapIcon:GetTall() - avatarTotalSize - 2 * avatarIconPadding)
+        return rootPosX - x, rootPosY - y, row >= maxRowCount
+    end
     return rootPosX + x, rootPosY + y, row >= maxRowCount
 end
 
@@ -224,7 +230,7 @@ function PANEL:CreateVoterPanel( identifier, voteMult )
     local iconContainer = vgui.Create( "Panel", self )
     local icon = vgui.Create( "AvatarImage", iconContainer ) --[[@as AvatarImage]]
     icon:SetSize( self.avatarSize, self.avatarSize )
-    icon:SetZPos( 1000 )
+    icon:SetZPos( 999 )
 
     iconContainer.ply = ply
     icon:SetPlayer( ply, self.avatarSize )

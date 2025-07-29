@@ -5,6 +5,7 @@ MapVote.style = {
 
     colorTextSecondary = Color( 166, 173, 200 ),
     colorTextPrimary = Color( 205, 214, 244 ),
+    colorTextShadow = Color( 0, 0, 0, 200 ),
     colorSelected = Color( 137, 180, 250 ),
 
     colorRed = Color( 243, 139, 168 ),
@@ -18,6 +19,8 @@ MapVote.style = {
     configLabelFont = "MapVote_ConfigNameLabel",
     mapVoteTitleFont = "MapVote_Title",
 
+    -- should the avatar icons fill bottom up
+    bottomUpIconFilling = true,
 }
 
 -- fonts
