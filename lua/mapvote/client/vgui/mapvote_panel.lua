@@ -229,7 +229,7 @@ function PANEL:CreateVoterPanel( identifier, voteMult )
     local iconContainer = vgui.Create( "Panel", self )
     local icon = vgui.Create( "AvatarImage", iconContainer ) --[[@as AvatarImage]]
     icon:SetSize( self.avatarSize, self.avatarSize )
-    icon:SetZPos( 999 )
+    icon:SetZPos( 1000 )
 
     iconContainer.ply = ply
     icon:SetPlayer( ply, self.avatarSize )
