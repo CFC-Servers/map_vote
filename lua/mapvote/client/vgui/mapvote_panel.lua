@@ -110,7 +110,6 @@ end
 ---@param identifier any
 ---@param mapIndex number
 function PANEL:SetVote( identifier, mapIndex, voteMult )
-    print( "SetVote", identifier, mapIndex, voteMult )
     local mapData = self.maps[mapIndex]
     if not mapData then
         error( "Invalid map index " .. mapIndex )
