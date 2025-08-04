@@ -15,7 +15,7 @@ local function iconFont( size )
         size = size,
         weight = 600,
         antialias = true,
-        shadow = false
+        shadow = true,
     } )
     fontCreated[name] = true
     return name
@@ -35,7 +35,7 @@ function PANEL:Init()
     else
         self.infoRow:Dock( BOTTOM )
     end
-    self.infoRow:SetTall( 30 )
+    self.infoRow:SetTall( 40 )
     self.infoRow.Paint = function( _, w, h )
     end
 
@@ -55,10 +55,30 @@ function PANEL:Init()
 
     self.label:SetZPos( 10001 )
     self.shadow:SetZPos( 10001 )
+
+    self.percentLabel = vgui.Create( "DLabel", self.button ) --[[@as DLabel]]
+    self.percentLabel:DockMargin( 5, 0, 0, 0 )
+    self.percentLabel:SetContentAlignment( 4 )
+    self.percentLabel:SetFont( iconFont( 25 ) )
+    self.percentLabel:SetTextColor( MapVote.style.colorTextPrimary )
+    self.percentLabel:SetText( "0%" )
+    if MapVote.style.bottomUpIconFilling then
+        self.percentLabel:Dock( TOP )
+    else
+        self.percentLabel:Dock( BOTTOM )
+    end
 end
 
 function PANEL:DoClick()
     -- override me
+end
+
+function PANEL:SetPercent( percent )
+    if percent < 0 or percent > 100 then
+        error( "Percent must be between 0 and 100" )
+    end
+    self.percentLabel:SetText( string.format( "%d%%", math.floor( percent ) ) )
+    self.percentLabel:SizeToContents()
 end
 
 function PANEL:PerformLayout( w, h )

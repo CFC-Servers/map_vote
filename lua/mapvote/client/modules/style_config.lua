@@ -4,7 +4,7 @@ MapVote.style = {
     colorSecondaryFG = Color( 69, 71, 90 ),
 
     colorTextSecondary = Color( 166, 173, 200 ),
-    colorTextPrimary = Color( 205, 214, 244 ),
+    colorTextPrimary = Color( 205, 214, 255 ),
     colorTextShadow = Color( 0, 0, 0, 200 ),
     colorSelected = Color( 137, 180, 250 ),
 
