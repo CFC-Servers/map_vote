@@ -105,6 +105,22 @@ function PANEL:removeVote( oldVote, removePanel )
     if removePanel then
         oldVote.panel:Remove()
     end
+    self:calculateIconPercents()
+end
+
+function PANEL:calculateIconPercents()
+    local totalVotes = 0
+    for _, mapData in ipairs( self.maps ) do
+        totalVotes = totalVotes + #mapData.voters
+    end
+
+    if totalVotes == 0 then return end
+
+    for _, mapData in ipairs( self.maps ) do
+        local percent = (#mapData.voters / totalVotes) * 100
+        ---@diagnostic disable-next-line: undefined-field
+        mapData.panel:SetPercent( percent )
+    end
 end
 
 ---@param identifier any
@@ -143,6 +159,7 @@ function PANEL:SetVote( identifier, mapIndex, voteMult )
         pnl:SetVisible( not willOverflow )
         pnl.inAnimation = false
     end )
+    self:calculateIconPercents()
 end
 
 ---@param mapData VoteAreaMap
@@ -169,6 +186,11 @@ function PANEL:CalculateDesiredAvatarIconPosition( mapData, index )
 
     local rootPosX, rootPosY = self:GetPositionRelativeToSelf( mapIcon )
 
+    if MapVote.style.bottomUpIconFilling then
+        rootPosX = rootPosX + (mapIcon:GetWide() - avatarTotalSize - 2 * avatarIconPadding)
+        rootPosY = rootPosY + (mapIcon:GetTall() - avatarTotalSize - 2 * avatarIconPadding)
+        return rootPosX - x, rootPosY - y, row >= maxRowCount
+    end
     return rootPosX + x, rootPosY + y, row >= maxRowCount
 end
 
