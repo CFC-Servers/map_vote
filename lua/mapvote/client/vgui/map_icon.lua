@@ -89,7 +89,7 @@ function PANEL:SetPercent( percent )
     self.percentLabel:SizeToContents()
 end
 
-function PANEL:PerformLayout( w, h )
+function PANEL:PerformLayout( w, _ )
     local padding = 75
     local baseFontSize = w * 0.10
     self.percentLabel:SetFont( iconFont( baseFontSize * 0.8 ) )
