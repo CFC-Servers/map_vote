@@ -11,11 +11,12 @@ local function iconFont( size )
     end
     local name = "MapVote_MapIcon" .. size
     surface.CreateFont( name, {
-        font = "Arial",
+        font = "Roboto",
         size = size,
         weight = 600,
         antialias = true,
         shadow = true,
+        outline = true,
     } )
     fontCreated[name] = true
     return name
@@ -35,28 +36,35 @@ function PANEL:Init()
     else
         self.infoRow:Dock( BOTTOM )
     end
-    self.infoRow:SetTall( 40 )
-    self.infoRow.Paint = function( _, w, h )
-    end
+    self.infoRow:SetTall( 50 )
 
-    self.shadow = vgui.Create( "DLabel", self.infoRow )
-    self.shadow:DockMargin( 5, 0, 0, 0 )
-    self.shadow:SetContentAlignment( 4 )
-    self.shadow:SetFont( iconFont( 20 ) )
-    self.shadow:SetTextColor( MapVote.style.colorTextShadow )
+    self.infoRow.Paint = function( _, w, h )
+        if MapVote.style.bottomUpIconFilling then
+            local gradient = "gui/gradient_down"
+            surface.SetDrawColor( Color( 0, 0, 0, 255 ) )
+            surface.SetMaterial( Material( gradient ) )
+        else
+            local gradient = "gui/gradient_up"
+            surface.SetDrawColor( Color( 0, 0, 0, 255 ) )
+            surface.SetMaterial( Material( gradient ) )
+        end
+        surface.DrawTexturedRect( 0, 0, w, h )
+    end
+    self.infoRow:SetMouseInputEnabled( false )
 
     self.label = vgui.Create( "DLabel", self.infoRow ) --[[@as DLabel]]
-    self.label:Dock( LEFT )
+    if MapVote.style.bottomUpIconFilling then
+        self.label:Dock( TOP )
+    else
+        self.label:Dock( BOTTOM )
+    end
     self.label:DockMargin( 5, 0, 0, 0 )
     self.label:SetContentAlignment( 4 )
     self.label:SetFont( iconFont( 20 ) )
     self.label:SizeToContents()
     self.label:SetTextColor( MapVote.style.colorTextPrimary )
 
-    self.label:SetZPos( 10001 )
-    self.shadow:SetZPos( 10001 )
-
-    self.percentLabel = vgui.Create( "DLabel", self.button ) --[[@as DLabel]]
+    self.percentLabel = vgui.Create( "DLabel", self.infoRow ) --[[@as DLabel]]
     self.percentLabel:DockMargin( 5, 0, 0, 0 )
     self.percentLabel:SetContentAlignment( 4 )
     self.percentLabel:SetFont( iconFont( 25 ) )
@@ -104,12 +112,7 @@ function PANEL:PerformLayout( w, h )
 
     self.label:SetFont( iconFont( baseFontSize ) )
     self.label:SizeToContents()
-    self.infoRow:SetTall( self.label:GetTall() + 10 )
-
-    self.shadow:SetFont( iconFont( baseFontSize ) )
-    self.shadow:SetText( self.label:GetText() )
-    self.shadow:SizeToContents()
-    self.shadow:SetPos( self.label:GetPos() + 2, self.label:GetPos() + 2 )
+    self.infoRow:SetTall( self.label:GetTall() + self.percentLabel:GetTall() + self:GetTall() * 0.66 )
 end
 
 function PANEL:Paint( w, h )
@@ -118,7 +121,7 @@ function PANEL:Paint( w, h )
 end
 
 function PANEL:SetMap( map )
-    self.label:SetText( map )
+    self.label:SetText( string.upper( map ) )
     self.label:SizeToContents()
     self.label:SetWide( math.min( self.label:GetWide(), self:GetWide() - 5 ) )
 
