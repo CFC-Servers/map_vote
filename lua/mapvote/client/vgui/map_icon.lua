@@ -92,6 +92,8 @@ end
 function PANEL:PerformLayout( w, h )
     local padding = 75
     local baseFontSize = w * 0.10
+    self.percentLabel:SetFont( iconFont( baseFontSize * 0.8 ) )
+    self.percentLabel:SizeToContents()
 
     surface.SetFont( iconFont( baseFontSize ) )
     local textW, _ = surface.GetTextSize( self.label:GetText() )
