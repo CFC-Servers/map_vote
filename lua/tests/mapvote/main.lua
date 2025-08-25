@@ -31,5 +31,19 @@ return {
                 end )
             end
         },
+        {
+            timeout = 5,
+            async = true,
+            name = "test vote state function exists",
+            func = function()
+                -- Test that the new sendVoteState function exists
+                expect( MapVote.Net.sendVoteState ).to.be.a( "function" )
+                
+                -- Test that the existing sendVoteStart function still exists
+                expect( MapVote.Net.sendVoteStart ).to.be.a( "function" )
+                
+                done()
+            end
+        },
     }
 }
