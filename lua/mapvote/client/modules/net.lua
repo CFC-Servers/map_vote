@@ -51,7 +51,6 @@ net.Receive( "MapVote_VoteState", function()
 
     local endTime = net.ReadUInt( 32 )
     MapVote.StartVote( maps, endTime )
-    
     -- Read current votes
     local voteCount = net.ReadUInt( 32 )
     for _ = 1, voteCount do

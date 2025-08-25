@@ -106,7 +106,7 @@ end
 function MapVote.Net.sendVoteState( endTime, mapsInVote, votes, ply )
     net.Start( "MapVote_VoteState" )
     writeVoteStart( endTime, mapsInVote )
-    
+
     -- Count valid votes first
     local validVotes = {}
     for steamID, mapID in pairs( votes ) do
@@ -115,7 +115,7 @@ function MapVote.Net.sendVoteState( endTime, mapsInVote, votes, ply )
             table.insert( validVotes, { voter = voter, mapID = mapID } )
         end
     end
-    
+
     -- Send current votes
     net.WriteUInt( #validVotes, 32 )
     for _, voteData in ipairs( validVotes ) do
@@ -124,7 +124,7 @@ function MapVote.Net.sendVoteState( endTime, mapsInVote, votes, ply )
         net.WriteUInt( voteData.mapID, 32 )
         net.WriteUInt( voteMult, 7 )
     end
-    
+
     if not ply then
         net.Broadcast()
     else
