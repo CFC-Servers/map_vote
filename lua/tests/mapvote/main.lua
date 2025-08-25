@@ -31,6 +31,5 @@ return {
                 end )
             end
         },
-
     }
 }
