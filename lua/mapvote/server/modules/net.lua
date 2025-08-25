@@ -11,6 +11,7 @@ util.AddNetworkString( "MapVote_VoteCancelled" )
 util.AddNetworkString( "MapVote_VoteFinished" )
 
 util.AddNetworkString( "MapVote_RequestVoteState" )
+util.AddNetworkString( "MapVote_VoteState" )
 
 util.AddNetworkString( "MapVote_ChangeVote" )
 util.AddNetworkString( "MapVote_PlayerChangedVote" )
@@ -69,20 +70,7 @@ end, MapVote.Net.requirePermission( MapVote.PermCanConfigure ) )
 
 MapVote.Net.receiveWithMiddleware( "MapVote_RequestVoteState", function( _, ply )
     if not MapVote.state.isInProgress then return end
-    MapVote.Net.sendVoteStart( MapVote.state.endTime, MapVote.state.currentMaps, ply )
-    timer.Simple( 0.1, function()
-        for steamID, mapID in pairs( MapVote.state.votes ) do
-            local voter = player.GetBySteamID( steamID )
-            if voter ~= false then
-                local voteMult = MapVote.GetVoteMultiplier( voter )
-                net.Start( "MapVote_PlayerChangedVote" )
-                net.WriteEntity( voter )
-                net.WriteUInt( mapID, 32 )
-                net.WriteUInt( voteMult, 7 )
-                net.Send( ply )
-            end
-        end
-    end )
+    MapVote.Net.sendVoteState( MapVote.state.endTime, MapVote.state.currentMaps, MapVote.state.votes, ply )
 end, MapVote.Net.rateLimit( "MapVote_RequestVoteState", 2, 0.1 ) )
 
 MapVote.Net.receiveWithMiddleware( "MapVote_RequestWorkshopIDTable", function( _, ply )
@@ -104,6 +92,41 @@ function MapVote.Net.sendVoteStart( endTime, mapsInVote, ply )
         net.WriteString( MapVote.GetConfig().MapIconURLs[map] or "" )
     end
     net.WriteUInt( endTime, 32 )
+    if not ply then
+        net.Broadcast()
+    else
+        net.Send( ply )
+    end
+end
+
+function MapVote.Net.sendVoteState( endTime, mapsInVote, votes, ply )
+    net.Start( "MapVote_VoteState" )
+    net.WriteUInt( #mapsInVote, 32 )
+    for _, map in ipairs( mapsInVote ) do
+        net.WriteString( map )
+        net.WriteUInt( MapVote.PlayCounts[map] or 0, 32 )
+        net.WriteString( MapVote.GetConfig().MapIconURLs[map] or "" )
+    end
+    net.WriteUInt( endTime, 32 )
+    
+    -- Count valid votes first
+    local validVotes = {}
+    for steamID, mapID in pairs( votes ) do
+        local voter = player.GetBySteamID( steamID )
+        if voter ~= false then
+            table.insert( validVotes, { voter = voter, mapID = mapID } )
+        end
+    end
+    
+    -- Send current votes
+    net.WriteUInt( #validVotes, 32 )
+    for _, voteData in ipairs( validVotes ) do
+        local voteMult = MapVote.GetVoteMultiplier( voteData.voter )
+        net.WriteEntity( voteData.voter )
+        net.WriteUInt( voteData.mapID, 32 )
+        net.WriteUInt( voteMult, 7 )
+    end
+    
     if not ply then
         net.Broadcast()
     else

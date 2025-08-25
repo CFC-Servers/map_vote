@@ -35,6 +35,33 @@ net.Receive( "MapVote_VoteStarted", function()
     MapVote.StartVote( maps, endTime )
 end )
 
+net.Receive( "MapVote_VoteState", function()
+    local maps = {}
+    local amt = net.ReadUInt( 32 )
+    for _ = 1, amt do
+        local map = net.ReadString()
+        net.ReadUInt( 32 ) -- this is playcount, TODO
+        local url = net.ReadString()
+        if url and url ~= "" then
+            MapVote.ThumbDownloader:SetURLOverride( map, url )
+        end
+
+        table.insert( maps, map )
+    end
+
+    local endTime = net.ReadUInt( 32 )
+    MapVote.StartVote( maps, endTime )
+    
+    -- Read current votes
+    local voteCount = net.ReadUInt( 32 )
+    for _ = 1, voteCount do
+        local ply = net.ReadEntity()
+        local mapIndex = net.ReadUInt( 32 )
+        local voteMult = net.ReadUInt( 7 )
+        MapVote.ChangeVote( ply, mapIndex, voteMult )
+    end
+end )
+
 net.Receive( "MapVote_PlayerChangedVote", function()
     local ply = net.ReadEntity() --[[@as Player]]
     local mapIndex = net.ReadUInt( 32 )
