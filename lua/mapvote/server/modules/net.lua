@@ -83,8 +83,7 @@ end, MapVote.Net.rateLimit( "MapVote_RequestWorkshopIDTable", 5, 0.5 ) )
 
 -- to client
 
-function MapVote.Net.sendVoteStart( endTime, mapsInVote, ply )
-    net.Start( "MapVote_VoteStarted" )
+local function writeVoteStart( endTime, mapsInVote )
     net.WriteUInt( #mapsInVote, 32 )
     for _, map in ipairs( mapsInVote ) do
         net.WriteString( map )
@@ -92,6 +91,11 @@ function MapVote.Net.sendVoteStart( endTime, mapsInVote, ply )
         net.WriteString( MapVote.GetConfig().MapIconURLs[map] or "" )
     end
     net.WriteUInt( endTime, 32 )
+end
+
+function MapVote.Net.sendVoteStart( endTime, mapsInVote, ply )
+    net.Start( "MapVote_VoteStarted" )
+    writeVoteStart( endTime, mapsInVote )
     if not ply then
         net.Broadcast()
     else
@@ -101,13 +105,7 @@ end
 
 function MapVote.Net.sendVoteState( endTime, mapsInVote, votes, ply )
     net.Start( "MapVote_VoteState" )
-    net.WriteUInt( #mapsInVote, 32 )
-    for _, map in ipairs( mapsInVote ) do
-        net.WriteString( map )
-        net.WriteUInt( MapVote.PlayCounts[map] or 0, 32 )
-        net.WriteString( MapVote.GetConfig().MapIconURLs[map] or "" )
-    end
-    net.WriteUInt( endTime, 32 )
+    writeVoteStart( endTime, mapsInVote )
     
     -- Count valid votes first
     local validVotes = {}
