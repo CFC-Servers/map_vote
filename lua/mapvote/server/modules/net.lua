@@ -69,6 +69,10 @@ end, MapVote.Net.requirePermission( MapVote.PermCanConfigure ) )
 
 MapVote.Net.receiveWithMiddleware( "MapVote_RequestVoteState", function( _, ply )
     if not MapVote.state.isInProgress then return end
+
+    -- if no maps are in the voting list we are likely in the short period before changelevel
+    if table.IsEmpty( MapVote.state.currentMaps ) then return end
+
     MapVote.Net.sendVoteStart( MapVote.state.endTime, MapVote.state.currentMaps, ply )
     timer.Simple( 0.1, function()
         for steamID, mapID in pairs( MapVote.state.votes ) do
