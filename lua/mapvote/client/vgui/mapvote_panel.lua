@@ -110,16 +110,22 @@ end
 
 function PANEL:calculateIconPercents()
     local totalVotes = 0
-    for _, mapData in ipairs( self.maps ) do
-        totalVotes = totalVotes + #mapData.voters
+    for _, vote in pairs( self.votes ) do
+        totalVotes = totalVotes + 1 * vote.voteMult
     end
 
     if totalVotes == 0 then return end
 
-    for _, mapData in ipairs( self.maps ) do
-        local percent = (#mapData.voters / totalVotes) * 100
+    for mapIndex, mapData in ipairs( self.maps ) do
+        local mapVotes = 0
+        for _, vote in pairs( self.votes ) do
+            if vote.mapIndex ~= mapIndex then continue end
+            mapVotes = mapVotes + 1 * vote.voteMult
+        end
+
+        local percentage = ( mapVotes / totalVotes ) * 100
         ---@diagnostic disable-next-line: undefined-field
-        mapData.panel:SetPercent( percent )
+        mapData.panel:SetPercent( percentage )
     end
 end
 
@@ -150,6 +156,7 @@ function PANEL:SetVote( identifier, mapIndex, voteMult )
         identifier = identifier,
         mapIndex = mapIndex,
         panel = panel,
+        voteMult = voteMult
     }
 
     local newX, newY, willOverflow = self:CalculateDesiredAvatarIconPosition( mapData )
@@ -176,7 +183,7 @@ function PANEL:CalculateDesiredAvatarIconPosition( mapData, index )
 
     local mapIcon = mapData.panel
     local maxColumnCount = math.floor( mapIcon:GetWide() / avatarTotalSize )
-    local maxRowCount = math.floor( (mapIcon:GetTall() - 20) / avatarTotalSize )
+    local maxRowCount = math.floor( ( mapIcon:GetTall() - 20 ) / avatarTotalSize )
 
     local column = index % maxColumnCount
     local row = math.floor( index / maxColumnCount )
@@ -187,8 +194,8 @@ function PANEL:CalculateDesiredAvatarIconPosition( mapData, index )
     local rootPosX, rootPosY = self:GetPositionRelativeToSelf( mapIcon )
 
     if MapVote.style.bottomUpIconFilling then
-        rootPosX = rootPosX + (mapIcon:GetWide() - avatarTotalSize - 2 * avatarIconPadding)
-        rootPosY = rootPosY + (mapIcon:GetTall() - avatarTotalSize - 2 * avatarIconPadding)
+        rootPosX = rootPosX + ( mapIcon:GetWide() - avatarTotalSize - 2 * avatarIconPadding )
+        rootPosY = rootPosY + ( mapIcon:GetTall() - avatarTotalSize - 2 * avatarIconPadding )
         return rootPosX - x, rootPosY - y, row >= maxRowCount
     end
     return rootPosX + x, rootPosY + y, row >= maxRowCount
@@ -373,7 +380,7 @@ function PANEL:CalculateAvatarSize( maxW, _maxH )
     -- add an extra row for title area
     local rowCount = math.ceil( math.sqrt( plyCount ) ) + 1
 
-    local availableSpace = maxW - (avatarIconPadding * 2) * rowCount
+    local availableSpace = maxW - ( avatarIconPadding * 2 ) * rowCount
     local newAvatarSize = math.ceil( availableSpace / rowCount ) - avatarIconPadding * 2
     self.avatarSize = newAvatarSize
 end
