@@ -144,8 +144,14 @@ function PANEL:SetVote( identifier, mapIndex, voteMult )
         if oldVote.mapIndex == mapIndex then
             return
         end
-        self:removeVote( oldVote, false )
-        panel = oldVote.panel
+
+        if oldVote.voteMult ~= voteMult then
+            self:removeVote( oldVote, true )
+            panel = self:CreateVoterPanel( identifier, voteMult )
+        else
+            self:removeVote( oldVote, false )
+            panel = oldVote.panel
+        end
     else
         panel = self:CreateVoterPanel( identifier, voteMult )
     end
