@@ -54,7 +54,7 @@ end
 
 function PANEL:RemoveInvalidVotes()
     for identifier, vote in pairs( self.votes ) do
-        local invalidPlayer = (type( identifier ) == "Player") and not IsValid( identifier )
+        local invalidPlayer = ( type( identifier ) == "Player" ) and not IsValid( identifier )
         if not identifier or invalidPlayer then
             self:removeVote( vote )
             self.votes[identifier] = nil
