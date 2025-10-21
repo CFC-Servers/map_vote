@@ -110,20 +110,17 @@ end
 
 function PANEL:calculateIconPercents()
     local totalVotes = 0
+    local mapVotes = {}
     for _, vote in pairs( self.votes ) do
         totalVotes = totalVotes + 1 * vote.voteMult
+        mapVotes[vote.mapIndex] = ( mapVotes[vote.mapIndex] or 0 ) + 1 * vote.voteMult
     end
 
     if totalVotes == 0 then return end
 
     for mapIndex, mapData in ipairs( self.maps ) do
-        local mapVotes = 0
-        for _, vote in pairs( self.votes ) do
-            if vote.mapIndex ~= mapIndex then continue end
-            mapVotes = mapVotes + 1 * vote.voteMult
-        end
-
-        local percentage = ( mapVotes / totalVotes ) * 100
+        local votes = mapVotes[mapIndex] or 0
+        local percentage = ( votes / totalVotes ) * 100
         ---@diagnostic disable-next-line: undefined-field
         mapData.panel:SetPercent( percentage )
     end
