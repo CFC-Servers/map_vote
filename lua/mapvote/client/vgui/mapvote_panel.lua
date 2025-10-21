@@ -112,8 +112,9 @@ function PANEL:calculateIconPercents()
     local totalVotes = 0
     local mapVotes = {}
     for _, vote in pairs( self.votes ) do
-        totalVotes = totalVotes + 1 * vote.voteMult
-        mapVotes[vote.mapIndex] = ( mapVotes[vote.mapIndex] or 0 ) + 1 * vote.voteMult
+        local votePower = 1 * vote.voteMult
+        totalVotes = totalVotes + votePower
+        mapVotes[vote.mapIndex] = ( mapVotes[vote.mapIndex] or 0 ) + votePower
     end
 
     if totalVotes == 0 then return end
