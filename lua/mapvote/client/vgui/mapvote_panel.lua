@@ -54,7 +54,7 @@ end
 
 function PANEL:RemoveInvalidVotes()
     for identifier, vote in pairs( self.votes ) do
-        local invalidPlayer = (type( identifier ) == "Player") and not IsValid( identifier )
+        local invalidPlayer = ( type( identifier ) == "Player" ) and not IsValid( identifier )
         if not identifier or invalidPlayer then
             self:removeVote( vote )
             self.votes[identifier] = nil
@@ -110,16 +110,19 @@ end
 
 function PANEL:calculateIconPercents()
     local totalVotes = 0
-    for _, mapData in ipairs( self.maps ) do
-        totalVotes = totalVotes + #mapData.voters
+    local mapVotes = {}
+    for _, vote in pairs( self.votes ) do
+        totalVotes = totalVotes + vote.voteMult
+        mapVotes[vote.mapIndex] = ( mapVotes[vote.mapIndex] or 0 ) + vote.voteMult
     end
 
     if totalVotes == 0 then return end
 
-    for _, mapData in ipairs( self.maps ) do
-        local percent = (#mapData.voters / totalVotes) * 100
+    for mapIndex, mapData in ipairs( self.maps ) do
+        local votes = mapVotes[mapIndex] or 0
+        local percentage = ( votes / totalVotes ) * 100
         ---@diagnostic disable-next-line: undefined-field
-        mapData.panel:SetPercent( percent )
+        mapData.panel:SetPercent( percentage )
     end
 end
 
@@ -138,8 +141,14 @@ function PANEL:SetVote( identifier, mapIndex, voteMult )
         if oldVote.mapIndex == mapIndex then
             return
         end
-        self:removeVote( oldVote, false )
-        panel = oldVote.panel
+
+        if oldVote.voteMult ~= voteMult then
+            self:removeVote( oldVote, true )
+            panel = self:CreateVoterPanel( identifier, voteMult )
+        else
+            self:removeVote( oldVote, false )
+            panel = oldVote.panel
+        end
     else
         panel = self:CreateVoterPanel( identifier, voteMult )
     end
@@ -150,6 +159,7 @@ function PANEL:SetVote( identifier, mapIndex, voteMult )
         identifier = identifier,
         mapIndex = mapIndex,
         panel = panel,
+        voteMult = voteMult
     }
 
     local newX, newY, willOverflow = self:CalculateDesiredAvatarIconPosition( mapData )
@@ -176,7 +186,7 @@ function PANEL:CalculateDesiredAvatarIconPosition( mapData, index )
 
     local mapIcon = mapData.panel
     local maxColumnCount = math.floor( mapIcon:GetWide() / avatarTotalSize )
-    local maxRowCount = math.floor( (mapIcon:GetTall() - 20) / avatarTotalSize )
+    local maxRowCount = math.floor( ( mapIcon:GetTall() - 20 ) / avatarTotalSize )
 
     local column = index % maxColumnCount
     local row = math.floor( index / maxColumnCount )
@@ -187,8 +197,8 @@ function PANEL:CalculateDesiredAvatarIconPosition( mapData, index )
     local rootPosX, rootPosY = self:GetPositionRelativeToSelf( mapIcon )
 
     if MapVote.style.bottomUpIconFilling then
-        rootPosX = rootPosX + (mapIcon:GetWide() - avatarTotalSize - 2 * avatarIconPadding)
-        rootPosY = rootPosY + (mapIcon:GetTall() - avatarTotalSize - 2 * avatarIconPadding)
+        rootPosX = rootPosX + ( mapIcon:GetWide() - avatarTotalSize - 2 * avatarIconPadding )
+        rootPosY = rootPosY + ( mapIcon:GetTall() - avatarTotalSize - 2 * avatarIconPadding )
         return rootPosX - x, rootPosY - y, row >= maxRowCount
     end
     return rootPosX + x, rootPosY + y, row >= maxRowCount
@@ -373,7 +383,7 @@ function PANEL:CalculateAvatarSize( maxW, _maxH )
     -- add an extra row for title area
     local rowCount = math.ceil( math.sqrt( plyCount ) ) + 1
 
-    local availableSpace = maxW - (avatarIconPadding * 2) * rowCount
+    local availableSpace = maxW - ( avatarIconPadding * 2 ) * rowCount
     local newAvatarSize = math.ceil( availableSpace / rowCount ) - avatarIconPadding * 2
     self.avatarSize = newAvatarSize
 end
