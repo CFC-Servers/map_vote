@@ -2,7 +2,6 @@ local ThumbDownloader = MapVote.ThumbDownloader or {
     workshopIDLookup = {},
     mapsToDownload = {},
     ---@type table<string, fun( filepath: string )>
-    mapDownloadCallbacks = {},
     urlOverrides = {},
     searchPaths = {
         "materials/mapvote/thumb_overrides/",
@@ -55,8 +54,7 @@ function ThumbDownloader:QueueDownload( map, callback )
     end
 
     print( "MapVote: Queued map thumb for download", map )
-    self.mapDownloadCallbacks[map] = callback
-    table.insert( self.mapsToDownload, map )
+    table.insert( self.mapsToDownload, { map = map, callback = callback } )
 end
 
 ---@param map string
@@ -74,25 +72,23 @@ end
 function ThumbDownloader:DownloadAll()
     print( "MapVote: Downloading all queued map thumbs" )
 
-    for _, map in pairs( self.mapsToDownload ) do
+    for _, mapData in pairs( self.mapsToDownload ) do
+        local map = mapData.map
+        local callback = mapData.callback
+
         local wsid = self.workshopIDLookup[map]
         if self.urlOverrides[map] then
-            self:DownloadThumbnailURL( map, self.urlOverrides[map] )
+            self:DownloadThumbnailURL( map, self.urlOverrides[map], callback )
         elseif wsid then
-            self:DownloadThumbnailSteam( map, wsid )
+            self:DownloadThumbnailSteam( wsid, callback )
         else
-            local callback = self.mapDownloadCallbacks[map]
-            self.mapDownloadCallbacks[map] = nil
             callback( Material( self.noIcon ) )
         end
     end
     self.mapsToDownload = {}
 end
 
-function ThumbDownloader:DownloadThumbnailSteam( name, wsid )
-    local callback = self.mapDownloadCallbacks[name]
-    self.mapDownloadCallbacks[name] = nil
-
+function ThumbDownloader:DownloadThumbnailSteam( wsid, callback )
     local MAT_ERROR = Material( self.noIcon )
     steamworks.FileInfo( wsid, function( result )
         if not result then
@@ -119,16 +115,12 @@ function ThumbDownloader:DownloadThumbnailSteam( name, wsid )
     end )
 end
 
-function ThumbDownloader:DownloadThumbnailURL( name, url )
+function ThumbDownloader:DownloadThumbnailURL( name, url, callback )
     file.CreateDir( "mapvote/thumb_cache" )
     local request = {
         failed = function( err )
             print( "MapVote: Failed to download map thumb", err )
-            local callback = self.mapDownloadCallbacks[name]
-            if callback then
-                self.mapDownloadCallbacks[name] = nil
-                callback( Material( self.noIcon ) )
-            end
+            callback( Material( self.noIcon ) )
         end,
         success = function( code, body, headers )
             if code < 200 or code > 299 then
@@ -144,11 +136,7 @@ function ThumbDownloader:DownloadThumbnailURL( name, url )
             print( "MapVote: Downloaded map thumb", name, filepath )
             file.Write( filepath, body )
 
-            local callback = self.mapDownloadCallbacks[name]
-            if callback then
-                self.mapDownloadCallbacks[name] = nil
-                callback( Material( "data/" .. filepath ) )
-            end
+            callback( Material( "data/" .. filepath ) )
         end,
         method = "GET",
         url = url,
