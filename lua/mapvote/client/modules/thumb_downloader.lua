@@ -69,7 +69,7 @@ function ThumbDownloader:RequestWorkshopIDs()
     local mapsNeedingIDs = {}
     for _, mapData in pairs( self.mapsToDownload ) do
         local map = mapData.map
-        if not self.workshopIDLookup[map] and not self.urlOverrides[map] then
+        if not self.urlOverrides[map] then
             table.insert( mapsNeedingIDs, map )
         end
     end
