@@ -66,7 +66,15 @@ end
 function ThumbDownloader:RequestWorkshopIDs()
     if #self.mapsToDownload == 0 then return end
 
-    MapVote.Net.requestWorskhopIDs( self.mapsToDownload )
+    local mapsNeedingIDs = {}
+    for _, mapData in pairs( self.mapsToDownload ) do
+        local map = mapData.map
+        if not self.workshopIDLookup[map] and not self.urlOverrides[map] then
+            table.insert( mapsNeedingIDs, map )
+        end
+    end
+
+    MapVote.Net.requestWorskhopIDs( mapsNeedingIDs )
 end
 
 function ThumbDownloader:DownloadAll()
