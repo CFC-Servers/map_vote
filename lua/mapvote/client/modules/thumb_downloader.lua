@@ -104,6 +104,11 @@ function ThumbDownloader:DownloadThumbnailSteam( wsid, callback )
             return
         end
 
+        if not result.previewid then
+            callback( MAT_ERROR )
+            return
+        end
+
         -- If we already have this icon downloaded, create a material from the file
         local path = "cache/workshop/" .. result.previewid .. ".cache"
         if file.Exists( path, "MOD" ) then
