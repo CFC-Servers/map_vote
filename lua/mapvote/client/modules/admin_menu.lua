@@ -103,6 +103,9 @@ function MapVote.openMapconfig()
     scrollPanel:Dock( FILL )
     scrollPanel:BindToEntry( textEntry )
     scrollPanel:DockMargin( 15, 5, 15, 5 )
+    function scrollPanel:OnRefresh()
+        MapVote.ThumbDownloader:RequestWorkshopIDs()
+    end
 
     MapVote._mapconfigFramescrollPanel = scrollPanel
 

@@ -35,6 +35,9 @@ function PANEL:PassesFilter( name )
     return string.find( name, self.filter ) ~= nil
 end
 
+function PANEL:OnRefresh()
+end
+
 function PANEL:Refresh()
     self:Clear()
     for _, item in ipairs( self.items ) do
@@ -42,6 +45,8 @@ function PANEL:Refresh()
             self:Add( item.f() )
         end
     end
+
+    self:OnRefresh()
 end
 
 vgui.Register( "MapVote_SearchableScrollPanel", PANEL, "DScrollPanel" )
