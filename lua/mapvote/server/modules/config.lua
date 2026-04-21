@@ -30,6 +30,18 @@ function MapVote.SetConfig( conf )
     return nil
 end
 
+local function migrateConfigTable( cfg )
+    if cfg.MapPrefixes then
+        if not cfg.MapPatterns then
+            cfg.MapPatterns = {}
+            for _, prefix in ipairs( cfg.MapPrefixes ) do
+                table.insert( cfg.MapPatterns, prefix .. "*" )
+            end
+        end
+        cfg.MapPrefixes = nil
+    end
+end
+
 function MapVote.LoadConfigFromFile( filename )
     local fileData = file.Read( filename, "DATA" )
     if not fileData then
@@ -41,6 +53,7 @@ function MapVote.LoadConfigFromFile( filename )
         print( "MapVote config is invalid: " .. filename .. " is not a valid JSON file" )
         return
     end
+    migrateConfigTable( cfg )
     return MapVote.MergeConfig( cfg )
 end
 

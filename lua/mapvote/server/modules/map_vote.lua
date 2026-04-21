@@ -1,3 +1,11 @@
+local function wildcardToPattern( wildcard )
+    local parts = string.Explode( "*", wildcard )
+    for i, part in ipairs( parts ) do
+        parts[i] = string.PatternSafe( part )
+    end
+    return table.concat( parts, ".*" )
+end
+
 function MapVote.isMapAllowed( m )
     local conf = MapVote.config
 
@@ -16,9 +24,9 @@ function MapVote.isMapAllowed( m )
     if conf.ExcludedMaps[m] then return false end -- dont allow excluded maps in vote
     if conf.IncludedMaps[m] then return true end -- skip prefix check if map is in included maps
 
-    if conf.MapPrefixes then
-        for _, v in pairs( conf.MapPrefixes ) do
-            if string.find( m, "^" .. v ) then
+    if conf.MapPatterns then
+        for _, v in pairs( conf.MapPatterns ) do
+            if string.find( m, wildcardToPattern( v ) ) then
                 return true
             end
         end
