@@ -3,7 +3,7 @@ local function wildcardToPattern( wildcard )
     for i, part in ipairs( parts ) do
         parts[i] = string.PatternSafe( part )
     end
-    return table.concat( parts, ".*" )
+    return "^" .. table.concat( parts, ".*" ) .. "$"
 end
 
 function MapVote.isMapAllowed( m )
