@@ -12,7 +12,7 @@ Pressing the Open Map Config button will allow you to set overrides for enabling
 
 ## Styling
 - Create a file at `lua/mapvote/client/plugins/mystyle.lua`
-- You can update colors and other style configuration by merging new values into the existing style table
+- You can update colors and other style configuration by merging new values into the [existing style table](https://github.com/CFC-Servers/map_vote/blob/main/lua/mapvote/client/modules/style_config.lua)
 Example:
 ```lua
 table.Merge(MapVote.style, {
