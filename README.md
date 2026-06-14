@@ -25,13 +25,16 @@ table.Merge(MapVote.style, {
 You can create file in lua/mapvote/client/plugins and lua/mapvote/server/plugins these files will be loaded after the main mapvote modules have been loaded
 
 ### Usable Hooks
-| Name                    | description                                                                        | args    | realm  |
-| ----------------------- | ---------------------------------------------------------------------------------- | ------- | ------ |
-| MapVote_IsMapAllowed    | Called to determine if a map is allowed, return true/false to allow/disallow a map | map     | server |
-| MapVote_VoteFinished    | Called when a vote is finished serverside                                          | results | server |
-| MapVote_ChangeMap       | Called just before mapvote changes the map, return false to skip                   | map     | server |
-| MapVote_VoteMultiplier  | Called when a vote is finished serverside, return vote multiplier                  | ply     | server |
-| MapVote_RTVStart        | Called when the vote has been rocked, return false to prevent map vote starting    |         | server |
-| MapVote_Loaded          | Called when all lua files for mapvote have been loaded                             |         | shared |
-| MapVote_VotePanelOpened | Called when the vote panel is shown                                                |         | client |
-| MapVote_VotePanelClosed | Called when the vote panel is hidden                                               |         | client |
+| Name                    | description                                                                        | args      | realm  |
+| ----------------------- | ---------------------------------------------------------------------------------- | --------- | ------ |
+| MapVote_Loaded          | Called when all lua files for mapvote have been loaded                             |           | shared |
+| MapVote_RTVStart        | Called a vote starts via !rtv, return false to prevent map vote starting           |           | server |
+| MapVote_CanStartVote    | Always called during MapVote.Start(), return false to prevent map vote starting    |           | server |
+| MapVote_IsMapAllowed    | Called to determine if a map is allowed, return true/false to allow/disallow a map | map       | server |
+| MapVote_VoteStarted     | Called after all maps are picked for a vote                                        | voteState | server |
+| MapVote_VoteMultiplier  | Multiply a player's weight in the vote, return vote multiplier                     | ply       | server |
+| MapVote_VoteFinished    | Called when a vote is finished serverside                                          | results   | server |
+| MapVote_ChangeMap       | Called just before mapvote changes the map, return false to skip                   | map       | server |
+| MapVote_MapIconCreated  | Called when a map icon panel is created                                            | panel     | client |
+| MapVote_VotePanelOpened | Called when the vote panel is shown                                                |           | client |
+| MapVote_VotePanelClosed | Called when the vote panel is hidden                                               |           | client |

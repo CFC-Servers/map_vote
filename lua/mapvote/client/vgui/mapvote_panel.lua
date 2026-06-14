@@ -357,6 +357,8 @@ function PANEL:SetMaps( maps )
                 self:OnMapClicked( currentMapIndex, mapName )
             end
 
+            hook.Run( "MapVote_MapIconCreated", icon )
+
             self.maps[mapIndex].panel = icon
             rowWidth = rowWidth + maxW + 4
             mapIndex = mapIndex + 1
