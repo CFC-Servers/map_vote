@@ -19,6 +19,7 @@ function MapVote.isMapAllowed( m )
         local cfg = conf.MapConfig[m]
         if cfg.MinPlayers and player.GetCount() < cfg.MinPlayers then return false end
         if cfg.MaxPlayers and cfg.MaxPlayers ~= 0 and player.GetCount() > cfg.MaxPlayers then return false end
+        if cfg.CooldownMinutes and MapVote.MinutesSinceLastPlayed( m ) < cfg.CooldownMinutes then return false end
     end
 
     if conf.ExcludedMaps[m] then return false end -- dont allow excluded maps in vote

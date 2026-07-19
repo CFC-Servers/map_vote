@@ -13,6 +13,15 @@ function MapVote.wasMapRecentlyPlayed( map )
     if MapVote.recentMaps[map] then return true end
 end
 
+---@param map string
+---@return number minutes since the map was last played, math.huge if never played
+function MapVote.MinutesSinceLastPlayed( map )
+    local lastPlayed = MapVote.DB.GetLastPlayed( map )
+    if not lastPlayed then return math.huge end
+
+    return ( os.time() - lastPlayed ) / 60
+end
+
 hook.Add( "Initialize", "MapVote_UpdateDB", function()
     MapVote.DB.MapPlayed( game.GetMap() )
 
