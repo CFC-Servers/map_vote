@@ -50,7 +50,7 @@ end
 ---@param map string
 ---@return number? last_played unix timestamp in seconds, or nil if never played
 function DB.GetLastPlayedTime( map )
-    local data = sql.QueryValue( string.format( "SELECT last_played FROM mapvote_played_maps WHERE map = %s", sql.SQLStr( map ) ) )
+    local data = sql.QueryTyped( "SELECT last_played FROM mapvote_played_maps WHERE map = ?", map )
     if data == false then
         error( "MapVote SQLError: " .. sql.LastError() )
     end
