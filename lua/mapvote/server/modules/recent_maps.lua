@@ -15,7 +15,7 @@ end
 
 ---@param map string
 ---@return number minutes since the map was last played, math.huge if never played
-function MapVote.MinutesSinceLastPlayed( map )
+function MapVote.minutesSinceLastPlayed( map )
     local lastPlayed = MapVote.DB.GetLastPlayedTime( map )
     if not lastPlayed then return math.huge end
 
