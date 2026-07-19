@@ -20,6 +20,7 @@ local schema = SV.Object {
     MapConfig = SV.Map( SV.String(), SV.Object( {
         MinPlayers = SV.Int { min = 0 }:Optional(),
         MaxPlayers = SV.Int { min = 0 }:Optional(),
+        CooldownMinutes = SV.Int { min = 0 }:Optional(),
     } ) ):Optional(),
     PlyRTVCooldownSeconds = SV.Int { min = 1 },
     MapIconURLs = SV.Map( SV.String(), SV.String() ):Optional(),

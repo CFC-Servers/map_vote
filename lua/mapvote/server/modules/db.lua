@@ -47,6 +47,17 @@ function DB.GetRecentMaps( limit )
     return data
 end
 
+---@param map string
+---@return number? last_played unix timestamp in seconds, or nil if never played
+function DB.GetLastPlayedTime( map )
+    local data = sql.QueryTyped( "SELECT last_played FROM mapvote_played_maps WHERE map = ?", map )
+    if data == false then
+        error( "MapVote SQLError: " .. sql.LastError() )
+    end
+
+    return tonumber( data )
+end
+
 ---@return {map:string, play_count:string, last_played:string}[]
 function DB.GetAllMaps()
     local data = sql.Query( "SELECT * FROM mapvote_played_maps" )
