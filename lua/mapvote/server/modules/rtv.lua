@@ -67,7 +67,7 @@ function RTV.GetThreshold()
 
     if conf.RTVPercentWhenOverpopulated > 0 then
         local mapsConfig = conf.MapConfig and conf.MapConfig[game.GetMap()] or nil
-        if mapsConfig and totalPlayers > mapsConfig.MaxPlayers then -- overpopulated map
+        if mapsConfig and mapsConfig.MaxPlayers and totalPlayers > mapsConfig.MaxPlayers then -- overpopulated map
             threshold = totalPlayers * conf.RTVPercentWhenOverpopulated
         end
     end
