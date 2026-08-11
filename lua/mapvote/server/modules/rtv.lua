@@ -113,7 +113,7 @@ function RTV.AddVote( ply )
 
     timer.Simple( 0, function()
         if not ply:IsValid() then return end
-        MsgN( ply:Nick() .. " has voted to change the map." )
+        MsgN( ply:Nick() .. " has voted to change the map. (" .. RTV.GetVoteCount() .. "/" .. threshold .. ")" )
         local threshold = RTV.GetThreshold()
         PrintMessage( HUD_PRINTTALK,
             ply:Nick() .. " has voted to change the map. (" .. RTV.GetVoteCount() .. "/" .. threshold .. ")" )
